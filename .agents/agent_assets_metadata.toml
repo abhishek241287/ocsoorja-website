@@ -1,0 +1,14 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "JY2OLmlBfgwLE0V9x_ZWD"
+uri = "file://screenshots/hero-before.jpg"
+type = "image"
+title = "Hero — Before (original)"
+
+[[outputs]]
+id = "Ik_uTcE576ZZ7QUhVAAFR"
+uri = "file://screenshots/hero-after.jpg"
+type = "image"
+title = "Hero — After (redesigned, current)"
