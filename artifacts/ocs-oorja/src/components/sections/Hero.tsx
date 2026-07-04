@@ -1,12 +1,9 @@
-
-
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { Link } from "wouter";
 import { Container } from "@/components/layout/Container";
 import { Button } from "@/components/ui/Button";
 import { HeroCards } from "@/components/sections/HeroCards";
-import { PRODUCT_CATEGORIES, getProductsByCategory, products, productsSortedByDateDesc, type Product } from "@/data/products";
-import StarBorder from "@/components/ui/StarBorder";
+import { products, productsSortedByDateDesc, type Product } from "@/data/products";
 
 // Base names for background videos. Actual sources provided as .webm and .mp4
 const videoSlides = [
@@ -14,6 +11,15 @@ const videoSlides = [
   "hero-background-2",
   "hero-background-3",
 ] as const;
+
+// Flagship products (real photography) guaranteed to appear first in the hero
+// carousel so a visitor immediately sees all three core businesses:
+// hybrid solar inverters, LiFePO4 batteries, and EV charging.
+const FLAGSHIP_SLUGS = [
+  "lithium-inverter-ocs-li-1000",
+  "24v-100ah-home-power-storage",
+  "ev-charger-dc-fast",
+];
 
 export default function Hero() {
   const [index, setIndex] = useState(0);
@@ -25,7 +31,7 @@ export default function Hero() {
   // Professional transition with crossfade
   const transitionToNext = useCallback(() => {
     if (isTransitioning) return;
-    
+
     const next = (index + 1) % videoSlides.length;
     setNextIndex(next);
     setIsTransitioning(true);
@@ -44,7 +50,7 @@ export default function Hero() {
     transitionTimeoutRef.current = setTimeout(() => {
       setIndex(next);
       setIsTransitioning(false);
-      
+
       // Pause the previous video after transition
       const prevVideo = videoRefs.current[index];
       if (prevVideo) {
@@ -96,14 +102,35 @@ export default function Hero() {
     };
   }, []);
 
+  // Curate hero carousel: guarantee the three flagship (real-photo) products
+  // representing each core business appear first, then top up with other
+  // real-photo products for variety (never falls back to placeholder SVGs).
+  const heroCardItems = useMemo(() => {
+    const bySlug = new Map(products.map((p) => [p.slug, p]));
+    const flagship = FLAGSHIP_SLUGS.map((slug) => bySlug.get(slug)).filter(
+      (p): p is Product => Boolean(p),
+    );
+    const seen = new Set(flagship.map((p) => p.id));
+    const rest = productsSortedByDateDesc(products).filter(
+      (p) => !seen.has(p.id) && p.image.endsWith(".jpeg"),
+    );
+    const picked = [...flagship, ...rest].slice(0, 5);
+    return picked.map((p) => ({
+      title: p.name,
+      image: p.image,
+      href: `/products/${p.slug}`,
+      cta: "Learn more",
+    }));
+  }, []);
+
   return (
-    <section className="relative isolate min-h-screen flex items-center">
+    <section className="relative isolate min-h-[100svh] flex items-center overflow-hidden bg-neutral-950">
       <div className="absolute inset-0 -z-10 overflow-hidden">
         {videoSlides.map((baseName: string, i: number) => {
           // Calculate opacity for professional crossfade effect
           let opacity = "opacity-0";
           let zIndex = "z-0";
-          
+
           if (i === index && !isTransitioning) {
             // Current video - fully visible
             opacity = "opacity-100";
@@ -121,30 +148,24 @@ export default function Hero() {
           return (
             <div
               key={baseName}
-              className={`absolute inset-0 transition-all duration-[1500ms] ease-out ${opacity} ${zIndex}`}
+              className={`absolute inset-0 transition-opacity duration-[1500ms] ease-out ${opacity} ${zIndex}`}
               aria-hidden={i !== index && (!isTransitioning || i !== nextIndex)}
             >
               <video
-                ref={(el) => { videoRefs.current[i] = el; }}
-                className="absolute inset-0 w-full h-full object-cover scale-105 transition-transform duration-[1500ms] ease-out"
-                style={{
-                  transform: i === nextIndex && isTransitioning 
-                    ? 'scale(1)' 
-                    : i === index && isTransitioning 
-                    ? 'scale(1.05)' 
-                    : 'scale(1.02)'
+                ref={(el) => {
+                  videoRefs.current[i] = el;
                 }}
+                className="absolute inset-0 h-full w-full object-cover"
                 muted
                 autoPlay
                 playsInline
-                preload="auto"
-                poster={`/images/hero/hero-${i + 1}.svg`}
+                preload={i === 0 ? "auto" : "metadata"}
                 onLoadedMetadata={(e) => {
                   try {
                     const v = e.currentTarget;
                     v.muted = true;
                     const p = v.play();
-                    if (p && typeof p.catch === 'function') p.catch(() => {});
+                    if (p && typeof p.catch === "function") p.catch(() => {});
                   } catch {}
                 }}
                 onCanPlay={(e) => {
@@ -152,7 +173,7 @@ export default function Hero() {
                     const v = e.currentTarget;
                     if (v.paused) {
                       const p = v.play();
-                      if (p && typeof p.catch === 'function') p.catch(() => {});
+                      if (p && typeof p.catch === "function") p.catch(() => {});
                     }
                   } catch {}
                 }}
@@ -165,121 +186,62 @@ export default function Hero() {
             </div>
           );
         })}
-        
-        {/* Enhanced gradient overlay for better text contrast */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-black/40 transition-opacity duration-1000" />
-        
-        {/* Left-side text area overlay for maximum readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent lg:to-black/20" />
-        
-        {/* Additional cinematic vignette effect */}
-        <div 
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: 'radial-gradient(circle at center, transparent 20%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0.7) 100%)'
-          }}
-        />
+
+        {/* Single, purposeful scrim: darkens the left/bottom for text legibility
+            without the layered "generic AI gradient" look. */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/20 lg:to-black/25" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
       </div>
-      <Container className="py-20 md:py-28 relative z-30">
-        <div className="grid items-center gap-8 lg:gap-10 lg:grid-cols-2">
-          <div className="max-w-3xl relative">
-            <div className="relative z-10">
-              <div className="inline-flex items-center px-4 py-2 rounded-full bg-black/30 backdrop-blur-md border border-white/20 shadow-lg motion-reduce:animate-none animate-[fade-in-up_600ms_ease-out_0ms_both]">
-                <div className="text-xs font-semibold uppercase tracking-wider text-emerald-400">
-                  Trusted Indian Manufacturer | Lucknow, U.P.
-                </div>
-              </div>
-              <h1 className="mt-3 text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight text-white text-balance whitespace-normal leading-[1.05] motion-reduce:animate-none animate-[fade-in-up_650ms_ease-out_100ms_both]">
-                <GradientHeadline text="LiFePO₄ Batteries, Hybrid Inverters & EV Charging Solutions" />
-              </h1>
-              <p className="mt-4 text-lg text-white/90 max-w-2xl drop-shadow-lg motion-reduce:animate-none animate-[fade-in-up_700ms_ease-out_180ms_both]" 
-                 style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
-                OCS OORJA – Trusted Indian manufacturer of advanced lithium-ion battery packs, solar hybrid inverters, and AC/DC EV chargers for e-mobility, telecom, and industrial applications. Based in Lucknow (Uttar Pradesh), we deliver home storage (12V/24V LFP), e‑rickshaw/e‑bike batteries with smart BMS technology.
-              </p>
-              <div className="mt-8 flex flex-wrap items-center gap-3 motion-reduce:animate-none animate-[fade-in-up_750ms_ease-out_260ms_both]">
-                <Button asChild className="shadow-2xl !rounded-[20px] !py-[16px] !px-[26px] !text-[16px] !h-auto">
-                  <Link href="/products">Explore Products</Link>
-                </Button>
-                <StarBorder
-                  as={Link}
-                  href="/contact"
-                  className="shadow-2xl"
-                  color="cyan"
-                  speed="5s"
-                  thickness={1}
-                >
-                  Request Quote
-                </StarBorder>
-              </div>
+
+      <Container className="relative z-30 py-24 md:py-28 lg:py-16">
+        <div className="grid grid-cols-1 items-center gap-16 lg:grid-cols-12 lg:gap-8">
+          <div className="lg:col-span-7">
+            <div className="flex items-center gap-3 motion-reduce:animate-none animate-[fade-in-up_600ms_ease-out_0ms_both]">
+              <span className="h-px w-8 bg-emerald-400" aria-hidden="true" />
+              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">
+                Trusted Indian Manufacturer &middot; Lucknow, U.P.
+              </span>
             </div>
+
+            <h1 className="mt-6 max-w-[20ch] text-4xl font-semibold leading-[1.1] tracking-tight text-white sm:text-5xl lg:max-w-[22ch] lg:text-6xl motion-reduce:animate-none animate-[fade-in-up_650ms_ease-out_100ms_both]">
+              <span className="block">Hybrid Solar Inverters,</span>
+              <span className="block text-emerald-300">
+                LiFePO&#8324; Batteries &amp; EV Charging
+              </span>
+            </h1>
+
+            <p className="mt-6 max-w-[46ch] text-base text-white/80 sm:text-lg motion-reduce:animate-none animate-[fade-in-up_700ms_ease-out_180ms_both]">
+              Reliable, factory-direct power systems engineered in Lucknow —
+              built for Indian conditions, priced for scale, and backed by a
+              5-year warranty on every battery pack.
+            </p>
+
+            <div className="mt-10 flex flex-wrap items-center gap-4 motion-reduce:animate-none animate-[fade-in-up_750ms_ease-out_260ms_both]">
+              <Button asChild size="lg" className="rounded-full">
+                <Link href="/contact">Request a Quote</Link>
+              </Button>
+              <Button
+                asChild
+                variant="outline"
+                size="lg"
+                className="rounded-full border-white/30 text-white hover:bg-white/10 focus-visible:ring-white/60 focus-visible:ring-offset-transparent"
+              >
+                <Link href="/products">Explore Products</Link>
+              </Button>
+            </div>
+
+            <p className="mt-8 text-sm text-white/60 motion-reduce:animate-none animate-[fade-in-up_800ms_ease-out_340ms_both]">
+              5-Year Warranty &middot; Factory-Direct Pricing &middot; Pan-India Delivery
+            </p>
           </div>
-          <div className="relative flex justify-center lg:justify-end px-4 sm:px-0">
-            <div className="w-full max-w-sm sm:max-w-md lg:max-w-lg">
-              {(() => {
-                // Pick the newest product in each category for variety, then top up to 5 with next-most-recent overall
-                const latestByCategory = PRODUCT_CATEGORIES.map((category) => {
-                  const sorted = productsSortedByDateDesc(getProductsByCategory(category.id, products));
-                  return sorted[0];
-                }).filter(Boolean) as Product[];
 
-                const sortedAll = productsSortedByDateDesc(products);
-                const targetCount = Math.min(5, sortedAll.length);
-                const picked: Product[] = [];
-                const seen = new Set<string>();
-
-                // Seed with per-category picks
-                latestByCategory.forEach((p) => {
-                  if (p && !seen.has(p.id) && picked.length < targetCount) {
-                    picked.push(p);
-                    seen.add(p.id);
-                  }
-                });
-
-                // Top up to target count with the next most recent products
-                for (const p of sortedAll) {
-                  if (picked.length >= targetCount) break;
-                  if (seen.has(p.id)) continue;
-                  picked.push(p);
-                  seen.add(p.id);
-                }
-
-                const items = picked.map((p) => ({
-                  title: p.name,
-                  image: p.image,
-                  href: `/products/${p.slug}`,
-                  cta: "Learn more",
-                }));
-
-                return <HeroCards items={items.length ? items : undefined} />;
-              })()}
+          <div className="lg:col-span-5">
+            <div className="mx-auto w-full max-w-sm sm:max-w-md lg:ml-auto lg:mr-0">
+              <HeroCards items={heroCardItems.length ? heroCardItems : undefined} />
             </div>
           </div>
         </div>
       </Container>
     </section>
-  );
-}
-
-function GradientHeadline({ text }: { text: string }) {
-  const words = text.trim().split(/\s+/);
-  return (
-    <span className="inline-flex flex-wrap items-baseline gap-x-[0.35ch] md:gap-x-[0.45ch]">
-      {words.map((w, i) => (
-        <span key={`${w}-${i}`} className="relative inline-block group align-baseline">
-          {/* Base word */}
-          <span className="relative transition-opacity duration-500 ease-in-out md:group-hover:opacity-0">
-            {w}
-          </span>
-          {/* Light green gradient   (no blend modes) */}
-          <span
-            aria-hidden
-            className="pointer-events-none absolute inset-0 bg-gradient-to-r from-emerald-200 via-emerald-100 to-emerald-50 bg-clip-text text-transparent opacity-0
-                       transition-opacity duration-500 ease-in-out md:group-hover:opacity-100"
-          >
-            {w}
-          </span>
-        </span>
-      ))}
-    </span>
   );
 }
