@@ -1,0 +1,54 @@
+Add a "Value for Money" Requirement
+
+This is one of your biggest differentiators, and we've discussed it many times. It should come across subtly in the Hero without making exaggerated claims.
+
+Add to Done looks like:
+
+The Hero communicates that OCS OORJA delivers reliable, value-for-money clean energy solutions without using exaggerated marketing claims.
+2. Show Multiple Products in the Hero
+
+Since OCS OORJA is not just an inverter company, the Hero should visually communicate your product range.
+
+Add to Brand clarity pass:
+
+The Hero visual should feature a premium composition of actual OCS OORJA products (Hybrid Solar Inverter, LiFePO₄ Battery, and EV Charger) so visitors immediately understand the breadth of the product portfolio.
+One thing I would REMOVE
+
+I would remove this comparison:
+
+"Comparable to Tesla Energy, Schneider Electric, Huawei Digital Power, Sungrow, and Apple"
+
+Instead, use:
+
+Aim for world-class visual quality and user experience suitable for a premium clean-energy manufacturer, while maintaining OCS OORJA's own distinct brand identity.
+Why?
+
+Those companies are useful inspiration, but naming them can sometimes encourage an AI to imitate specific visual patterns. It's better to define the quality level without implying that the design should resemble any one company.
+
+Final Approval
+
+Once those small edits are made, I would rate the brief:
+
+Clarity: ⭐⭐⭐⭐⭐
+Scope: ⭐⭐⭐⭐⭐
+Design direction: ⭐⭐⭐⭐⭐
+Technical constraints: ⭐⭐⭐⭐⭐
+Brand alignment: ⭐⭐⭐⭐⭐
+
+Overall: 9.8/10
+
+The remaining 0.2 isn't because the brief is weak—it's because the final quality depends on execution. That's why we'll review the Hero before approving it.
+
+🚀 My recommendation
+
+Go ahead and assign this task.
+
+Then, when the Task Agent finishes:
+
+Send me the before screenshot.
+Send me the after screenshot.
+Send me the design rationale.
+
+We'll review it together against our checklist. If it's outstanding, we approve it and move to the Header. If not, we'll refine it before touching any other section.
+
+This is exactly how I'd run a professional website redesign project.
