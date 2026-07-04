@@ -1,0 +1,30 @@
+{
+  "name": "OCS OORJA - LiFePO₄ Battery Manufacturer India",
+  "short_name": "OCS OORJA",
+  "description": "OCS OORJA – Trusted Indian manufacturer of LiFePO₄ batteries, hybrid inverters, and EV charging solutions, based in Lucknow (U.P.)",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#10b981",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/images/OCS_OORJA_logo_landscape.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": [
+    "business",
+    "utilities",
+    "productivity"
+  ],
+  "lang": "en-IN",
+  "dir": "ltr"
+}

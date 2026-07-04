@@ -1,0 +1,60 @@
+import { Seo } from "@/components/Seo";
+import { Container } from "@/components/layout/Container";
+import { SectionHeading } from "@/components/ui/SectionHeading";
+import ContactForm from "@/components/contact/ContactForm";
+import { Link } from "wouter";
+import { Phone, Mail, MapPin } from "lucide-react";
+
+export default function ContactPage() {
+  return (
+    <div className="py-12 md:py-16">
+      <Seo
+        title="Contact Us - OCS OORJA | LiFePO₄ Battery Manufacturer Lucknow"
+        description="Contact OCS OORJA – Trusted Indian manufacturer of LiFePO₄ batteries, hybrid inverters, and EV charging solutions in Lucknow (U.P.). Request a quote for lithium-ion battery packs, solar inverters, or EV chargers. Phone: 7521803995 | Email: Ocsoorja@gmail.com"
+        canonical="https://www.ocsoorja.com/contact"
+      />
+      <Container>
+        <SectionHeading
+          title="Contact us"
+          subtitle="Request a quote or speak with our battery experts"
+          align="left"
+        />
+        <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-3">
+          {/* Info column */}
+          <div className="space-y-5 md:col-span-1">
+            <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.02] supports-[backdrop-filter]:bg-foreground/5 supports-[backdrop-filter]:backdrop-blur-md p-5 sm:p-6">
+              <h3 className="text-base font-semibold text-foreground">Talk to us</h3>
+              <p className="mt-1 text-sm text-foreground/70">We typically reply within one business day.</p>
+              <ul className="mt-4 space-y-3 text-sm text-foreground/80">
+                <li className="flex items-center gap-2">
+                  <Phone className="h-4 w-4" />
+                  <Link href="tel:+917521803995" className="hover:underline">7521803995</Link>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Mail className="h-4 w-4" />
+                  <Link href="mailto:Ocsoorja@gmail.com" className="hover:underline">Ocsoorja@gmail.com</Link>
+                </li>
+              </ul>
+            </div>
+
+            <div className="rounded-2xl border border-foreground/10 p-5 sm:p-6">
+              <h3 className="text-base font-semibold text-foreground">Office</h3>
+              <div className="mt-3 flex items-start gap-2 text-sm text-foreground/80">
+                <MapPin className="mt-0.5 h-4 w-4 flex-shrink-0" />
+                <p>Commercial Unit No. 304 on 3rd Floor Royal Plaza, Block-3 in IT Park-2, at Sushant Golf City, Lucknow</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Form column */}
+          <div className="md:col-span-2">
+            <div className="rounded-2xl border border-foreground/10 bg-background p-6 sm:p-8">
+              <h3 className="sr-only">Contact form</h3>
+              <ContactForm />
+            </div>
+          </div>
+        </div>
+      </Container>
+    </div>
+  );
+}

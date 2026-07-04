@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="640" height="480" viewBox="0 0 640 480" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder image">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#e5e7eb"/>
+      <stop offset="100%" stop-color="#cbd5e1"/>
+    </linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#94a3b8" stroke-width="0.5" opacity="0.35"/>
+    </pattern>
+  </defs>
+  <rect width="640" height="480" fill="url(#g)"/>
+  <rect width="640" height="480" fill="url(#grid)"/>
+  <rect x="24" y="24" width="592" height="432" rx="16" ry="16" fill="none" stroke="#475569" stroke-width="2" stroke-dasharray="10 8" opacity="0.5"/>
+  <g opacity="0.85">
+    <circle cx="320" cy="220" r="56" fill="#64748b" opacity="0.25"/>
+    <path d="M280 264L320 224L352 248L368 232L400 264" stroke="#64748b" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" opacity="0.55"/>
+  </g>
+  <text x="50%" y="86%" text-anchor="middle" fill="#334155" font-size="20" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, Noto Sans, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji'" opacity="0.9">Image coming soon</text>
+</svg>

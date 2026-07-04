@@ -1,0 +1,201 @@
+/**
+ * SEO Utility - Structured Data and Schema.org markup for better search engine visibility
+ */
+
+interface OrganizationSchema {
+  "@context": string;
+  "@type": string;
+  name: string;
+  alternateName?: string;
+  url: string;
+  logo: string;
+  description: string;
+  address: {
+    "@type": string;
+    streetAddress: string;
+    addressLocality: string;
+    addressRegion: string;
+    postalCode?: string;
+    addressCountry: string;
+  };
+  contactPoint: {
+    "@type": string;
+    telephone: string;
+    contactType: string;
+    email: string;
+    areaServed: string;
+    availableLanguage: string[];
+  };
+  sameAs: string[];
+  foundingLocation?: {
+    "@type": string;
+    address: {
+      "@type": string;
+      addressLocality: string;
+      addressRegion: string;
+      addressCountry: string;
+    };
+  };
+  areaServed?: {
+    "@type": string;
+    name: string;
+  };
+}
+
+interface LocalBusinessSchema extends OrganizationSchema {
+  "@type": "LocalBusiness";
+  priceRange?: string;
+  openingHours?: string;
+}
+
+interface ProductSchema {
+  "@context": string;
+  "@type": string;
+  name: string;
+  description: string;
+  brand: {
+    "@type": string;
+    name: string;
+  };
+  manufacturer: {
+    "@type": string;
+    name: string;
+  };
+  offers?: {
+    "@type": string;
+    availability: string;
+    priceCurrency: string;
+    url: string;
+  };
+}
+
+/**
+ * Generate Organization Schema for OCS OORJA
+ */
+export function getOrganizationSchema(): OrganizationSchema {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "OCS OORJA",
+    alternateName: "OCS OORJA Green Energy Solutions",
+    url: "https://www.ocsoorja.com",
+    logo: "https://www.ocsoorja.com/images/OCS_OORJA_logo_landscape.png",
+    description: "OCS OORJA – Trusted Indian manufacturer of LiFePO₄ batteries, hybrid inverters, and EV charging solutions, based in Lucknow (U.P.). We supply advanced lithium-ion battery packs, solar energy storage systems, and EV chargers for e-mobility, telecom, and industrial applications across India.",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "Commercial Unit No. 304 on 3rd Floor Royal Plaza, Block-3 in IT Park-2, at Sushant Golf City",
+      addressLocality: "Lucknow",
+      addressRegion: "Uttar Pradesh",
+      addressCountry: "IN",
+    },
+    contactPoint: {
+      "@type": "ContactPoint",
+      telephone: "+91-75218-03995",
+      contactType: "Sales",
+      email: "Ocsoorja@gmail.com",
+      areaServed: "IN",
+      availableLanguage: ["English", "Hindi"],
+    },
+    sameAs: [
+      "https://www.instagram.com/ocs_oorja",
+      "https://www.youtube.com/@ocs_oorja",
+    ],
+    foundingLocation: {
+      "@type": "Place",
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "Lucknow",
+        addressRegion: "Uttar Pradesh",
+        addressCountry: "IN",
+      },
+    },
+    areaServed: {
+      "@type": "Country",
+      name: "India",
+    },
+  };
+}
+
+/**
+ * Generate LocalBusiness Schema for better local SEO
+ */
+export function getLocalBusinessSchema(): LocalBusinessSchema {
+  return {
+    ...getOrganizationSchema(),
+    "@type": "LocalBusiness",
+    priceRange: "₹₹₹",
+  };
+}
+
+/**
+ * Generate Product Schema for a specific product
+ */
+export function getProductSchema(product: {
+  name: string;
+  description: string;
+  url: string;
+}): ProductSchema {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: product.description,
+    brand: {
+      "@type": "Brand",
+      name: "OCS OORJA",
+    },
+    manufacturer: {
+      "@type": "Organization",
+      name: "OCS OORJA",
+    },
+    offers: {
+      "@type": "Offer",
+      availability: "https://schema.org/InStock",
+      priceCurrency: "INR",
+      url: product.url,
+    },
+  };
+}
+
+/**
+ * Generate BreadcrumbList Schema for better navigation understanding
+ */
+export function getBreadcrumbSchema(items: Array<{ name: string; url: string }>) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: item.url,
+    })),
+  };
+}
+
+/**
+ * Generate FAQ Schema for FAQ pages
+ */
+export function getFAQSchema(faqs: Array<{ question: string; answer: string }>) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.answer,
+      },
+    })),
+  };
+}
+
+/**
+ * Utility to render JSON-LD script tag
+ */
+export function renderJsonLd(data: object) {
+  return {
+    __html: JSON.stringify(data),
+  };
+}
