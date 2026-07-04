@@ -212,8 +212,8 @@ export default function Hero() {
 
             <p className="mt-6 max-w-[46ch] text-base text-white/80 sm:text-lg motion-reduce:animate-none animate-[fade-in-up_700ms_ease-out_180ms_both]">
               Reliable, factory-direct power systems engineered in Lucknow —
-              built for Indian conditions, priced for scale, and backed by a
-              5-year warranty on every battery pack.
+              built for Indian conditions, priced for scale, and backed by up
+              to a 5-year warranty.
             </p>
 
             <div className="mt-10 flex flex-wrap items-center gap-4 motion-reduce:animate-none animate-[fade-in-up_750ms_ease-out_260ms_both]">
@@ -231,7 +231,7 @@ export default function Hero() {
             </div>
 
             <p className="mt-8 text-sm text-white/60 motion-reduce:animate-none animate-[fade-in-up_800ms_ease-out_340ms_both]">
-              5-Year Warranty &middot; Factory-Direct Pricing &middot; Pan-India Delivery
+              Up to 5-Year Warranty &middot; Factory-Direct Pricing &middot; Pan-India Delivery
             </p>
           </div>
 
