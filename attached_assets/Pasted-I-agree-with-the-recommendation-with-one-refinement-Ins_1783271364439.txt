@@ -1,0 +1,108 @@
+I agree with the recommendation, with one refinement.
+
+Instead of modernizing the website section by section immediately, I'd build the foundation first so we don't have to redesign pages twice.
+
+Phase 1 – Build the OCS OORJA Product Foundation (Do this first)
+
+Before any more UI work, update the entire product architecture.
+
+Your website should consistently represent these 7 product families:
+
+Hybrid Solar Inverters
+Inbuilt Lithium Battery Inverters
+LiFePO₄ Battery Systems
+AC EV Chargers
+DC Fast Chargers
+E-Rickshaw Chargers
+Battery Energy Storage Systems (BESS)
+
+Each should have:
+
+Proper product category
+Product images
+Technical specifications
+Applications
+Features
+Downloads section (future brochures)
+SEO-ready structure
+
+This becomes the single source of truth for the whole website.
+
+Phase 2 – Reposition the Brand
+
+Once the catalog exists, update the messaging everywhere.
+
+Instead of appearing as only a battery company or inverter company, OCS OORJA should clearly present itself as:
+
+Integrated Clean Energy & EV Infrastructure Manufacturer
+
+with messaging like:
+
+Hybrid Solar Inverters • Lithium Battery Systems • EV Charging Infrastructure • Battery Energy Storage Systems
+
+That positioning can then flow consistently into:
+
+Hero
+Header
+Products
+About
+Contact
+Future Google Ads landing pages
+Phase 3 – Continue Premium UI
+
+Then continue in this order:
+
+Header & Navigation
+Products Page
+Product Detail Pages
+About
+Contact
+Footer
+Remaining homepage sections
+
+By this point, every section will already know what products and positioning it needs to communicate.
+
+Phase 4 – Marketing Assets
+
+After the website is complete:
+
+Dedicated Hybrid Inverter landing page
+Google Analytics
+Conversion tracking
+Google Ads landing pages
+Dealer portal
+Brochures
+Product catalogs
+Datasheets
+One more suggestion
+
+I think we should also create a permanent OCS Design System before we get too far.
+
+This would define:
+
+Brand colors
+Typography
+Button styles
+Cards
+Icons
+Spacing (8px system)
+Shadows
+Border radius
+Animation rules
+Product photography style
+Illustration style
+Section layouts
+
+Then every new page follows the same design language, giving the site the consistency you'd expect from companies like Schneider Electric or Huawei Digital Power.
+
+My recommendation
+
+I would choose:
+
+Step 1: Product Foundation (7 product families)
+
+Step 2: OCS Design System
+
+Step 3: Premium website modernization section by section
+
+This approach minimizes rework and gives OCS OORJA a consistent, premium identity across the entire website and future marketing materials.
