@@ -1,0 +1,233 @@
+Phase 1 — OCS Design System (Task #4 FIRST)
+
+Do this first.
+
+Why?
+
+Everything else depends on it.
+
+If we first redesign products, then later change:
+
+Button styles
+Typography
+Colors
+Cards
+Spacing
+
+...we'll end up revisiting those pages.
+
+The Design System becomes the rulebook for the whole project.
+
+Phase 2 — Product Foundation (Task #3)
+
+Once the design language is fixed:
+
+Build the entire OCS product architecture.
+
+Not just categories.
+
+Think of it as your Product Database.
+
+Every product should contain:
+
+Hero Image
+Gallery
+Product Family
+Features
+Technical Specifications
+Applications
+Downloads
+FAQs
+Warranty
+Certifications
+Related Products
+CTA
+
+This will power:
+
+Website
+Dealer Portal
+OCS One ERP
+Future Mobile App
+Brochures
+Google Ads Landing Pages
+Then Phase 3
+
+Premium UI
+
+Header
+Homepage
+Products
+Product Details
+About
+Contact
+Footer
+Then Phase 4
+
+Marketing
+
+Google Ads
+Landing Pages
+SEO
+Analytics
+CRM Integration
+OCS One Integration
+Lead Capture
+I also want to improve Task #3
+
+Right now it talks about 7 Product Families.
+
+I want it to become:
+
+OCS Product Information Management (PIM)
+
+That's what companies like Schneider, ABB, Siemens, Huawei and Sungrow effectively maintain—a structured source of truth for product data.
+
+Instead of just:
+
+Product Family
+
+It becomes:
+
+Product
+
+↓
+
+Family
+
+↓
+
+Series
+
+↓
+
+Model
+
+↓
+
+Technical Specs
+
+↓
+
+Downloads
+
+↓
+
+Images
+
+↓
+
+Applications
+
+↓
+
+Accessories
+
+↓
+
+Related Products
+
+↓
+
+SEO
+
+↓
+
+Warranty
+
+↓
+
+Certifications
+
+This structure will support the website today and future systems later.
+
+Improve Task #4
+
+Instead of simply documenting colors and typography, make it the OCS Brand Design System.
+
+It should include:
+
+Colors
+Typography
+Buttons
+Cards
+Icons
+Tables
+Forms
+Product Cards
+Product Detail Layout
+Hero Layout
+CTA Design
+Image Treatment
+Video Style
+Illustration Rules
+Shadows
+Border Radius
+Animation Rules
+Accessibility Rules
+Responsive Breakpoints
+Dark Mode Rules (even if not used immediately)
+Print Style Rules
+My Biggest Recommendation
+
+Create one more foundational task before any more UI work:
+
+Task #5 — OCS Content System
+
+This defines:
+
+Brand messaging
+Headlines
+Product descriptions
+Tone of voice
+Dealer messaging
+Industrial messaging
+Government messaging
+SEO keywords
+CTA wording
+FAQ standards
+
+Every page will then use the same voice.
+
+📈 My Final Master Roadmap
+Phase A
+
+✅ Design System
+
+Phase B
+
+✅ Product Information Management
+
+Phase C
+
+✅ Content System
+
+Phase D
+
+Premium Website
+
+Phase E
+
+Marketing System
+
+Phase F
+
+OCS One Integration
+
+This is why I'm excited
+
+When we started, we were trying to "improve a website."
+
+Now we're building:
+
+A brand system.
+A product information system.
+A content system.
+A website.
+A marketing platform.
+
+All from one consistent foundation.
+
+If OCS OORJA grows into a large manufacturing company over the next 5–10 years, this structure will scale with it instead of needing to be rebuilt.
+
+My recommendation: Approve Task #4 first, then Task #3, and only after those are complete continue with the remaining website modernization tasks. I believe that sequence will save you time, reduce rework, and produce a much more consistent, premium result.
