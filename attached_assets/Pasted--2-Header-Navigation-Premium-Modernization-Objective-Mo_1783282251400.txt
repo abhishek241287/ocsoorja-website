@@ -1,0 +1,132 @@
+#2 – Header & Navigation Premium Modernization
+
+Objective
+
+Modernize only the Header & Navigation of the OCS OORJA website.
+
+The Design System (Task #4), Product Foundation/PIM (Task #3), and Brand Communication System (Task #5) are complete.
+
+Do not introduce any new architecture, backend integrations, frameworks, or internal systems.
+
+Focus only on visible improvements that customers will notice.
+
+Scope
+
+• Premium sticky header
+• Premium navigation
+• Better mobile navigation
+• Better CTA
+• Better UX
+• Better accessibility
+
+Keep the existing routes exactly as they are.
+
+Do not create new pages.
+
+Do not create placeholder links.
+
+Navigation
+
+Logo → Home
+
+Products
+
+About
+
+Contact
+
+Request a Quote (Primary CTA)
+
+Products dropdown should visually group the existing product families but every item must point to an existing destination only.
+
+No dead links.
+
+Design Requirements
+
+• Solid white header
+
+• Transparent only at top of homepage
+
+• Smooth transition on scroll
+
+• Subtle shadow after scrolling
+
+• Premium spacing (8px system)
+
+• Elegant typography
+
+• Premium hover states
+
+• Visible active page
+
+• Excellent mobile navigation
+
+• Preserve theme toggle
+
+• Preserve contact information
+
+• Keyboard accessible
+
+• No glassmorphism
+
+• No heavy gradients
+
+• No neon
+
+• No AI-style glow
+
+• No oversized shadows
+
+Performance
+
+No new dependencies.
+
+No routing changes.
+
+No SEO changes.
+
+No visual regressions.
+
+Acceptance
+
+✓ Typecheck passes
+
+✓ Desktop, Tablet and Mobile screenshots
+
+✓ Before/After comparison
+
+✓ Short design rationale
+
+✓ Regression check
+
+✓ No changes outside the Header & Navigation
+
+Important
+
+This is now a customer-facing project.
+
+Do not build new systems.
+
+Do not refactor architecture.
+
+Do not prepare future features.
+
+Only improve what visitors can see.
+
+After this task the next sequence is:
+
+1. Homepage remaining sections
+
+2. Products page
+
+3. Product Detail pages
+
+4. About page
+
+5. Contact page
+
+6. Footer
+
+7. SEO optimization
+
+8. Blog
