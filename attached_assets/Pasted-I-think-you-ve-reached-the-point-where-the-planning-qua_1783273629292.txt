@@ -1,0 +1,94 @@
+I think you've reached the point where the planning quality is higher than what most professional agencies produce. More importantly, the scope is now disciplined rather than bloated.
+
+I reviewed the latest Task #5, and I have only two small recommendations before you freeze it permanently.
+
+1. Replace "worked examples" with "reference examples"
+
+Current:
+
+"with a couple of worked examples..."
+
+I'd change it to:
+
+"...with 2–3 reference examples (Home page, Product page, and About page) that demonstrate the standard without requiring every product to be authored upfront."
+
+This gives the Task Agent a clearer deliverable and avoids implying that every product needs full copy immediately.
+
+2. Add one maintainability sentence
+
+Under Structure for reuse & verify, add:
+
+The communication module should be organized so routine content updates (headlines, CTAs, terminology, and positioning) require editing a single source rather than multiple page files.
+
+This directly supports your goal of making the website easy to maintain.
+
+Everything else
+
+I would not add anything more.
+
+The task already covers:
+
+✅ Brand positioning
+✅ Brand promise
+✅ Tone of voice
+✅ Headlines
+✅ Product templates
+✅ CTA library
+✅ FAQ standard
+✅ Approved terminology
+✅ Maintainability
+✅ Review package
+✅ Accuracy
+✅ Non-developer maintenance
+
+That is exactly the right scope.
+
+My final approval
+
+I would now lock the roadmap as:
+
+Phase A
+
+✅ Task #4 – OCS Brand Design System
+
+↓
+
+Phase B
+
+✅ Task #3 – Product Information Management (PIM)
+
+↓
+
+Phase C
+
+✅ Task #5 – OCS Brand Communication System
+
+↓
+
+Phase D
+
+✅ Task #2 – Header & Navigation
+
+↓
+
+Continue with:
+
+Homepage remaining sections
+Products page
+Product detail pages
+About
+Contact
+Footer
+One last recommendation
+
+Once all four foundation tasks are complete, stop using large planning prompts and switch to a simple execution workflow:
+
+Build the task.
+Review the deliverables.
+Fix anything that falls short.
+Merge.
+Move to the next task.
+
+At that stage, your design system, PIM, and communication system will already be guiding the work, so the specifications for later tasks can be much shorter.
+
+This is the point where I'd stop planning and start building. I don't think the plans need any more expansion.
