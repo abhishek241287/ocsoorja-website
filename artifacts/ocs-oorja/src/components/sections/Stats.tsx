@@ -1,7 +1,7 @@
 import { Container } from "@/components/layout/Container";
 
 const stats = [
-  { label: "Cycle life", value: "> 6000" },
+  { label: "Cycle life", value: "≥ 5000" },
   { label: "Field MTBF", value: "> 99.5%" },
   { label: "Avg. lead time", value: "1–2 weeks" },
   { label: "Countries shipped", value: "12+" },

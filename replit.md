@@ -28,6 +28,7 @@ Marketing + product website for **OCS OORJA**, an integrated clean-energy & EV-i
 - **Living design-system reference:** `artifacts/ocs-oorja/src/pages/design-system.tsx` (unlinked route `/design-system`)
 - **Product data (single source):** `artifacts/ocs-oorja/src/data/products/` — one file per family (`<family>.ts`) holding that family's records, plus `types.ts` (the `Product` model), `families.ts` (`FAMILIES` metadata + `DEFAULT_CTA`), and `index.ts` (public entry point that concatenates families into `products` and exposes helpers). Add/edit a product by editing ONLY its family file; consumers import from `@/data/products`.
 - **Product media & downloads:** `artifacts/ocs-oorja/public/images/products/<family>/` and `public/downloads/{brochures,datasheets}/` — see the `README.md` in those folders for the naming convention
+- **Shared site copy (single source for messaging & CTA wording):** `artifacts/ocs-oorja/src/data/brand.ts` — edit shared headlines, positioning statement, and button labels HERE; components import `BRAND`, `CTAS`, `HEADLINES` (plus `PRODUCT_DESCRIPTION_TEMPLATE`/`FAQ_STANDARD` writing guides). Zero runtime imports so it stays non-developer-editable. Product-specific copy still lives in `src/data/products/`.
 - **Navigation:** `artifacts/ocs-oorja/src/data/navigation.ts` · **Routes:** `artifacts/ocs-oorja/src/App.tsx`
 
 ## Architecture decisions

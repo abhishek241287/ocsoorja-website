@@ -3,28 +3,28 @@ import { Container } from "@/components/layout/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { CheckCircle2, Leaf, ShieldCheck, Cpu, Sparkles, ArrowRight } from "lucide-react";
 import { Link } from "wouter";
+import { BRAND, HEADLINES, CTAS } from "@/data/brand";
 
 export default function AboutPage() {
   return (
     <div className="py-12 md:py-16">
       <Seo
         title="About OCS OORJA"
-        description="OCS OORJA – Trusted Indian manufacturer of LiFePO₄ batteries, hybrid inverters, and EV charging solutions, based in Lucknow (U.P.). Learn about our engineering expertise, capabilities, and commitment to delivering safe, reliable energy storage solutions."
+        description={`${BRAND.positioning} Learn about our engineering expertise, capabilities, and commitment to safe, reliable clean-energy systems.`}
         canonical="https://www.ocsoorja.com/about"
       />
       <Container>
         <SectionHeading
-          title="About OCS OORJA"
-          subtitle="We deliver safe, reliable energy storage so our customers can innovate with confidence."
+          title={HEADLINES.about.title}
+          subtitle={HEADLINES.about.subtitle}
           align="left"
         />
 
         {/* Intro card */}
         <div className="mt-8 rounded-2xl border border-foreground/10 bg-foreground/[0.02] supports-[backdrop-filter]:bg-foreground/5 supports-[backdrop-filter]:backdrop-blur-md p-6 sm:p-8">
           <p className="text-base leading-7 text-foreground/80">
-            <strong>OCS OORJA – Trusted Indian manufacturer of LiFePO₄ batteries, hybrid inverters, and EV charging solutions, based in Lucknow (Uttar Pradesh).</strong>
-            {" "}We design and supply advanced lithium‑ion battery packs and cells for e‑mobility, telecom, energy storage and industrial OEMs across India.
-            Our team blends chemistry expertise (LFP/NMC), robust BMS integration and manufacturability to deliver dependable products at scale.
+            <strong>{BRAND.positioningLead}</strong>
+            {" "}{BRAND.positioningBody}
           </p>
         </div>
 
@@ -60,8 +60,8 @@ export default function AboutPage() {
             <h4 className="text-base sm:text-lg font-semibold text-foreground">Want to discuss a project?</h4>
             <p className="mt-1 text-sm text-foreground/70">Tell us your application and requirements — we’ll respond within one business day.</p>
           </div>
-          <Link href="/contact" className="inline-flex items-center gap-2 rounded-full border border-foreground/15 bg-foreground/5 px-4 py-2 text-sm font-medium text-foreground hover:bg-foreground/10 transition-colors">
-            Contact us <ArrowRight className="h-4 w-4" />
+          <Link href={CTAS.contactUs.href} className="inline-flex items-center gap-2 rounded-full border border-foreground/15 bg-foreground/5 px-4 py-2 text-sm font-medium text-foreground hover:bg-foreground/10 transition-colors">
+            {CTAS.contactUs.label} <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
       </Container>

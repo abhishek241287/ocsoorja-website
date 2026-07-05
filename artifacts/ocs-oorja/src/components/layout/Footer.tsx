@@ -1,6 +1,7 @@
 import { Link } from "wouter";
 import { Container } from "./Container";
 import { Mail, MapPin, Phone, Instagram, Youtube } from "lucide-react";
+import { BRAND } from "@/data/brand";
 
 export default function Footer() {
   return (
@@ -17,7 +18,7 @@ export default function Footer() {
             />
           </Link>
           <p className="text-sm leading-relaxed text-foreground/70">
-            OCS OORJA – Trusted Indian manufacturer of LiFePO₄ batteries, hybrid inverters, and EV charging solutions, based in Lucknow (U.P.). Advanced lithium-ion battery packs for e-mobility, solar energy storage and industrial applications.
+            {BRAND.positioning}
           </p>
           <div className="flex items-center gap-3 text-foreground/60">
             <a href="https://www.instagram.com/ocs_oorja" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="hover:text-foreground"><Instagram className="h-5 w-5" /></a>

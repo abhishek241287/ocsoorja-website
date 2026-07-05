@@ -2,6 +2,8 @@
  * SEO Utility - Structured Data and Schema.org markup for better search engine visibility
  */
 
+import { BRAND } from "@/data/brand";
+
 interface OrganizationSchema {
   "@context": string;
   "@type": string;
@@ -80,7 +82,7 @@ export function getOrganizationSchema(): OrganizationSchema {
     alternateName: "OCS OORJA Green Energy Solutions",
     url: "https://www.ocsoorja.com",
     logo: "https://www.ocsoorja.com/images/OCS_OORJA_logo_landscape.png",
-    description: "OCS OORJA – Trusted Indian manufacturer of LiFePO₄ batteries, hybrid inverters, and EV charging solutions, based in Lucknow (U.P.). We supply advanced lithium-ion battery packs, solar energy storage systems, and EV chargers for e-mobility, telecom, and industrial applications across India.",
+    description: BRAND.positioning,
     address: {
       "@type": "PostalAddress",
       streetAddress: "Commercial Unit No. 304 on 3rd Floor Royal Plaza, Block-3 in IT Park-2, at Sushant Golf City",

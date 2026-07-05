@@ -6,6 +6,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import TiltedCard from "@/components/ui/TiltedCard";
 import ProductCard from "@/components/ui/ProductCard";
 import ProductSearch from "@/components/products/ProductSearch";
+import { HEADLINES } from "@/data/brand";
 
 export default function Products() {
   const sortedProducts = useMemo(() => productsSortedByDateDesc(products), []);
@@ -23,7 +24,7 @@ export default function Products() {
       />
       <Container>
         <div className="mb-8">
-          <SectionHeading title="Products" subtitle="Standard SKUs ready for deployment" align="left" />
+          <SectionHeading title={HEADLINES.products.pageTitle} subtitle={HEADLINES.products.pageSubtitle} align="left" />
         </div>
 
         <ProductSearch products={sortedProducts} onFilteredProducts={handleFilteredProducts} />

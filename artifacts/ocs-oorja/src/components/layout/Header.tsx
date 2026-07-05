@@ -7,6 +7,7 @@ import { navItems } from "@/data/navigation";
 import { Container } from "./Container";
 import { Button } from "@/components/ui/Button";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import { CTAS } from "@/data/brand";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
@@ -46,7 +47,7 @@ export default function Header() {
           </a>
           <ThemeToggle />
           <Button asChild>
-            <Link href="/contact">Request Quote</Link>
+            <Link href={CTAS.requestQuote.href}>{CTAS.requestQuote.label}</Link>
           </Button>
         </div>
         <button
@@ -73,8 +74,8 @@ export default function Header() {
             <div className="flex items-center justify-between">
               <ThemeToggle />
               <Button asChild>
-                <Link href="/contact" onClick={() => setOpen(false)}>
-                  Request Quote
+                <Link href={CTAS.requestQuote.href} onClick={() => setOpen(false)}>
+                  {CTAS.requestQuote.label}
                 </Link>
               </Button>
             </div>

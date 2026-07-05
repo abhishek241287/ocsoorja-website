@@ -5,6 +5,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { InfiniteProductCards } from "@/components/ui/InfiniteProductCards";
 import { Button } from "@/components/ui/Button";
 import { Zap, Sun, Home, BatteryCharging, Battery, type LucideIcon } from "lucide-react";
+import { HEADLINES, CTAS } from "@/data/brand";
 
 // Resolve a family's icon NAME (stored in data) to a lucide component here in the
 // UI layer. Components are never stored in the data files.
@@ -21,9 +22,9 @@ export default function ProductsGrid() {
     <section className="py-12 md:py-16">
       <Container>
         <SectionHeading
-          eyebrow="Products"
-          title="Proven battery packs and cells"
-          subtitle="Standard SKUs for quick deployment and a strong base for customization"
+          eyebrow={HEADLINES.products.eyebrow}
+          title={HEADLINES.products.gridTitle}
+          subtitle={HEADLINES.products.gridSubtitle}
         />
 
         {/* Family-wise product carousels */}
@@ -68,10 +69,10 @@ export default function ProductsGrid() {
           })}
         </div>
 
-        {/* See all products CTA */}
+        {/* Explore all products CTA */}
         <div className="mt-12 flex justify-center">
           <Button asChild size="lg">
-            <Link href="/products">See all products</Link>
+            <Link href={CTAS.exploreProducts.href}>{CTAS.exploreProducts.label}</Link>
           </Button>
         </div>
       </Container>

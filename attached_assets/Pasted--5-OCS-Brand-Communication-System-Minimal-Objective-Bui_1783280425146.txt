@@ -1,0 +1,104 @@
+#5 – OCS Brand Communication System (Minimal)
+
+Objective
+
+Build only what is required for the public website.
+
+The Design System (Task #4) and Product Foundation/PIM (Task #3) are complete.
+
+From this point onward, every task must produce visible customer-facing improvements or improve SEO/lead generation.
+
+Do NOT introduce any new architecture, backend integrations, frameworks, or internal systems.
+
+Keep everything simple and maintainable.
+
+Scope
+
+Create a single reusable communication module that provides:
+
+• Brand positioning
+• Brand promise
+• Tone of voice
+• Standard page headlines
+• CTA library
+• Product description template
+• FAQ writing standard
+• Approved terminology
+
+Only create what is required for the website.
+
+Do not build a corporate communication framework.
+
+Do not create audience libraries.
+
+Do not create government messaging.
+
+Do not create marketing automation.
+
+Do not create CRM integrations.
+
+Do not create SEO frameworks.
+
+Done looks like
+
+✓ One reusable communication file
+
+✓ Homepage uses consistent messaging
+
+✓ About page uses consistent messaging
+
+✓ Product pages use consistent messaging
+
+✓ CTA wording is consistent across the website
+
+✓ Brand terminology is standardized
+
+✓ Warranty and marketing claims remain accurate
+
+✓ No visual regressions
+
+✓ Typecheck passes
+
+✓ No new dependencies
+
+Maintainability
+
+All reusable communication should live in a single source so future updates require editing only one file.
+
+Review package required
+
+• Before/After screenshots (Desktop, Tablet, Mobile)
+
+• Typecheck result
+
+• Regression check
+
+• List of every visible wording change
+
+• Confirmation that no claim exceeds actual product specifications or warranty.
+
+Important
+
+After this task, stop building internal systems.
+
+The next work should be visible improvements only:
+
+1. Header & Navigation
+
+2. Homepage remaining sections
+
+3. Products page
+
+4. Product Detail pages
+
+5. About
+
+6. Contact
+
+7. Footer
+
+8. SEO
+
+9. Blog
+
+No additional architecture unless explicitly requested.

@@ -4,19 +4,20 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import ContactForm from "@/components/contact/ContactForm";
 import { Link } from "wouter";
 import { Phone, Mail, MapPin } from "lucide-react";
+import { BRAND, HEADLINES } from "@/data/brand";
 
 export default function ContactPage() {
   return (
     <div className="py-12 md:py-16">
       <Seo
         title="Contact Us - OCS OORJA | LiFePO₄ Battery Manufacturer Lucknow"
-        description="Contact OCS OORJA – Trusted Indian manufacturer of LiFePO₄ batteries, hybrid inverters, and EV charging solutions in Lucknow (U.P.). Request a quote for lithium-ion battery packs, solar inverters, or EV chargers. Phone: 7521803995 | Email: Ocsoorja@gmail.com"
+        description={`${BRAND.positioning} Request a quote for hybrid solar inverters, LiFePO₄ batteries, energy storage, or EV chargers — Phone: 7521803995 | Email: Ocsoorja@gmail.com`}
         canonical="https://www.ocsoorja.com/contact"
       />
       <Container>
         <SectionHeading
-          title="Contact us"
-          subtitle="Request a quote or speak with our battery experts"
+          title={HEADLINES.contact.title}
+          subtitle={HEADLINES.contact.subtitle}
           align="left"
         />
         <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-3">

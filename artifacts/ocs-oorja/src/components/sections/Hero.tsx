@@ -4,6 +4,7 @@ import { Container } from "@/components/layout/Container";
 import { Button } from "@/components/ui/Button";
 import { HeroCards } from "@/components/sections/HeroCards";
 import { products, productsSortedByDateDesc, type Product } from "@/data/products";
+import { HEADLINES, CTAS } from "@/data/brand";
 
 // Base names for background videos. Actual sources provided as .webm and .mp4
 const videoSlides = [
@@ -199,26 +200,24 @@ export default function Hero() {
             <div className="flex items-center gap-3 motion-reduce:animate-none animate-[fade-in-up_600ms_ease-out_0ms_both]">
               <span className="h-px w-8 bg-emerald-400" aria-hidden="true" />
               <span className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">
-                Trusted Indian Manufacturer &middot; Lucknow, U.P.
+                {HEADLINES.home.eyebrow}
               </span>
             </div>
 
             <h1 className="mt-6 max-w-[20ch] text-4xl font-semibold leading-[1.1] tracking-tight text-white sm:text-5xl lg:max-w-[22ch] lg:text-6xl motion-reduce:animate-none animate-[fade-in-up_650ms_ease-out_100ms_both]">
-              <span className="block">Hybrid Solar Inverters,</span>
+              <span className="block">{HEADLINES.home.title[0]}</span>
               <span className="block text-emerald-300">
-                LiFePO&#8324; Batteries &amp; EV Charging
+                {HEADLINES.home.title[1]}
               </span>
             </h1>
 
             <p className="mt-6 max-w-[46ch] text-base text-white/80 sm:text-lg motion-reduce:animate-none animate-[fade-in-up_700ms_ease-out_180ms_both]">
-              Reliable, factory-direct power systems engineered in Lucknow —
-              built for Indian conditions, priced for scale, and backed by up
-              to a 5-year warranty.
+              {HEADLINES.home.subhead}
             </p>
 
             <div className="mt-10 flex flex-wrap items-center gap-4 motion-reduce:animate-none animate-[fade-in-up_750ms_ease-out_260ms_both]">
               <Button asChild size="lg" className="rounded-full">
-                <Link href="/contact">Request a Quote</Link>
+                <Link href={CTAS.requestQuote.href}>{CTAS.requestQuote.label}</Link>
               </Button>
               <Button
                 asChild
@@ -226,12 +225,12 @@ export default function Hero() {
                 size="lg"
                 className="rounded-full border-white/30 text-white hover:bg-white/10 focus-visible:ring-white/60 focus-visible:ring-offset-transparent"
               >
-                <Link href="/products">Explore Products</Link>
+                <Link href={CTAS.exploreProducts.href}>{CTAS.exploreProducts.label}</Link>
               </Button>
             </div>
 
             <p className="mt-8 text-sm text-white/60 motion-reduce:animate-none animate-[fade-in-up_800ms_ease-out_340ms_both]">
-              Up to 5-Year Warranty &middot; Factory-Direct Pricing &middot; Pan-India Delivery
+              {HEADLINES.home.highlights}
             </p>
           </div>
 

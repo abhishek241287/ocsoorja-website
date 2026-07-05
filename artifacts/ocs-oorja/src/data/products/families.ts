@@ -1,10 +1,9 @@
 import type { ProductCta, ProductFamilyMeta } from "./types";
+import { CTAS } from "../brand";
 
 // Default call-to-action used when a product does not define its own `cta`.
-export const DEFAULT_CTA: ProductCta = {
-  label: "Request quote",
-  href: "/contact",
-};
+// Sourced from the shared CTA library so quote wording stays consistent site-wide.
+export const DEFAULT_CTA: ProductCta = CTAS.requestQuote;
 
 // The seven product families, in site display order.
 //
