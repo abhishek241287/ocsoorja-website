@@ -190,7 +190,7 @@ export default function Header() {
                           {FAMILIES.map((family) => (
                             <li key={family.id}>
                               <Link
-                                href="/products"
+                                href={`/products?family=${family.id}`}
                                 onClick={() => setProductsOpen(false)}
                                 className={cn(
                                   "block rounded-lg px-3 py-2 transition-colors hover:bg-foreground/5",
@@ -315,7 +315,7 @@ export default function Header() {
                     {FAMILIES.map((family) => (
                       <li key={family.id}>
                         <Link
-                          href="/products"
+                          href={`/products?family=${family.id}`}
                           onClick={() => setMobileOpen(false)}
                           className={cn(
                             "block rounded-lg px-3 py-2 text-sm text-foreground/70 transition-colors hover:bg-foreground/5 hover:text-foreground",

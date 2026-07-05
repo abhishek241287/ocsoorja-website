@@ -1,11 +1,12 @@
-import { useState, useCallback, useMemo, useRef } from "react";
-import { Link } from "wouter";
+import { useState, useCallback, useMemo, useRef, useLayoutEffect } from "react";
+import { Link, useSearch } from "wouter";
 import { Search } from "lucide-react";
 import { Seo } from "@/components/Seo";
 import {
   products,
   productsSortedByDateDesc,
   getProductsGroupedByFamily,
+  FAMILIES,
   type Product,
 } from "@/data/products";
 import { Container } from "@/components/layout/Container";
@@ -45,6 +46,29 @@ export default function Products() {
       window.scrollTo({ top, behavior: "smooth" });
     });
   }, []);
+
+  // Header → Products dropdown deep-links here as `/products?family=<id>`. On the
+  // first arrival at that entry, jump the chosen family's section to just below
+  // the sticky header. This runs in useLayoutEffect (pre-paint) and AFTER
+  // ScrollRestoration's own layout effect — it is mounted as our left sibling in
+  // App, so its layout effect fires first, resetting a fresh entry to the top
+  // before we position it (no flash, no smooth-animation timing races). The entry
+  // is marked handled in history.state so returning via Back skips this and lets
+  // ScrollRestoration restore the exact prior scroll position instead.
+  const search = useSearch();
+  useLayoutEffect(() => {
+    const familyId = new URLSearchParams(search).get("family");
+    if (!familyId || !FAMILIES.some((f) => f.id === familyId)) return;
+    const state = (window.history.state ?? null) as Record<string, unknown> | null;
+    if (state?.__familyScrolled) return;
+    window.history.replaceState({ ...(state ?? {}), __familyScrolled: true }, "");
+    const el = document.getElementById(`family-${familyId}`);
+    if (!el) return;
+    const header = document.querySelector("header");
+    const offset = (header?.offsetHeight ?? 0) + 16;
+    const top = Math.max(0, el.getBoundingClientRect().top + window.scrollY - offset);
+    window.scrollTo(0, top);
+  }, [search]);
 
   // Group the (filtered) catalogue by family in display order. Family section
   // headers only appear when more than one family is on screen; a single group

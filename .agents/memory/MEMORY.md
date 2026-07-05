@@ -2,4 +2,4 @@
 - [OCS OORJA product catalog model](product-catalog-model.md) — Family→Series→Model taxonomy; adding a family touches 4 places in lockstep; icons stored as strings.
 - [Eval TS data files in the code sandbox](ts-data-extraction-in-sandbox.md) — sandbox can't resolve workspace deps (esbuild) from repo root; extract+eval the array literal instead.
 - [SPA "dead link" symptom](spa-broken-route-symptom.md) — a link that "won't open" often means the DESTINATION route fails to compile (e.g. dup import); tsc may still pass.
-- [wouter scroll restoration](wouter-scroll-restoration.md) — key each history entry via history.state; a popstate "is-pop" flag is racy with wouter's useSyncExternalStore and silently restores to 0.
+- [wouter scroll restoration](wouter-scroll-restoration.md) — key history entries in history.state (is-pop flag is racy); on Back the products grid settles late so scrollTo clamps → re-apply on rAF until the page is tall enough.
