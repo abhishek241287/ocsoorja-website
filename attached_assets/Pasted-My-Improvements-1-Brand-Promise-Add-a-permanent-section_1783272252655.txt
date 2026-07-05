@@ -1,0 +1,292 @@
+My Improvements
+1. Brand Promise
+
+Add a permanent section.
+
+Brand Promise
+
+Reliable.
+Intelligent.
+Value for Money.
+
+OCS OORJA delivers dependable clean-energy solutions engineered for Indian conditions through practical innovation, transparent support and long-term partnerships.
+
+Every page should reinforce this.
+
+2. Brand Personality
+
+Define personality.
+
+Instead of generic corporate language.
+
+Example:
+
+Engineering-led
+Honest
+Practical
+Knowledgeable
+Reliable
+Approachable
+Professional
+Confident
+
+Avoid:
+
+Overhyped
+Aggressive marketing
+Buzzwords
+Unverifiable claims
+3. Audience Library
+
+Instead of only:
+
+Dealer
+
+Industrial
+
+Government
+
+Expand it.
+
+Residential
+Commercial
+Industrial
+EPC Companies
+Government
+Dealers & Distributors
+OEM Partners
+EV Infrastructure Companies
+
+Each audience should receive different messaging.
+
+4. Product Messaging Framework
+
+Every product should answer exactly the same questions.
+
+Problem
+
+↓
+
+Solution
+
+↓
+
+Benefits
+
+↓
+
+Applications
+
+↓
+
+Technical Highlights
+
+↓
+
+Why OCS
+
+↓
+
+Downloads
+
+↓
+
+CTA
+
+This creates consistency.
+
+5. Trust Messaging Library
+
+This is missing.
+
+Create reusable trust statements.
+
+Examples:
+
+Indian Manufacturer
+Factory Direct
+Technical Support
+Value for Money
+Up to 5-Year Warranty
+Reliable Performance
+Engineered for Indian Conditions
+
+Pages can reuse them consistently.
+
+6. Proof Library
+
+Very important.
+
+Every marketing statement should be backed by evidence.
+
+Example
+
+Instead of
+
+Best Quality
+
+Use
+
+Manufactured using LiFePO₄ technology with advanced Battery Management Systems.
+
+Instead of
+
+Premium
+
+Explain why.
+
+7. SEO
+
+Don't only store keywords.
+
+Store
+
+Primary Keyword
+
+Secondary Keywords
+
+Meta Title
+
+Meta Description
+
+Schema Type
+
+URL
+
+Internal Links
+
+External References
+
+8. CTA Library
+
+Expand.
+
+Examples
+
+Request a Quote
+
+Become a Dealer
+
+Talk to Sales
+
+Download Brochure
+
+Compare Products
+
+Find the Right Solution
+
+Request Technical Support
+
+9. FAQ Library
+
+Instead of page FAQs.
+
+Create one reusable FAQ database.
+
+Pages simply consume it.
+
+10. Government Language
+
+Very important.
+
+Create dedicated messaging.
+
+Government buyers respond differently.
+
+Dealer language is different.
+
+Industrial buyers are different.
+
+11. Writing Rules
+
+Missing.
+
+Should define
+
+Sentence length
+
+Capitalization
+
+Numbers
+
+Units
+
+Abbreviations
+
+Technical terminology
+
+Product naming
+
+12. Image Captions
+
+Future-proof.
+
+Every image should have
+
+Alt Text
+
+Caption
+
+SEO Description
+
+Biggest Improvement
+
+I would rename the task.
+
+Instead of
+
+OCS Content System
+
+Call it
+
+OCS Brand Communication System
+
+Because it's much broader than content.
+
+It becomes the company's communication standard.
+
+Final Roadmap
+Phase A
+
+Design System
+
+Phase B
+
+Product Information Management
+
+Phase C
+
+Brand Communication System
+
+Phase D
+
+Premium Website
+
+Phase E
+
+Marketing Platform
+
+Phase F
+
+Dealer Portal
+
+Phase G
+
+OCS One Integration
+
+⭐ My Rating
+
+Current task: 9.6/10
+
+With these additions:
+
+10/10
+
+I genuinely think these four foundations—
+
+Design System
+Product Information Management (PIM)
+Brand Communication System
+Premium Website
+
+—will become assets that OCS OORJA can use not just for this website, but for brochures, dealer kits, presentations, Google Ads, OCS One, and future mobile applications. This is the kind of foundation that scales as the company grows.
