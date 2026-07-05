@@ -12,3 +12,9 @@ id = "Ik_uTcE576ZZ7QUhVAAFR"
 uri = "file://screenshots/hero-after.jpg"
 type = "image"
 title = "Hero — After (redesigned, current)"
+
+[[outputs]]
+id = "cb8CQEItCG4HKxOSOHIyQ"
+uri = "file://artifacts/ocs-oorja/HOW-TO-UPDATE-WEBSITE.md"
+type = "text"
+title = "OCS OORJA Website Update Guide"
