@@ -9,6 +9,7 @@ import About from "@/pages/about";
 import Contact from "@/pages/contact";
 import Products from "@/pages/products";
 import ProductDetail from "@/pages/product-detail";
+import DesignSystem from "@/pages/design-system";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,7 @@ function Router() {
         <Route path="/contact" component={Contact} />
         <Route path="/products" component={Products} />
         <Route path="/products/:slug" component={ProductDetail} />
+        <Route path="/design-system" component={DesignSystem} />
         <Route component={NotFound} />
       </Switch>
     </Layout>

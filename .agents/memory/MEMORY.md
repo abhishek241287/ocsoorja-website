@@ -1,0 +1,1 @@
+- [OCS OORJA design tokens](ocs-oorja-design-tokens.md) — Tailwind v4 needs BOTH a raw :root HSL var and an @theme mapping; split bg-primary (fills) vs text-primary-strong (text) for dark-mode AA.

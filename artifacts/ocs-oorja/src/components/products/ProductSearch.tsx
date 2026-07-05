@@ -158,8 +158,8 @@ export default function ProductSearch({ products, onFilteredProducts }: ProductS
             "rounded-full px-5 py-2.5 text-sm font-semibold transition-all border-2",
             selectedCategory === "all"
               ? isDarkMode
-                ? "border-green-500 bg-green-500/20 text-green-400 shadow-lg shadow-green-500/20"
-                : "border-green-500 bg-green-500 text-white shadow-lg shadow-green-500/30"
+                ? "border-primary bg-primary/15 text-primary-strong shadow-lg shadow-primary/20"
+                : "border-primary bg-primary text-primary-foreground shadow-lg shadow-primary/25"
               : isDarkMode
                 ? "border-gray-700 bg-gray-800/50 text-gray-300 hover:border-gray-600 hover:bg-gray-800"
                 : "border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50 shadow-sm"
@@ -175,8 +175,8 @@ export default function ProductSearch({ products, onFilteredProducts }: ProductS
               "rounded-full px-5 py-2.5 text-sm font-semibold transition-all border-2",
               selectedCategory === category.id
                 ? isDarkMode
-                  ? "border-green-500 bg-green-500/20 text-green-400 shadow-lg shadow-green-500/20"
-                  : "border-green-500 bg-green-500 text-white shadow-lg shadow-green-500/30"
+                  ? "border-primary bg-primary/15 text-primary-strong shadow-lg shadow-primary/20"
+                  : "border-primary bg-primary text-primary-foreground shadow-lg shadow-primary/25"
                 : isDarkMode
                   ? "border-gray-700 bg-gray-800/50 text-gray-300 hover:border-gray-600 hover:bg-gray-800"
                   : "border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50 shadow-sm"
@@ -202,10 +202,10 @@ export default function ProductSearch({ products, onFilteredProducts }: ProductS
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search products by name, specs, tags, features..."
             className={cn(
-              "w-full rounded-2xl border py-3.5 pl-12 pr-12 text-sm outline-none transition-all focus:border-green-500 focus:ring-2",
+              "w-full rounded-2xl border py-3.5 pl-12 pr-12 text-sm outline-none transition-all focus:border-primary focus:ring-2",
               isDarkMode
-                ? "border-gray-700 bg-gray-900 text-white placeholder:text-gray-500 focus:ring-green-500/30"
-                : "border-gray-200 bg-white text-gray-900 placeholder:text-gray-500 shadow-sm focus:ring-green-500/20"
+                ? "border-gray-700 bg-gray-900 text-white placeholder:text-gray-500 focus:ring-primary/40"
+                : "border-gray-200 bg-white text-gray-900 placeholder:text-gray-500 shadow-sm focus:ring-primary/25"
             )}
           />
           {searchQuery && (
@@ -233,8 +233,8 @@ export default function ProductSearch({ products, onFilteredProducts }: ProductS
               : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50",
             (showFilters || selectedTags.length > 0) &&
               (isDarkMode
-                ? "border-green-600 bg-green-950/50 text-green-400"
-                : "border-green-500 bg-green-50 text-green-700")
+                ? "border-primary bg-primary/10 text-primary-strong"
+                : "border-primary bg-secondary text-primary-strong")
           )}
         >
           <Filter className="h-4 w-4" />
@@ -242,8 +242,8 @@ export default function ProductSearch({ products, onFilteredProducts }: ProductS
           {selectedTags.length > 0 && (
             <span
               className={cn(
-                "flex h-5 w-5 items-center justify-center rounded-full text-xs font-semibold text-white",
-                isDarkMode ? "bg-green-600" : "bg-green-500"
+                "flex h-5 w-5 items-center justify-center rounded-full text-xs font-semibold text-primary-foreground",
+                isDarkMode ? "bg-primary" : "bg-primary"
               )}
             >
               {selectedTags.length}
@@ -270,8 +270,8 @@ export default function ProductSearch({ products, onFilteredProducts }: ProductS
                 className={cn(
                   "text-xs font-medium transition-colors",
                   isDarkMode
-                    ? "text-green-400 hover:text-green-300"
-                    : "text-green-600 hover:text-green-700"
+                    ? "text-primary-strong hover:text-primary-strong/80"
+                    : "text-primary-strong hover:text-primary-strong/80"
                 )}
               >
                 Clear all
@@ -287,8 +287,8 @@ export default function ProductSearch({ products, onFilteredProducts }: ProductS
                   "rounded-full px-4 py-2 text-sm font-medium transition-all border",
                   selectedTags.includes(tag)
                     ? isDarkMode
-                      ? "border-green-600 bg-green-600 text-white hover:bg-green-500"
-                      : "border-green-500 bg-green-500 text-white hover:bg-green-600"
+                      ? "border-primary bg-primary text-primary-foreground hover:bg-primary/90"
+                      : "border-primary bg-primary text-primary-foreground hover:bg-primary/90"
                     : isDarkMode
                       ? "border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700"
                       : "border-gray-200 bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -326,8 +326,8 @@ export default function ProductSearch({ products, onFilteredProducts }: ProductS
             className={cn(
               "text-sm font-medium transition-colors",
               isDarkMode
-                ? "text-green-400 hover:text-green-300"
-                : "text-green-600 hover:text-green-700"
+                ? "text-primary-strong hover:text-primary-strong/80"
+                : "text-primary-strong hover:text-primary-strong/80"
             )}
           >
             Clear all filters

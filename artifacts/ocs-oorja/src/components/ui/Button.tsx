@@ -1,35 +1,48 @@
-
-
 import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
 
-export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: "primary" | "secondary" | "ghost" | "outline";
-  size?: "sm" | "md" | "lg";
-  asChild?: boolean;
-};
+const buttonVariants = cva(
+  "inline-flex items-center justify-center rounded-full font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-50 disabled:pointer-events-none",
+  {
+    variants: {
+      variant: {
+        primary:
+          "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 active:bg-primary/95",
+        secondary:
+          "bg-foreground text-background shadow-sm hover:opacity-90 active:opacity-80",
+        outline:
+          "border border-border bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground active:bg-accent/70",
+        ghost:
+          "bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground active:bg-accent/70",
+        energy:
+          "bg-accent-energy text-accent-energy-foreground shadow-sm hover:bg-accent-energy/90 active:bg-accent-energy/95",
+        link: "bg-transparent text-primary-strong underline-offset-4 hover:underline",
+      },
+      size: {
+        sm: "h-9 px-4 text-sm",
+        md: "h-11 px-6 text-sm",
+        lg: "h-12 px-8 text-base",
+      },
+    },
+    defaultVariants: {
+      variant: "primary",
+      size: "md",
+    },
+  },
+);
 
-export function Button({ className, variant = "primary", size = "md", asChild, ...props }: ButtonProps) {
-  const base =
-    "inline-flex items-center justify-center rounded-full font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
+export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> &
+  VariantProps<typeof buttonVariants> & {
+    asChild?: boolean;
+  };
 
-  const sizes = {
-    sm: "h-9 px-4 text-sm",
-    md: "h-11 px-6 text-sm",
-    lg: "h-12 px-8 text-base",
-  } as const;
-
-  const variants = {
-    primary:
-      "bg-gradient-to-r from-emerald-500 to-cyan-500 text-white hover:from-emerald-600 hover:to-cyan-600 shadow-sm",
-    secondary: "bg-foreground text-background hover:opacity-90",
-    ghost: "bg-transparent hover:bg-foreground/5 border border-transparent",
-    outline: "bg-transparent border border-foreground/15 text-foreground hover:bg-foreground/5",
-  } as const;
-
+export function Button({ className, variant, size, asChild, ...props }: ButtonProps) {
   const Comp = (asChild ? Slot : "button") as React.ElementType;
-
-  return <Comp className={cn(base, sizes[size], variants[variant], className)} {...props} />;
+  return (
+    <Comp className={cn(buttonVariants({ variant, size }), className)} {...props} />
+  );
 }
 
+export { buttonVariants };

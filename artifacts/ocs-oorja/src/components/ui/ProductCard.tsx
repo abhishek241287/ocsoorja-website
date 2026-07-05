@@ -1,5 +1,3 @@
-
-
 import { Link } from "wouter";
 import { cn } from "@/lib/utils";
 import type { Product } from "@/data/products";
@@ -32,13 +30,11 @@ export default function ProductCard({
     <article
       aria-labelledby={titleId}
       className={cn(
-        "group relative flex h-full flex-col overflow-hidden rounded-2xl border border-foreground/10 cursor-pointer",
-        // Glass / translucent background with graceful fallback
-        "bg-foreground/[0.02] dark:bg-foreground/[0.03] supports-[backdrop-filter]:bg-foreground/5 supports-[backdrop-filter]:backdrop-blur-md",
-        // Subtle lift and shadow on hover, respect reduced motion
-        "transition-all duration-300 motion-reduce:transition-none motion-reduce:hover:transform-none hover:-translate-y-0.5 hover:shadow-xl",
-        // Rings and subtle outline on hover
-        "hover:ring-1 hover:ring-emerald-400/20",
+        "group relative flex h-full flex-col overflow-hidden rounded-2xl border border-card-border bg-card cursor-pointer",
+        // Restrained lift + shadow on hover; respect reduced motion
+        "transition-all duration-300 motion-reduce:transition-none motion-reduce:hover:transform-none hover:-translate-y-0.5 hover:shadow-lg",
+        // Brand-token hover accent (no glassmorphism / glow)
+        "hover:border-primary/40 hover:ring-1 hover:ring-primary/20",
         // Enforce near-uniform height across cards
         "min-h-[420px] sm:min-h-[460px]",
         className,
@@ -53,24 +49,13 @@ export default function ProductCard({
         className="absolute inset-0 z-[1]"
       />
 
-      {/* Accent glow frame (hover) */}
-      <div
-        aria-hidden
-        className={
-          "pointer-events-none absolute inset-0 -z-10 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-          + " bg-[radial-gradient(120%_60%_at_0%_0%,rgba(16,185,129,0.12),transparent_60%),radial-gradient(120%_60%_at_100%_0%,rgba(6,182,212,0.12),transparent_60%)]"
-        }
-      />
-
       {/* Image */}
-      <div className="relative h-44 sm:h-52">
+      <div className="relative h-44 sm:h-52 bg-secondary">
         <img
           src={product.image}
           alt={product.name}
           className="object-cover w-full h-full"
         />
-        {/* Soft gradient for better contrast over busy images (safe for SVGs too) */}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-background/0 via-background/0 to-background/10 dark:from-black/0 dark:via-black/0 dark:to-black/20" />
       </div>
 
       {/* Content */}
@@ -78,7 +63,7 @@ export default function ProductCard({
         <h3 id={titleId} className="text-base sm:text-lg font-semibold tracking-tight text-foreground line-clamp-2 min-h-[44px] sm:min-h-[48px]">
           {product.name}
         </h3>
-        <p className="mt-1.5 text-sm text-foreground/70 line-clamp-2 min-h-10">{product.summary}</p>
+        <p className="mt-1.5 text-sm text-muted-foreground line-clamp-2 min-h-10">{product.summary}</p>
 
         {/* Specs */}
         {specs?.length ? (
@@ -86,10 +71,7 @@ export default function ProductCard({
             {specs.map((s) => (
               <li
                 key={s.key}
-                className={
-                  "rounded-md border border-foreground/10 [background:linear-gradient(to_bottom_right,rgba(255,255,255,0.06),rgba(255,255,255,0)_60%)]"
-                  + " dark:[background:linear-gradient(to_bottom_right,rgba(255,255,255,0.04),rgba(255,255,255,0)_60%)] px-2 py-1 truncate"
-                }
+                className="rounded-md border border-border bg-secondary/50 px-2 py-1 truncate"
               >
                 <span className="font-medium text-foreground">{s.key}</span>: {s.value}
               </li>
@@ -105,10 +87,7 @@ export default function ProductCard({
             {product.tags.slice(0, tagsLimit).map((t) => (
               <span
                 key={t}
-                className={
-                  "text-[11px] leading-5 rounded-full border border-foreground/10 px-2 py-0.5 text-foreground/70"
-                  + " bg-foreground/[0.03] dark:bg-foreground/[0.06]"
-                }
+                className="text-[11px] leading-5 rounded-full border border-border px-2 py-0.5 text-muted-foreground bg-secondary/60"
               >
                 {t}
               </span>
