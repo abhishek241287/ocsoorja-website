@@ -1,17 +1,19 @@
 import { Link } from "wouter";
-import { products, PRODUCT_CATEGORIES, getProductsByCategory, productsSortedByDateDesc } from "@/data/products";
+import { products, FAMILIES, getProductsByFamily, productsSortedByDateDesc } from "@/data/products";
 import { Container } from "@/components/layout/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { InfiniteProductCards } from "@/components/ui/InfiniteProductCards";
 import { Button } from "@/components/ui/Button";
-import { Zap, Sun, Home, BatteryCharging } from "lucide-react";
+import { Zap, Sun, Home, BatteryCharging, Battery, type LucideIcon } from "lucide-react";
 
-// Icon mapping for categories
-const categoryIcons = {
-  ev: Zap,
-  solar: Sun,
-  "home-inverter": Home,
-  charger: BatteryCharging,
+// Resolve a family's icon NAME (stored in data) to a lucide component here in the
+// UI layer. Components are never stored in the data files.
+const iconByName: Record<string, LucideIcon> = {
+  Zap,
+  Sun,
+  Home,
+  BatteryCharging,
+  Battery,
 };
 
 export default function ProductsGrid() {
@@ -24,17 +26,17 @@ export default function ProductsGrid() {
           subtitle="Standard SKUs for quick deployment and a strong base for customization"
         />
 
-        {/* Category-wise product carousels */}
+        {/* Family-wise product carousels */}
         <div className="mt-8 space-y-12">
-          {PRODUCT_CATEGORIES.map((category) => {
-            const categoryProducts = productsSortedByDateDesc(getProductsByCategory(category.id, products));
-            if (categoryProducts.length === 0) return null;
+          {FAMILIES.map((family) => {
+            const familyProducts = productsSortedByDateDesc(getProductsByFamily(family.id, products));
+            if (familyProducts.length === 0) return null;
 
-            const IconComponent = categoryIcons[category.id];
+            const IconComponent = iconByName[family.icon] ?? BatteryCharging;
 
             return (
-              <div key={category.id} className="space-y-4">
-                {/* Category Header */}
+              <div key={family.id} className="space-y-4">
+                {/* Family Header */}
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                   <div className="flex items-center gap-3">
                     <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border border-foreground/10 bg-white shadow-sm dark:border-foreground/20 dark:bg-transparent">
@@ -42,22 +44,22 @@ export default function ProductsGrid() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <h3 className="text-lg font-semibold text-foreground">
-                        {category.label}
+                        {family.label}
                       </h3>
                       <p className="text-sm text-foreground/60">
-                        {category.description}
+                        {family.description}
                       </p>
                     </div>
                   </div>
                   <span className="ml-13 sm:ml-auto w-fit rounded-full bg-foreground/10 px-3 py-1 text-sm font-medium text-foreground/80">
-                    {categoryProducts.length} {categoryProducts.length === 1 ? "product" : "products"}
+                    {familyProducts.length} {familyProducts.length === 1 ? "product" : "products"}
                   </span>
                 </div>
 
-                {/* Category Products Carousel */}
+                {/* Family Products Carousel */}
                 <InfiniteProductCards
-                  products={categoryProducts}
-                  direction={category.id === "solar" || category.id === "charger" ? "right" : "left"}
+                  products={familyProducts}
+                  direction={family.order % 2 === 0 ? "right" : "left"}
                   speed="slow"
                   pauseOnHover
                 />
@@ -76,4 +78,3 @@ export default function ProductsGrid() {
     </section>
   );
 }
-

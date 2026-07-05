@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useTheme } from "next-themes";
 import { Search, X, Filter } from "lucide-react";
-import { Product, ProductCategory, PRODUCT_CATEGORIES } from "@/data/products";
+import { Product, ProductFamily, FAMILIES } from "@/data/products";
 import { cn } from "@/lib/utils";
 
 interface ProductSearchProps {
@@ -17,7 +17,7 @@ export default function ProductSearch({ products, onFilteredProducts }: ProductS
   const resolvedTheme = theme === "system" ? systemTheme ?? "light" : theme ?? "light";
   const isDarkMode = resolvedTheme === "dark";
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<ProductCategory | "all">("all");
+  const [selectedCategory, setSelectedCategory] = useState<ProductFamily | "all">("all");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
   const [debouncedQuery, setDebouncedQuery] = useState("");
@@ -32,7 +32,7 @@ export default function ProductSearch({ products, onFilteredProducts }: ProductS
     const tagSet = new Set<string>();
     const categoryFilteredProducts = selectedCategory === "all" 
       ? products 
-      : products.filter(p => p.category === selectedCategory);
+      : products.filter(p => p.family === selectedCategory);
     categoryFilteredProducts.forEach((product) => {
       product.tags.forEach((tag) => tagSet.add(tag));
     });
@@ -54,7 +54,7 @@ export default function ProductSearch({ products, onFilteredProducts }: ProductS
 
     // Apply category filter first
     if (selectedCategory !== "all") {
-      filtered = filtered.filter((product) => product.category === selectedCategory);
+      filtered = filtered.filter((product) => product.family === selectedCategory);
     }
 
     // Apply search query filter
@@ -138,7 +138,7 @@ export default function ProductSearch({ products, onFilteredProducts }: ProductS
   };
 
   // Handle category change - also clear tag filters since they're category-specific
-  const handleCategoryChange = (category: ProductCategory | "all") => {
+  const handleCategoryChange = (category: ProductFamily | "all") => {
     setSelectedCategory(category);
     setSelectedTags([]); // Clear tag filters when switching categories
   };
@@ -167,7 +167,7 @@ export default function ProductSearch({ products, onFilteredProducts }: ProductS
         >
           All Products
         </button>
-        {PRODUCT_CATEGORIES.map((category) => (
+        {FAMILIES.map((category) => (
           <button
             key={category.id}
             onClick={() => handleCategoryChange(category.id)}
@@ -182,7 +182,7 @@ export default function ProductSearch({ products, onFilteredProducts }: ProductS
                   : "border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50 shadow-sm"
             )}
           >
-            {category.label}
+            {category.shortLabel}
           </button>
         ))}
       </div>
@@ -314,7 +314,7 @@ export default function ProductSearch({ products, onFilteredProducts }: ProductS
               Found <span className={cn("font-semibold", isDarkMode ? "text-white" : "text-gray-900")}>{filteredProducts.length}</span> of <span className={cn("font-medium", isDarkMode ? "text-gray-300" : "text-gray-700")}>{products.length}</span> products
               {selectedCategory !== "all" && (
                 <span className={cn("ml-1", isDarkMode ? "text-gray-500" : "text-gray-500")}>
-                  in {PRODUCT_CATEGORIES.find(c => c.id === selectedCategory)?.label}
+                  in {FAMILIES.find(c => c.id === selectedCategory)?.shortLabel}
                 </span>
               )}
             </>

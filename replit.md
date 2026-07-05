@@ -26,7 +26,7 @@ Marketing + product website for **OCS OORJA**, an integrated clean-energy & EV-i
 - **Design tokens (single source of truth for color, type, spacing, radius, shadow, motion):** `artifacts/ocs-oorja/src/index.css`
 - **Core UI primitives:** `artifacts/ocs-oorja/src/components/ui/` (Button, Card, Table, Input, Textarea, ProductCard, SectionHeading)
 - **Living design-system reference:** `artifacts/ocs-oorja/src/pages/design-system.tsx` (unlinked route `/design-system`)
-- **Product data (single source):** `artifacts/ocs-oorja/src/data/products.ts` (owned by the PIM work — Task #3)
+- **Product data (single source):** `artifacts/ocs-oorja/src/data/products/` — one file per family (`<family>.ts`) holding that family's records, plus `types.ts` (the `Product` model), `families.ts` (`FAMILIES` metadata + `DEFAULT_CTA`), and `index.ts` (public entry point that concatenates families into `products` and exposes helpers). Add/edit a product by editing ONLY its family file; consumers import from `@/data/products`.
 - **Product media & downloads:** `artifacts/ocs-oorja/public/images/products/<family>/` and `public/downloads/{brochures,datasheets}/` — see the `README.md` in those folders for the naming convention
 - **Navigation:** `artifacts/ocs-oorja/src/data/navigation.ts` · **Routes:** `artifacts/ocs-oorja/src/App.tsx`
 
@@ -44,7 +44,7 @@ A premium industrial site presenting OCS OORJA's product families (inverters, Li
 
 ## User preferences
 
-- **OCS OORJA Project Principle (permanent):** the site must be maintainable by a non-developer. Every routine update — replacing product images, adding brochures/datasheets, updating specs, adding new products — must be doable from a **single data source** (`src/data/products.ts` + the `public/` media folders), **without editing multiple files or React components**. This does not mean avoiding code; the architecture should make common updates easy.
+- **OCS OORJA Project Principle (permanent):** the site must be maintainable by a non-developer. Every routine update — replacing product images, adding brochures/datasheets, updating specs, adding new products — must be doable from a **single data source** (`src/data/products/` + the `public/` media folders), **without editing multiple files or React components**. This does not mean avoiding code; the architecture should make common updates easy.
 - **Non-developer review test** — before shipping any change, it must pass all four:
   1. Can a non-developer make the routine version of this change by editing ONE data source (not touching components/layout)?
   2. Is content separated from presentation (data in `src/data/*` & assets in `public/`, not hardcoded in JSX)?

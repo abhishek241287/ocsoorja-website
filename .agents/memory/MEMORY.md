@@ -1,1 +1,3 @@
 - [OCS OORJA design tokens](ocs-oorja-design-tokens.md) — Tailwind v4 needs BOTH a raw :root HSL var and an @theme mapping; split bg-primary (fills) vs text-primary-strong (text) for dark-mode AA.
+- [OCS OORJA product catalog model](product-catalog-model.md) — Family→Series→Model taxonomy; adding a family touches 4 places in lockstep; icons stored as strings.
+- [Eval TS data files in the code sandbox](ts-data-extraction-in-sandbox.md) — sandbox can't resolve workspace deps (esbuild) from repo root; extract+eval the array literal instead.

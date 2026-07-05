@@ -1,6 +1,6 @@
 import { Seo } from "@/components/Seo";
 import { Link } from "wouter";
-import { products } from "@/data/products";
+import { getProductBySlug, DEFAULT_CTA } from "@/data/products";
 import { Container } from "@/components/layout/Container";
 import { Button } from "@/components/ui/Button";
 import { CheckCircle2, FileDown, Tag } from "lucide-react";
@@ -27,7 +27,7 @@ function ListCard({ title, items }: { title: string; items: string[] }) {
 export default function ProductDetail() {
   const params = useParams<{ slug: string }>();
   const slug = params.slug;
-  const product = products.find((p) => p.slug === slug);
+  const product = getProductBySlug(slug);
   
   if (!product) {
     return (
@@ -47,15 +47,15 @@ export default function ProductDetail() {
   const hasMain = Boolean(product.details || product.features?.length || product.applications?.length);
   const productSchema = getProductSchema({
     name: product.name,
-    description: product.summary,
+    description: product.seo?.metaDescription ?? product.summary,
     url: `https://www.ocsoorja.com/products/${slug}`,
   });
 
   return (
     <div className="py-12 md:py-16">
       <Seo
-        title={product.name}
-        description={product.summary}
+        title={product.seo?.metaTitle ?? product.name}
+        description={product.seo?.metaDescription ?? product.summary}
         canonical={`https://www.ocsoorja.com/products/${slug}`}
       />
       <Container>
@@ -85,6 +85,11 @@ export default function ProductDetail() {
               )}
             </div>
             <div className="md:col-span-3">
+              {product.status === "placeholder" && (
+                <span className="mb-3 inline-flex w-fit items-center rounded-full border border-foreground/15 bg-foreground/5 px-2.5 py-1 text-xs font-medium text-foreground/70">
+                  Coming soon — details being finalized
+                </span>
+              )}
               <h1 className="text-2xl md:text-3xl lg:text-4xl font-semibold tracking-tight text-foreground">{product.name}</h1>
               <p className="mt-3 text-base leading-7 text-foreground/80 max-w-2xl">{product.summary}</p>
               {product.tags?.length ? (
@@ -123,6 +128,9 @@ export default function ProductDetail() {
             <div className="rounded-2xl border border-foreground/10 bg-background p-5 sm:p-6">
               <h2 className="text-sm font-semibold tracking-wide text-foreground/80">Key specifications</h2>
               <ul className="mt-3 grid grid-cols-1 gap-2 text-sm text-foreground/80">
+                <li className="rounded-md border border-foreground/10 px-3 py-2">
+                  <span className="font-medium text-foreground">Warranty</span>: {product.warranty}
+                </li>
                 {product.specs.map((s) => (
                   <li key={s.key} className="rounded-md border border-foreground/10 px-3 py-2">
                     <span className="font-medium text-foreground">{s.key}</span>: {s.value}
@@ -131,15 +139,22 @@ export default function ProductDetail() {
               </ul>
 
               <div className="mt-5 flex flex-wrap items-center gap-3">
-                {product.datasheetUrl && (
+                {product.downloads?.datasheet && (
                   <Button variant="outline" asChild>
-                    <a href={product.datasheetUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2">
+                    <a href={product.downloads.datasheet} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2">
                       <FileDown className="h-4 w-4" /> Datasheet
                     </a>
                   </Button>
                 )}
+                {product.downloads?.brochure && (
+                  <Button variant="outline" asChild>
+                    <a href={product.downloads.brochure} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2">
+                      <FileDown className="h-4 w-4" /> Brochure
+                    </a>
+                  </Button>
+                )}
                 <Button asChild>
-                  <Link href="/contact">Request quote</Link>
+                  <Link href={product.cta?.href ?? DEFAULT_CTA.href}>{product.cta?.label ?? DEFAULT_CTA.label}</Link>
                 </Button>
               </div>
             </div>

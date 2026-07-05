@@ -112,7 +112,7 @@ export default function Hero() {
     );
     const seen = new Set(flagship.map((p) => p.id));
     const rest = productsSortedByDateDesc(products).filter(
-      (p) => !seen.has(p.id) && p.image.endsWith(".jpeg"),
+      (p) => !seen.has(p.id) && !p.awaiting?.includes("images"),
     );
     const picked = [...flagship, ...rest].slice(0, 5);
     return picked.map((p) => ({

@@ -51,6 +51,11 @@ export default function ProductCard({
 
       {/* Image */}
       <div className="relative h-44 sm:h-52 bg-secondary">
+        {product.status === "placeholder" && (
+          <span className="absolute left-2 top-2 z-[2] rounded-full border border-foreground/15 bg-background/90 px-2 py-0.5 text-[11px] font-medium text-foreground/70">
+            Coming soon
+          </span>
+        )}
         <img
           src={product.image}
           alt={product.name}
