@@ -26,15 +26,13 @@ export default function ProductImageGallery({
 
   return (
     <div className={cn("relative", className)}>
-      <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-foreground/10 bg-background">
+      <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-card-border bg-neutral-50">
         <img
           key={safeImages[index]}
           src={safeImages[index]}
           alt={alt}
-           
-          
-          className="object-contain p-4 transition-opacity duration-300"
-           
+          loading="lazy"
+          className="h-full w-full object-contain p-6 transition-opacity duration-300"
         />
 
         {safeImages.length > 1 && (
@@ -42,14 +40,14 @@ export default function ProductImageGallery({
             <button
               aria-label="Previous image"
               onClick={prev}
-              className="absolute left-2 top-1/2 -translate-y-1/2 inline-flex h-8 w-8 items-center justify-center rounded-full bg-background/80 text-foreground shadow ring-1 ring-foreground/10 hover:bg-background"
+              className="absolute left-2 top-1/2 -translate-y-1/2 inline-flex h-8 w-8 items-center justify-center rounded-full border border-border bg-card/90 text-foreground shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground"
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
             <button
               aria-label="Next image"
               onClick={next}
-              className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex h-8 w-8 items-center justify-center rounded-full bg-background/80 text-foreground shadow ring-1 ring-foreground/10 hover:bg-background"
+              className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex h-8 w-8 items-center justify-center rounded-full border border-border bg-card/90 text-foreground shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground"
             >
               <ChevronRight className="h-4 w-4" />
             </button>
@@ -65,8 +63,8 @@ export default function ProductImageGallery({
               aria-label={`Go to image ${i + 1}`}
               onClick={() => goTo(i)}
               className={cn(
-                "h-2.5 w-2.5 rounded-full",
-                i === index ? "bg-emerald-500" : "bg-foreground/30 hover:bg-foreground/50"
+                "h-2.5 w-2.5 rounded-full transition-colors",
+                i === index ? "bg-primary" : "bg-foreground/30 hover:bg-foreground/50"
               )}
             />
           ))}

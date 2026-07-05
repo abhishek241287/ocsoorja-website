@@ -21,7 +21,7 @@ Adding only the `:root` var (or only the `@theme` mapping) silently produces no 
 Solution in place: a dedicated `--primary-strong` token — same deep green in light mode, but **brighter** in dark mode (`156 52% 52%`) so brand-colored text/icons/links stay AA.
 
 **Rule:** use `bg-primary` for fills; use `text-primary-strong` (never `text-primary`) for brand-colored text, icons, and links.
-**Why:** the first token remap regressed dark-mode contrast on eyebrows, filter pills, "clear" links, form success text, and the Button `link` variant; architect flagged it.
+**Why:** a naive single-token remap regresses dark-mode contrast on eyebrows, filter pills, "clear" links, form success text, and the Button `link` variant.
 
 ## JIT only sees literal class strings
 Tailwind v4 does not detect dynamically constructed color class names. Keep full class strings literal (the `/design-system` reference page relies on this).

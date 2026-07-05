@@ -1,12 +1,26 @@
 import { useState, useCallback, useMemo } from "react";
+import { Link } from "wouter";
+import { Search } from "lucide-react";
 import { Seo } from "@/components/Seo";
-import { products, productsSortedByDateDesc, type Product } from "@/data/products";
+import {
+  products,
+  productsSortedByDateDesc,
+  getProductsGroupedByFamily,
+  type Product,
+} from "@/data/products";
 import { Container } from "@/components/layout/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import TiltedCard from "@/components/ui/TiltedCard";
+import { Button } from "@/components/ui/Button";
 import ProductCard from "@/components/ui/ProductCard";
 import ProductSearch from "@/components/products/ProductSearch";
-import { HEADLINES } from "@/data/brand";
+import { HEADLINES, CTAS } from "@/data/brand";
+import {
+  getItemListSchema,
+  getBreadcrumbSchema,
+  renderJsonLd,
+} from "@/lib/seo";
+
+const SITE = "https://www.ocsoorja.com";
 
 export default function Products() {
   const sortedProducts = useMemo(() => productsSortedByDateDesc(products), []);
@@ -16,61 +30,111 @@ export default function Products() {
     setFilteredProducts(filtered);
   }, []);
 
+  // Group the (filtered) catalogue by family in display order. Family section
+  // headers only appear when more than one family is on screen; a single group
+  // renders as a clean flat grid (no redundant heading).
+  const groups = useMemo(() => getProductsGroupedByFamily(filteredProducts), [filteredProducts]);
+  const showGroupHeaders = groups.length > 1;
+
+  // Structured data for the catalogue (full product list, not the filtered view).
+  const itemListSchema = useMemo(
+    () =>
+      getItemListSchema(
+        sortedProducts.map((p) => ({ name: p.name, url: `${SITE}/products/${p.slug}` })),
+      ),
+    [sortedProducts],
+  );
+  const breadcrumbSchema = useMemo(
+    () =>
+      getBreadcrumbSchema([
+        { name: "Home", url: `${SITE}/` },
+        { name: "Products", url: `${SITE}/products` },
+      ]),
+    [],
+  );
+
   return (
     <div className="py-12 md:py-16">
       <Seo
-        title="Products"
-        description="Explore our range of LiFePO₄ batteries, hybrid inverters, and EV chargers."
+        title={HEADLINES.products.metaTitle}
+        description={HEADLINES.products.metaDescription}
+        canonical={`${SITE}/products`}
       />
       <Container>
-        <div className="mb-8">
-          <SectionHeading title={HEADLINES.products.pageTitle} subtitle={HEADLINES.products.pageSubtitle} align="left" />
+        <script type="application/ld+json" dangerouslySetInnerHTML={renderJsonLd(breadcrumbSchema)} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={renderJsonLd(itemListSchema)} />
+
+        {/* Header */}
+        <div className="mb-10">
+          <SectionHeading
+            eyebrow={HEADLINES.products.pageEyebrow}
+            title={HEADLINES.products.pageTitle}
+            subtitle={HEADLINES.products.pageSubtitle}
+            align="left"
+          />
         </div>
 
         <ProductSearch products={sortedProducts} onFilteredProducts={handleFilteredProducts} />
 
         {filteredProducts.length > 0 ? (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 items-stretch">
-            {filteredProducts.map((p) => (
-              <TiltedCard
-                key={p.id}
-                rotateAmplitude={8}
-                scaleOnHover={1.03}
-                showMobileWarning={false}
-                showTooltip={false}
-                containerHeight="100%"
-                containerWidth="100%"
-                contentClassName="h-full"
+          <div className="mt-10 space-y-14">
+            {groups.map((group) => (
+              <section
+                key={group.family.id}
+                aria-labelledby={showGroupHeaders ? `family-${group.family.id}` : undefined}
               >
-                <ProductCard product={p} specsLimit={4} tagsLimit={3} showTags className="h-full" />
-              </TiltedCard>
+                {showGroupHeaders && (
+                  <div className="mb-6 border-l-2 border-primary/60 pl-4">
+                    <h2
+                      id={`family-${group.family.id}`}
+                      className="text-lg font-semibold tracking-tight text-foreground"
+                    >
+                      {group.family.label}
+                    </h2>
+                    <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
+                      {group.family.description}
+                    </p>
+                  </div>
+                )}
+                <div className="grid grid-cols-1 items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                  {group.products.map((p) => (
+                    <ProductCard key={p.id} product={p} specsLimit={4} tagsLimit={3} showTags className="h-full" />
+                  ))}
+                </div>
+              </section>
             ))}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-16 text-center">
-            <div className="rounded-full bg-gray-100 dark:bg-gray-800 p-6 mb-4">
-              <svg
-                className="h-16 w-16 text-gray-400 dark:text-gray-500"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
+          <div className="mt-10 flex flex-col items-center justify-center rounded-3xl border border-border bg-card py-16 text-center">
+            <div className="mb-4 rounded-full bg-secondary p-6">
+              <Search className="h-10 w-10 text-primary-strong" aria-hidden="true" />
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
-              No products found
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400 max-w-md">
+            <h3 className="mb-2 text-xl font-semibold text-foreground">No products found</h3>
+            <p className="max-w-md text-muted-foreground">
               Try adjusting your search or filters to find what you're looking for.
             </p>
           </div>
         )}
+
+        {/* Lead generation */}
+        <section className="mt-16 rounded-3xl border border-border bg-secondary/60 px-6 py-10 sm:px-10 sm:py-12">
+          <div className="flex flex-col items-start gap-6 md:flex-row md:items-center md:justify-between">
+            <div className="max-w-2xl">
+              <h2 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
+                {HEADLINES.cta.title}
+              </h2>
+              <p className="mt-2 text-sm text-muted-foreground sm:text-base">{HEADLINES.cta.body}</p>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <Button asChild size="lg">
+                <Link href={CTAS.requestQuote.href}>{CTAS.requestQuote.label}</Link>
+              </Button>
+              <Button asChild size="lg" variant="outline">
+                <Link href={CTAS.contactUs.href}>{CTAS.contactUs.label}</Link>
+              </Button>
+            </div>
+          </div>
+        </section>
       </Container>
     </div>
   );

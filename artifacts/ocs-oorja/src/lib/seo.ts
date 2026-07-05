@@ -55,6 +55,7 @@ interface ProductSchema {
   "@type": string;
   name: string;
   description: string;
+  image?: string;
   brand: {
     "@type": string;
     name: string;
@@ -136,12 +137,14 @@ export function getProductSchema(product: {
   name: string;
   description: string;
   url: string;
+  image?: string;
 }): ProductSchema {
   return {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.name,
     description: product.description,
+    ...(product.image ? { image: product.image } : {}),
     brand: {
       "@type": "Brand",
       name: "OCS OORJA",
@@ -189,6 +192,22 @@ export function getFAQSchema(faqs: Array<{ question: string; answer: string }>) 
         "@type": "Answer",
         text: faq.answer,
       },
+    })),
+  };
+}
+
+/**
+ * Generate ItemList Schema for a catalogue / listing page
+ */
+export function getItemListSchema(items: Array<{ name: string; url: string }>) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      url: item.url,
     })),
   };
 }

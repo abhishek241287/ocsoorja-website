@@ -88,8 +88,14 @@ export const HEADLINES = {
     gridSubtitle:
       "Hybrid solar inverters, LiFePO₄ storage and EV charging — standard models for quick deployment and a strong base for customization.",
     // Products listing page
+    pageEyebrow: "Product Catalogue",
     pageTitle: "Products",
-    pageSubtitle: "Standard models ready for deployment",
+    pageSubtitle:
+      "Hybrid solar inverters, LiFePO₄ batteries and BESS, and EV charging — standard, factory-direct models ready to deploy.",
+    // Search-engine copy for the catalogue page
+    metaTitle: "Products — Hybrid Solar Inverters, LiFePO₄ Batteries & EV Chargers",
+    metaDescription:
+      "Browse OCS OORJA's catalogue of hybrid solar inverters, LiFePO₄ batteries and BESS, and AC/DC EV chargers — factory-direct power systems engineered in Lucknow for Indian conditions.",
   },
   about: {
     title: "About OCS OORJA",

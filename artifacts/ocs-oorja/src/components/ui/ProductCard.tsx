@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { cn } from "@/lib/utils";
-import type { Product } from "@/data/products";
+import { getFamilyInfo, type Product } from "@/data/products";
 import { Button } from "@/components/ui/Button";
 
 export type ProductCardProps = {
@@ -23,7 +23,8 @@ export default function ProductCard({
   ctaLabel = "View details",
 }: ProductCardProps) {
   const specs = typeof specsLimit === "number" ? product.specs.slice(0, specsLimit) : product.specs;
-
+  const family = getFamilyInfo(product.family);
+  const isPlaceholder = product.status === "placeholder";
   const titleId = `product-${product.id}-title`;
 
   return (
@@ -32,11 +33,11 @@ export default function ProductCard({
       className={cn(
         "group relative flex h-full flex-col overflow-hidden rounded-2xl border border-card-border bg-card cursor-pointer",
         // Restrained lift + shadow on hover; respect reduced motion
-        "transition-all duration-300 motion-reduce:transition-none motion-reduce:hover:transform-none hover:-translate-y-0.5 hover:shadow-lg",
+        "transition-all duration-300 motion-reduce:transition-none motion-reduce:hover:transform-none hover:-translate-y-1 hover:shadow-lg",
         // Brand-token hover accent (no glassmorphism / glow)
         "hover:border-primary/40 hover:ring-1 hover:ring-primary/20",
         // Enforce near-uniform height across cards
-        "min-h-[420px] sm:min-h-[460px]",
+        "min-h-[440px] sm:min-h-[480px]",
         className,
       )}
     >
@@ -49,62 +50,67 @@ export default function ProductCard({
         className="absolute inset-0 z-[1]"
       />
 
-      {/* Image */}
-      <div className="relative h-44 sm:h-52 bg-secondary">
-        {product.status === "placeholder" && (
-          <span className="absolute left-2 top-2 z-[2] rounded-full border border-foreground/15 bg-background/90 px-2 py-0.5 text-[11px] font-medium text-foreground/70">
+      {/* Image well — light neutral in both themes so photos with baked-in
+          backgrounds read cleanly and never glare in dark mode. */}
+      <div className="relative aspect-[4/3] overflow-hidden border-b border-card-border bg-neutral-50">
+        {isPlaceholder && (
+          <span className="absolute left-3 top-3 z-[2] inline-flex items-center rounded-full border border-black/10 bg-white/90 px-2.5 py-0.5 text-[11px] font-medium text-neutral-600">
             Coming soon
           </span>
         )}
         <img
           src={product.image}
           alt={product.name}
-          className="object-cover w-full h-full"
+          loading="lazy"
+          className="h-full w-full object-contain p-6 transition-transform duration-500 motion-reduce:transition-none group-hover:scale-[1.04]"
         />
       </div>
 
       {/* Content */}
       <div className="flex flex-1 flex-col p-5 sm:p-6">
-        <h3 id={titleId} className="text-base sm:text-lg font-semibold tracking-tight text-foreground line-clamp-2 min-h-[44px] sm:min-h-[48px]">
+        {family && (
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-primary-strong">
+            {family.shortLabel}
+          </span>
+        )}
+        <h3
+          id={titleId}
+          className="mt-1.5 text-base sm:text-lg font-semibold tracking-tight text-foreground line-clamp-2 min-h-[44px] sm:min-h-[48px]"
+        >
           {product.name}
         </h3>
         <p className="mt-1.5 text-sm text-muted-foreground line-clamp-2 min-h-10">{product.summary}</p>
 
-        {/* Specs */}
+        {/* Specs — spec-sheet style rows (label / value) avoid mid-word truncation */}
         {specs?.length ? (
-          <ul className="mt-3 grid grid-cols-2 gap-2 text-xs text-foreground/80 sm:text-[13px] min-h-[64px]">
+          <dl className="mt-4 divide-y divide-border border-y border-border">
             {specs.map((s) => (
-              <li
-                key={s.key}
-                className="rounded-md border border-border bg-secondary/50 px-2 py-1 truncate"
-              >
-                <span className="font-medium text-foreground">{s.key}</span>: {s.value}
-              </li>
+              <div key={s.key} className="flex items-baseline justify-between gap-4 py-1.5">
+                <dt className="shrink-0 text-xs text-muted-foreground">{s.key}</dt>
+                <dd className="min-w-0 truncate text-right text-[13px] font-medium text-foreground">{s.value}</dd>
+              </div>
             ))}
-          </ul>
+          </dl>
         ) : (
-          <div className="mt-3 min-h-[64px]" aria-hidden="true" />
+          <div className="mt-4" aria-hidden="true" />
         )}
 
         {/* Tags */}
         {showTags && product.tags?.length ? (
-          <div className="mt-3 h-7 flex flex-nowrap gap-2 overflow-hidden">
+          <div className="mt-4 flex flex-wrap gap-1.5 overflow-hidden">
             {product.tags.slice(0, tagsLimit).map((t) => (
               <span
                 key={t}
-                className="text-[11px] leading-5 rounded-full border border-border px-2 py-0.5 text-muted-foreground bg-secondary/60"
+                className="rounded-full bg-secondary px-2.5 py-0.5 text-[11px] font-medium text-secondary-foreground"
               >
                 {t}
               </span>
             ))}
           </div>
-        ) : (
-          // Reserve space so cards without tags don't get shorter
-          <div className="mt-3 h-7" aria-hidden="true" />
-        )}
+        ) : null}
 
         {/* CTA */}
-        <div className="pt-1 mt-auto relative z-[2]">
+        <div className="pt-5 mt-auto relative z-[2]">
           <Button asChild size="sm" variant="outline" className="group/btn">
             <Link href={href} aria-label={`${product.name} – ${ctaLabel}`}>
               {ctaLabel}
