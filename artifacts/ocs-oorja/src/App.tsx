@@ -10,6 +10,7 @@ import Contact from "@/pages/contact";
 import Products from "@/pages/products";
 import ProductDetail from "@/pages/product-detail";
 import DesignSystem from "@/pages/design-system";
+import ScrollRestoration from "@/components/ScrollRestoration";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +35,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+          <ScrollRestoration />
           <Router />
         </WouterRouter>
         <Toaster />

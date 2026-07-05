@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useRef } from "react";
 import { Link } from "wouter";
 import { Search } from "lucide-react";
 import { Seo } from "@/components/Seo";
@@ -28,6 +28,22 @@ export default function Products() {
 
   const handleFilteredProducts = useCallback((filtered: Product[]) => {
     setFilteredProducts(filtered);
+  }, []);
+
+  // Anchor for the results region so selecting a family can smooth-scroll to it.
+  const resultsRef = useRef<HTMLDivElement>(null);
+
+  // On family/category selection, bring the results into view just below the
+  // sticky header — measured at runtime so the offset always matches the header.
+  const scrollToResults = useCallback(() => {
+    requestAnimationFrame(() => {
+      const el = resultsRef.current;
+      if (!el) return;
+      const header = document.querySelector("header");
+      const offset = (header?.offsetHeight ?? 0) + 16;
+      const top = Math.max(0, el.getBoundingClientRect().top + window.scrollY - offset);
+      window.scrollTo({ top, behavior: "smooth" });
+    });
   }, []);
 
   // Group the (filtered) catalogue by family in display order. Family section
@@ -74,7 +90,13 @@ export default function Products() {
           />
         </div>
 
-        <ProductSearch products={sortedProducts} onFilteredProducts={handleFilteredProducts} />
+        <ProductSearch
+          products={sortedProducts}
+          onFilteredProducts={handleFilteredProducts}
+          onCategoryChange={scrollToResults}
+        />
+
+        <div ref={resultsRef} aria-hidden="true" />
 
         {filteredProducts.length > 0 ? (
           <div className="mt-10 space-y-14">

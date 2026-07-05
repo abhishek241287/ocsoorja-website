@@ -6,9 +6,12 @@ import { cn } from "@/lib/utils";
 interface ProductSearchProps {
   products: Product[];
   onFilteredProducts: (products: Product[]) => void;
+  // Fired whenever a category/family pill is clicked (including "All Products"),
+  // so the page can smooth-scroll the results into view.
+  onCategoryChange?: (category: ProductFamily | "all") => void;
 }
 
-export default function ProductSearch({ products, onFilteredProducts }: ProductSearchProps) {
+export default function ProductSearch({ products, onFilteredProducts, onCategoryChange }: ProductSearchProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<ProductFamily | "all">("all");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -80,6 +83,7 @@ export default function ProductSearch({ products, onFilteredProducts }: ProductS
   const handleCategoryChange = (category: ProductFamily | "all") => {
     setSelectedCategory(category);
     setSelectedTags([]);
+    onCategoryChange?.(category);
   };
 
   const pill = (active: boolean) =>
