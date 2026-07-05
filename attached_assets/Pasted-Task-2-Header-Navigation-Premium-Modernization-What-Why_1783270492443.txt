@@ -1,0 +1,176 @@
+Task #2 – Header & Navigation Premium Modernization
+What & Why
+
+Modernize only the Header & Navigation of the imported OCS OORJA website (artifacts/ocs-oorja) to a premium, world-class standard suitable for a serious Indian clean-energy manufacturer.
+
+The Header should immediately communicate trust, engineering excellence, and professionalism while remaining clean, lightweight, and highly usable.
+
+The Header is the second most important section after the Hero because it appears on every page and strongly influences the first impression.
+
+Prioritize clarity, hierarchy, usability, and brand consistency over decorative effects.
+
+Done Looks Like
+Premium white navigation bar with subtle shadow only when scrolling.
+Sticky navigation with smooth transition.
+OCS OORJA logo displayed prominently but proportionally.
+Navigation spacing follows an 8px spacing system.
+Typography is elegant and easy to scan.
+Navigation immediately communicates OCS OORJA as a manufacturer rather than a reseller.
+"Get a Quote" remains the primary CTA.
+Mobile navigation feels premium rather than a generic slide-out drawer.
+Product navigation clearly separates:
+Hybrid Solar Inverters
+LiFePO₄ Batteries
+EV Charging Solutions
+Navigation includes:
+Company
+Solutions
+Products
+Industries
+Dealer Network
+Resources
+Contact
+Dropdown menus feel modern with smooth micro-interactions.
+Current page is clearly highlighted.
+Hover states are subtle and premium.
+Keyboard accessibility is fully maintained.
+Header remains lightweight with no noticeable performance regression.
+Desktop, tablet, and mobile layouts are all polished.
+No routing changes.
+No SEO changes.
+No analytics changes.
+No backend changes.
+No new dependencies.
+No UI libraries added.
+Existing functionality remains intact.
+Brand Direction
+
+The Header should feel closer to a premium industrial technology company than a consumer electronics website.
+
+The overall impression should be:
+
+Clean
+Confident
+Engineering-led
+Reliable
+Indian manufacturer
+Modern
+Premium
+Minimal
+
+Avoid flashy effects.
+
+Visual Style
+
+Use only OCS OORJA brand colours:
+
+White
+Light Green
+Deep Green
+Yellow
+Orange accents
+
+Avoid:
+
+Glassmorphism
+Neon effects
+Heavy gradients
+AI-looking glows
+Oversized shadows
+Cartoon icons
+Navigation Hierarchy
+
+Navigation should communicate the complete business.
+
+Suggested structure:
+
+Company
+
+Solutions
+
+Products
+
+Industries
+
+Dealer Network
+
+Resources
+
+Contact
+
+Primary CTA
+
+Get a Quote
+
+Micro-interactions
+Smooth hover animations
+Premium dropdown transitions
+Refined active states
+Excellent keyboard focus
+Smooth sticky transition
+
+Nothing flashy.
+
+Responsive Behaviour
+
+Desktop
+
+Premium horizontal navigation.
+
+Tablet
+
+Compact navigation with refined spacing.
+
+Mobile
+
+Premium mobile menu with smooth animation.
+
+No generic hamburger experience.
+
+Accessibility
+
+Maintain:
+
+Semantic navigation
+Keyboard support
+Focus visibility
+ARIA labels
+Contrast compliance
+Performance
+
+Do not introduce:
+
+Heavy JavaScript
+Large assets
+New dependencies
+Render-blocking code
+
+Maintain fast loading and excellent Core Web Vitals.
+
+Out of Scope
+
+Do not modify:
+
+Hero
+Products section
+Footer
+About
+Contact
+Product pages
+SEO
+Routing
+Analytics
+Backend
+Validation
+
+After implementation provide:
+
+Before desktop screenshot
+After desktop screenshot
+Before mobile screenshot
+After mobile screenshot
+Written design rationale
+Typecheck results
+Performance verification
+Accessibility verification
+Confirmation that no regressions occurred
