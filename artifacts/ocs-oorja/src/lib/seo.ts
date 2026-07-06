@@ -214,6 +214,45 @@ export function getItemListSchema(items: Array<{ name: string; url: string }>) {
 }
 
 /**
+ * Generate Article Schema for a blog post
+ */
+export function getArticleSchema(article: {
+  title: string;
+  description: string;
+  url: string;
+  image?: string;
+  author: string;
+  datePublished: string; // ISO date (YYYY-MM-DD)
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: article.title,
+    description: article.description,
+    ...(article.image ? { image: article.image } : {}),
+    author: {
+      "@type": "Organization",
+      name: article.author,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "OCS OORJA",
+      logo: {
+        "@type": "ImageObject",
+        url: `${SITE.url}/images/OCS_OORJA_logo_landscape.png`,
+      },
+    },
+    datePublished: article.datePublished,
+    dateModified: article.datePublished,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": article.url,
+    },
+    url: article.url,
+  };
+}
+
+/**
  * Utility to render JSON-LD script tag
  */
 export function renderJsonLd(data: object) {

@@ -6,7 +6,7 @@ import ManufacturingExcellence from "@/components/sections/ManufacturingExcellen
 import CertificationsStrip from "@/components/sections/CertificationsStrip";
 import Testimonials from "@/components/sections/Testimonials";
 import FeaturedProducts from "@/components/sections/FeaturedProducts";
-import Insights from "@/components/sections/Insights";
+import LatestArticles from "@/components/sections/LatestArticles";
 import FinalCta from "@/components/sections/FinalCta";
 import { getOrganizationSchema, getLocalBusinessSchema, renderJsonLd } from "@/lib/seo";
 import { SITE } from "@/data/site";
@@ -42,7 +42,7 @@ export default function Home() {
         <CertificationsStrip />
         <Testimonials />
         <FeaturedProducts />
-        <Insights />
+        <LatestArticles />
         <FinalCta />
       </div>
     </>

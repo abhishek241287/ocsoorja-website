@@ -14,7 +14,7 @@
 //
 // Product-specific copy lives in src/data/products/. Shared brand wording (hero,
 // footer, global CTAs) lives in src/data/brand.ts. Industries live in
-// src/data/industries.ts. Insights live in src/data/insights.ts.
+// src/data/industries.ts. Blog articles live in src/data/blog.ts.
 // =============================================================================
 
 // --- Section headings (eyebrow / title / subtitle per homepage section) -------

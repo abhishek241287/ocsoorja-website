@@ -1,43 +1,61 @@
 // =============================================================================
-// OCS OORJA — Insights / articles (SINGLE SOURCE for the homepage Insights)
+// OCS OORJA — Blog articles (SINGLE SOURCE for the blog + homepage teaser)
 // =============================================================================
-// Non-developers: edit the "Latest Insights" articles by editing THIS list.
-// Each entry renders one card on the homepage; clicking "Read More" opens the
-// full article in an on-page modal (no separate blog page required).
+// Non-developers: to PUBLISH A NEW ARTICLE, add ONE entry to `blogPosts` below.
+// Nothing else needs editing — the homepage automatically shows the latest
+// three, the /blog page lists them all with search + category filters, each
+// article gets its own page at /blog/<slug>, and the sitemap updates on the
+// next build. The structure supports unlimited articles with zero code changes.
 //
-//   • image — a path under public/ (e.g. "/images/articles/…jpg"). Replace the
-//             file at that path to change the featured picture — no code edit.
-//   • body  — the full article, as an ordered list of sections. Each section has
-//             an optional `heading` and one or more `paragraphs`.
-//   • date  — ISO date (YYYY-MM-DD); shown to readers in a friendly format.
+//   • slug            — the URL segment: /blog/<slug>. Lowercase words joined
+//                       by hyphens; keep it unique and never change it once
+//                       published (the old link would break).
+//   • title           — the article headline.
+//   • excerpt         — a 1–2 sentence summary shown on cards and previews.
+//   • category        — a short label (e.g. "Solar"); also drives the filter.
+//   • image           — a path under public/ (e.g. "/images/articles/foo.jpg").
+//                       Replace the file at that path to change the picture.
+//   • author          — who wrote it (shown on the article).
+//   • publishDate     — ISO date (YYYY-MM-DD); newest dates appear first.
+//   • readingTime     — a friendly estimate, e.g. "5 min read".
+//   • seoTitle        — the browser-tab / search-result title.
+//   • seoDescription  — the search-result summary (~150 characters).
+//   • content         — the article body: an ordered list of sections, each
+//                       with an optional `heading` and one or more `paragraphs`.
 // =============================================================================
 
 export type ArticleSection = { heading?: string; paragraphs: string[] };
 
-export type Insight = {
-  id: string;
-  category: string;
+export type BlogPost = {
+  slug: string;
   title: string;
   excerpt: string;
+  category: string;
   image: string;
-  date: string; // ISO date (YYYY-MM-DD)
-  readingTime?: string;
-  author?: string;
-  body: ArticleSection[];
+  author: string;
+  publishDate: string; // ISO date (YYYY-MM-DD)
+  readingTime: string;
+  seoTitle: string;
+  seoDescription: string;
+  content: ArticleSection[];
 };
 
-export const insights: Insight[] = [
+export const blogPosts: BlogPost[] = [
   {
-    id: "sizing-hybrid-solar-inverter",
-    category: "Solar",
+    slug: "how-to-size-a-solar-inverter",
     title: "How to Size a Hybrid Solar Inverter for Indian Homes",
     excerpt:
       "A practical guide to matching inverter capacity, solar array size and battery bank for reliable day-and-night backup.",
+    category: "Solar",
     image: "/images/articles/hybrid-solar-inverter.jpg",
-    date: "2026-06-18",
-    readingTime: "5 min read",
     author: "OCS OORJA Engineering",
-    body: [
+    publishDate: "2026-06-18",
+    readingTime: "5 min read",
+    seoTitle:
+      "How to Size a Hybrid Solar Inverter for Indian Homes | OCS OORJA",
+    seoDescription:
+      "Size a hybrid solar inverter the right way: match inverter capacity, solar array and battery bank for reliable day-and-night backup in Indian homes.",
+    content: [
       {
         paragraphs: [
           "A hybrid solar inverter sits at the centre of a modern home power system — it converts DC from your panels and battery into usable AC, charges the battery from solar or the grid, and switches to backup instantly when the mains fail. Get the sizing right and the system runs quietly for years; get it wrong and you either overpay or trip the inverter every time the air-conditioner starts.",
@@ -75,16 +93,20 @@ export const insights: Insight[] = [
     ],
   },
   {
-    id: "lifepo4-vs-lead-acid",
-    category: "Lithium",
+    slug: "lifepo4-vs-lead-acid",
     title: "Why LiFePO₄ Batteries Outlast Lead-Acid in Real Duty Cycles",
     excerpt:
       "Cycle life, depth of discharge, safety and total cost of ownership — how lithium iron phosphate compares for solar and backup.",
+    category: "Lithium",
     image: "/images/articles/lifepo4-vs-lead-acid.jpg",
-    date: "2026-06-02",
-    readingTime: "6 min read",
     author: "OCS OORJA Engineering",
-    body: [
+    publishDate: "2026-06-02",
+    readingTime: "6 min read",
+    seoTitle:
+      "LiFePO₄ vs Lead-Acid: Which Battery Really Costs Less? | OCS OORJA",
+    seoDescription:
+      "Cycle life, usable capacity, safety and total cost of ownership compared — why LiFePO₄ usually beats lead-acid for solar and backup duty cycles.",
+    content: [
       {
         paragraphs: [
           "On the shop floor, lead-acid still looks cheaper per kilowatt-hour. But batteries are bought for the energy they deliver over their life, not their price on day one. Measured that way, lithium iron phosphate (LiFePO₄) is usually the lower-cost and more dependable choice for solar and backup duty.",
@@ -118,19 +140,22 @@ export const insights: Insight[] = [
     ],
   },
   {
-    id: "ac-vs-dc-ev-charging",
-    category: "EV Charging",
+    slug: "ac-vs-dc-ev-charging",
     title: "AC vs DC EV Charging: Choosing the Right Setup",
     excerpt:
       "Understand charging speeds, site requirements and use-cases to pick between AC and DC fast charging for your fleet or facility.",
+    category: "EV Charging",
     image: "/images/articles/ac-vs-dc-ev-chargers.jpg",
-    date: "2026-05-20",
-    readingTime: "4 min read",
     author: "OCS OORJA Engineering",
-    body: [
+    publishDate: "2026-05-20",
+    readingTime: "4 min read",
+    seoTitle: "AC vs DC EV Charging: How to Choose the Right Setup | OCS OORJA",
+    seoDescription:
+      "Compare AC and DC EV charging on speed, cost and site requirements to choose the right charger mix for your home, workplace, fleet or facility.",
+    content: [
       {
         paragraphs: [
-          "\"AC or DC?\" is the first question for any EV charging project, and the answer shapes cost, speed and civil work. Both deliver energy to the vehicle — the difference is where the conversion from AC to DC happens.",
+          '"AC or DC?" is the first question for any EV charging project, and the answer shapes cost, speed and civil work. Both deliver energy to the vehicle — the difference is where the conversion from AC to DC happens.',
         ],
       },
       {
@@ -161,3 +186,64 @@ export const insights: Insight[] = [
     ],
   },
 ];
+
+// --- Helpers -----------------------------------------------------------------
+// Consumers import these; you do NOT need to touch them to add an article.
+
+/** All posts, newest first (by publishDate). */
+export function getSortedPosts(): BlogPost[] {
+  return [...blogPosts].sort(
+    (a, b) =>
+      new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime(),
+  );
+}
+
+/** The newest `count` posts (for the homepage teaser). */
+export function getLatestPosts(count: number): BlogPost[] {
+  return getSortedPosts().slice(0, count);
+}
+
+/** Find a single post by its slug. */
+export function getPostBySlug(slug: string): BlogPost | undefined {
+  return blogPosts.find((p) => p.slug === slug);
+}
+
+/** Unique category labels, in newest-first order of first appearance. */
+export function getAllCategories(): string[] {
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const p of getSortedPosts()) {
+    if (!seen.has(p.category)) {
+      seen.add(p.category);
+      out.push(p.category);
+    }
+  }
+  return out;
+}
+
+/** Related posts: same category first, then most-recent others. */
+export function getRelatedPosts(slug: string, limit = 3): BlogPost[] {
+  const current = getPostBySlug(slug);
+  if (!current) return [];
+  const others = getSortedPosts().filter((p) => p.slug !== slug);
+  const sameCategory = others.filter((p) => p.category === current.category);
+  const seen = new Set(sameCategory.map((p) => p.slug));
+  return [...sameCategory, ...others.filter((p) => !seen.has(p.slug))].slice(
+    0,
+    limit,
+  );
+}
+
+/** Neighbours in chronological order: `previous` is older, `next` is newer. */
+export function getAdjacentPosts(slug: string): {
+  previous?: BlogPost;
+  next?: BlogPost;
+} {
+  const sorted = getSortedPosts(); // newest first
+  const i = sorted.findIndex((p) => p.slug === slug);
+  if (i === -1) return {};
+  return {
+    next: i > 0 ? sorted[i - 1] : undefined,
+    previous: i < sorted.length - 1 ? sorted[i + 1] : undefined,
+  };
+}

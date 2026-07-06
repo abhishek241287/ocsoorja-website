@@ -9,6 +9,8 @@ import About from "@/pages/about";
 import Contact from "@/pages/contact";
 import Products from "@/pages/products";
 import ProductDetail from "@/pages/product-detail";
+import Blog from "@/pages/blog";
+import BlogDetail from "@/pages/blog-detail";
 import DesignSystem from "@/pages/design-system";
 import ScrollRestoration from "@/components/ScrollRestoration";
 import { Analytics } from "@/components/Analytics";
@@ -24,6 +26,8 @@ function Router() {
         <Route path="/contact" component={Contact} />
         <Route path="/products" component={Products} />
         <Route path="/products/:slug" component={ProductDetail} />
+        <Route path="/blog" component={Blog} />
+        <Route path="/blog/:slug" component={BlogDetail} />
         <Route path="/design-system" component={DesignSystem} />
         <Route component={NotFound} />
       </Switch>

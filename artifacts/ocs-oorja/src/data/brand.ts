@@ -67,6 +67,7 @@ export const CTAS = {
   requestQuote: { label: "Request a Quote", href: "/contact" } as Cta,
   exploreProducts: { label: "Explore Products", href: "/products" } as Cta,
   contactUs: { label: "Contact Us", href: "/contact" } as Cta,
+  viewAllArticles: { label: "View all articles", href: "/blog" } as Cta,
 };
 
 // --- Company contact details (SINGLE SOURCE for the customer-facing email) -----
@@ -105,6 +106,18 @@ export const HEADLINES = {
     metaTitle: "Products — Hybrid Solar Inverters, LiFePO₄ Batteries & EV Chargers",
     metaDescription:
       "Browse OCS OORJA's catalogue of hybrid solar inverters, LiFePO₄ batteries and BESS, and AC/DC EV chargers — factory-direct power systems engineered in Lucknow for Indian conditions.",
+  },
+  blog: {
+    // Blog listing page (/blog)
+    pageEyebrow: "Insights & Guides",
+    pageTitle: "The OCS OORJA Blog",
+    pageSubtitle:
+      "Practical, no-hype guides on solar, lithium storage and EV charging — written by the engineers who build our systems.",
+    // Search-engine copy for the blog listing page
+    metaTitle:
+      "Blog — Solar, LiFePO₄ Storage & EV Charging Guides | OCS OORJA",
+    metaDescription:
+      "Engineer-written guides on hybrid solar inverters, LiFePO₄ batteries and EV charging for Indian conditions, from OCS OORJA in Lucknow.",
   },
   about: {
     title: "About OCS OORJA",

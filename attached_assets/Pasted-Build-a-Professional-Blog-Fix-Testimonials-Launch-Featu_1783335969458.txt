@@ -1,0 +1,289 @@
+Build a Professional Blog & Fix Testimonials (Launch Feature)
+Objective
+
+The website is almost launch-ready.
+
+Implement ONLY two customer-facing improvements:
+
+Fix the Testimonials section so all testimonials are visible.
+Build a professional Blog system that can be updated weekly by a non-developer.
+
+Do NOT redesign the homepage.
+
+Do NOT change the design system.
+
+Do NOT introduce any backend, CMS, database, or new dependencies.
+
+Reuse the existing architecture and data-driven approach.
+
+PART 1 — Testimonials
+
+Current issue
+
+Only some testimonials are visible.
+
+Visitors cannot easily read all customer feedback.
+
+Requirements
+
+Replace the current implementation with a responsive grid.
+
+Desktop
+
+3 columns
+
+Tablet
+
+2 columns
+
+Mobile
+
+1 column
+
+All testimonials should always be visible.
+
+No hidden cards.
+
+No clipped content.
+
+No horizontal scrolling.
+
+No unnecessary carousel.
+
+Every testimonial card should contain:
+
+customer photo (or avatar)
+name
+designation
+company
+review
+optional rating
+
+Hover effect:
+
+Very subtle lift.
+
+No glow.
+
+No glassmorphism.
+
+Move all testimonials into
+
+src/data/testimonials.ts
+
+so adding a new customer review is only one data entry.
+
+PART 2 — Professional Blog
+
+The current "Latest Insights" section is NOT a real blog.
+
+Build a complete blog system.
+
+New Route
+/blog
+Individual Article Route
+/blog/:slug
+
+Examples
+
+/blog/lifepo4-vs-lead-acid
+
+/blog/how-to-size-a-solar-inverter
+
+/blog/ac-vs-dc-ev-charging
+Data Source
+
+Create
+
+src/data/blog.ts
+
+Every article should be plain data.
+
+Example
+
+{
+ slug:
+ title:
+ excerpt:
+ category:
+ image:
+ author:
+ publishDate:
+ readingTime:
+ seoTitle:
+ seoDescription:
+ content:[]
+}
+
+No markdown parser.
+
+No CMS.
+
+No backend.
+
+No database.
+
+Homepage
+
+The homepage should automatically display
+
+Latest 3 Articles
+
+from
+
+src/data/blog.ts
+
+Newest first.
+
+Show
+
+Image
+
+Title
+
+Excerpt
+
+Read More
+
+Blog Listing Page
+
+Create a premium blog page.
+
+Include
+
+Hero
+
+Search
+
+Category filter
+
+Article grid
+
+Featured article
+
+Pagination if required
+
+Blog Detail Page
+
+Every article should contain
+
+Hero image
+
+Category
+
+Publish date
+
+Author
+
+Reading time
+
+Share buttons
+
+Previous article
+
+Next article
+
+Related articles
+
+SEO
+
+Breadcrumb
+
+Article schema
+
+Weekly Updates
+
+A non-developer should only edit
+
+src/data/blog.ts
+
+to publish a new article.
+
+Nothing else.
+
+Initial Articles
+
+Convert the existing homepage insights into real blog articles.
+
+Keep these:
+
+Solar Inverter Sizing Guide
+
+LiFePO₄ vs Lead Acid
+
+AC vs DC EV Charging
+
+Future Articles
+
+Structure should support unlimited articles.
+
+No code changes needed.
+
+Styling
+
+Follow existing OCS Design System.
+
+No redesign.
+
+No new colors.
+
+No glass.
+
+No gradients.
+
+No animations beyond subtle hover.
+
+Premium industrial manufacturer style.
+
+Constraints
+
+No backend
+
+No CMS
+
+No database
+
+No authentication
+
+No API
+
+No routing changes outside Blog
+
+No SEO regressions
+
+No design regressions
+
+No new dependencies
+
+Verification
+
+Run
+
+Typecheck
+
+Architect review
+
+Responsive test
+
+SEO validation
+
+Ensure
+
+Homepage shows latest 3 blogs automatically.
+
+Blog page lists all articles.
+
+Every article has its own URL.
+
+Testimonials display 100%.
+
+No hidden cards.
+
+No broken links.
+
+No console errors.
+
+Success Criteria
+Testimonials are fully visible on all devices.
+OCS OORJA has a professional, SEO-friendly blog that you can update every week by editing a single src/data/blog.ts file.
+The homepage automatically highlights the latest three articles, while the full archive is available at
