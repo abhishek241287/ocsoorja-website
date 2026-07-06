@@ -8,7 +8,7 @@
 //   • icon  — a lucide-react icon NAME (a string). The UI layer maps the name to
 //             a real icon component, so this file stays plain, editable data.
 //             Browse names at https://lucide.dev/icons.
-//   • image — a path under public/ (e.g. "/images/manufacturing/testing.jpg").
+//   • image — a path under public/ (e.g. "/images/home/manufacturing-testing.jpg").
 //             Replace the file at that path to change the picture — no code edit.
 //   • This file has no imports on purpose, so it stays easy and safe to edit.
 //
@@ -115,27 +115,27 @@ export const MANUFACTURING_STEPS: ManufacturingStep[] = [
   {
     title: "Engineering",
     body: "Our engineers design power electronics and battery systems tuned to Indian grid, voltage and temperature conditions.",
-    image: "/images/manufacturing/engineering.jpg",
+    image: "/images/home/manufacturing-engineering.jpg",
   },
   {
     title: "Manufacturing",
     body: "Inverters and LiFePO₄ packs are assembled on controlled production lines at our Lucknow facility.",
-    image: "/images/manufacturing/manufacturing.jpg",
+    image: "/images/home/manufacturing-assembly.jpg",
   },
   {
     title: "Testing",
     body: "Every unit undergoes electrical, thermal and safety testing to validate real-world performance.",
-    image: "/images/manufacturing/testing.jpg",
+    image: "/images/home/manufacturing-testing.jpg",
   },
   {
     title: "Quality Inspection",
     body: "Multi-point inspection checks welds, BMS behaviour and finish before a unit is cleared for dispatch.",
-    image: "/images/manufacturing/quality-inspection.jpg",
+    image: "/images/home/manufacturing-quality.jpg",
   },
   {
     title: "Delivery",
     body: "Cleared units are packed and dispatched pan-India with full documentation and after-sales support.",
-    image: "/images/manufacturing/delivery.jpg",
+    image: "/images/home/manufacturing-dispatch.jpg",
   },
 ];
 
@@ -155,13 +155,13 @@ export const FEATURED_PRODUCT_SLUGS: string[] = [
 // --- Hero "energy ecosystem" visual ------------------------------------------
 // The hero's right-hand visual: a premium, at-a-glance map of the complete
 // OCS OORJA energy ecosystem (generate → convert → store → charge). Each stage
-// shows a real image: either a product photo (via `productSlug`, resolved from
-// the catalogue) or a direct `image` path under public/.
+// shows a real image loaded directly from public/images/home/. To change a tile,
+// replace the file at that path (keep the same name) — no code changes needed.
 export type EcosystemNode = {
   label: string;
   note: string;
-  productSlug?: string; // resolves to that product's photo from the catalogue
-  image?: string; // direct public/ path (used when there is no productSlug)
+  image: string; // direct path under public/images/home/
+  fit?: "contain" | "cover"; // "cover" = full-bleed scene photo; default is "contain" (product render)
 };
 
 export const HERO_ECOSYSTEM = {
@@ -171,22 +171,23 @@ export const HERO_ECOSYSTEM = {
     {
       label: "Solar Generation",
       note: "High-efficiency solar energy",
-      image: "/images/hero/solar-panels.jpg",
+      image: "/images/home/hero-solar.jpg",
+      fit: "cover",
     },
     {
       label: "Hybrid Inverter",
       note: "Smart energy conversion",
-      productSlug: "solar-hybrid-inverter-48v-6kw",
+      image: "/images/home/hero-hybrid-inverter.jpg",
     },
     {
       label: "LiFePO₄ Battery Storage",
       note: "Reliable long-life backup",
-      productSlug: "12v-100ah-home-power-storage",
+      image: "/images/home/hero-lifepo4-battery.jpg",
     },
     {
       label: "EV Charging",
       note: "Fast AC & DC charging",
-      productSlug: "ev-charger-ac",
+      image: "/images/home/hero-ev-charger.jpg",
     },
   ] as EcosystemNode[],
   badge: "Designed & Manufactured in Lucknow, India",

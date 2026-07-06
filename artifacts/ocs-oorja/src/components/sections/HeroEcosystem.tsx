@@ -1,38 +1,28 @@
 import { Check } from "lucide-react";
-import { getProductBySlug } from "@/data/products";
 import { HERO_ECOSYSTEM } from "@/data/home";
 
 type EcosystemNode = (typeof HERO_ECOSYSTEM.nodes)[number];
 
-// Resolve a node's image from the product catalogue (single source) with a fallback.
-function nodeImage(node: EcosystemNode): string | undefined {
-  return node.productSlug
-    ? getProductBySlug(node.productSlug)?.image ?? node.image
-    : node.image;
-}
-
-// One product tile: a large product render on a clean white background.
-// Product renders (linked via `productSlug`) use object-contain so the whole
-// unit is visible and never cropped; the solar scene uses object-cover.
+// One tile: a large image on a clean white background. Product renders use
+// object-contain so the whole unit is visible and never cropped; full-bleed
+// scene photos (fit: "cover") fill the tile. Every image is loaded directly
+// from public/images/home/ — see HERO_ECOSYSTEM in src/data/home.ts.
 function Tile({ node }: { node: EcosystemNode }) {
-  const image = nodeImage(node);
-  const isProduct = Boolean(node.productSlug);
+  const isCover = node.fit === "cover";
   return (
     <div className="text-center">
       <div className="aspect-square w-full overflow-hidden rounded-2xl border border-card-border bg-white">
-        {image ? (
-          <img
-            src={image}
-            alt={node.label}
-            width={320}
-            height={320}
-            className={
-              isProduct
-                ? "h-full w-full object-contain p-2.5 sm:p-3"
-                : "h-full w-full object-cover"
-            }
-          />
-        ) : null}
+        <img
+          src={node.image}
+          alt={node.label}
+          width={320}
+          height={320}
+          className={
+            isCover
+              ? "h-full w-full object-cover"
+              : "h-full w-full object-contain p-2.5 sm:p-3"
+          }
+        />
       </div>
       <div className="mt-2.5 text-sm font-semibold leading-tight text-foreground">
         {node.label}
@@ -46,8 +36,8 @@ function Tile({ node }: { node: EcosystemNode }) {
 
 // The hero's single premium visual: a clean, engineered map of the complete
 // OCS OORJA energy ecosystem built from real product photography. Four large
-// product renders — Solar, Inverter, Battery, EV — read as the full ecosystem
-// at a glance. No tiny thumbnails, no outline icons.
+// renders — Solar, Inverter, Battery, EV — read as the full ecosystem at a
+// glance. No tiny thumbnails, no outline icons.
 export default function HeroEcosystem() {
   return (
     <div className="rounded-3xl border border-card-border bg-card p-5 shadow-lg sm:p-6">

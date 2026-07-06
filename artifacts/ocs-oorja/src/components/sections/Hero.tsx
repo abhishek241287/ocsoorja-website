@@ -5,8 +5,8 @@ import HeroEcosystem from "@/components/sections/HeroEcosystem";
 import { HEADLINES, CTAS } from "@/data/brand";
 
 // Hero background image. To change it, replace this ONE file:
-//   public/images/hero/hero-background.jpg
-const HERO_IMAGE = "/images/hero/hero-background.jpg";
+//   public/images/home/hero-background.jpg
+const HERO_IMAGE = "/images/home/hero-background.jpg";
 
 export default function Hero() {
   return (

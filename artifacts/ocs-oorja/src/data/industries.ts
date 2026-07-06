@@ -4,7 +4,7 @@
 // Non-developers: add, remove or edit an industry by editing THIS list only.
 // Each entry renders one card in the "Industries We Serve" homepage section.
 //
-//   • image — a path under public/ (e.g. "/images/industries/telecom.jpg").
+//   • image — a path under public/ (e.g. "/images/home/industries-telecom.jpg").
 //             Replace the file at that path to change the photo — no code edit.
 //   • href  — where the card's link goes. Defaults to the products catalogue.
 // =============================================================================
@@ -23,7 +23,7 @@ export const industries: Industry[] = [
     name: "Residential Solar & Backup",
     description:
       "Hybrid inverters and LiFePO₄ storage for reliable day-and-night power backup in homes and apartments.",
-    image: "/images/industries/residential-solar.jpg",
+    image: "/images/home/industries-residential.jpg",
     href: "/products",
   },
   {
@@ -31,7 +31,7 @@ export const industries: Industry[] = [
     name: "Commercial Buildings",
     description:
       "Scalable storage and power systems that cut diesel dependence and keep offices, hotels and shops running through outages.",
-    image: "/images/industries/commercial-buildings.jpg",
+    image: "/images/home/industries-commercial.jpg",
     href: "/products",
   },
   {
@@ -39,7 +39,7 @@ export const industries: Industry[] = [
     name: "Industrial Plants",
     description:
       "Robust energy storage and power electronics for factories, warehouses and process plants with demanding duty cycles.",
-    image: "/images/industries/industrial-plants.jpg",
+    image: "/images/home/industries-industrial.jpg",
     href: "/products",
   },
   {
@@ -47,7 +47,7 @@ export const industries: Industry[] = [
     name: "Telecom & Critical Backup",
     description:
       "Wide-temperature LiFePO₄ backup for telecom towers and mission-critical sites that cannot afford downtime.",
-    image: "/images/industries/telecom.jpg",
+    image: "/images/home/industries-telecom.jpg",
     href: "/products",
   },
   {
@@ -55,7 +55,7 @@ export const industries: Industry[] = [
     name: "EV Charging Infrastructure",
     description:
       "AC and DC fast chargers for homes, workplaces, fleets and public charging points across India.",
-    image: "/images/industries/ev-infrastructure.jpg",
+    image: "/images/home/industries-ev.jpg",
     href: "/products",
   },
   {
@@ -63,7 +63,7 @@ export const industries: Industry[] = [
     name: "Agriculture & Rural",
     description:
       "Solar-powered energy for irrigation, cold storage and rural sites where dependable off-grid power matters most.",
-    image: "/images/industries/agriculture.jpg",
+    image: "/images/home/industries-agriculture.jpg",
     href: "/products",
   },
 ];
