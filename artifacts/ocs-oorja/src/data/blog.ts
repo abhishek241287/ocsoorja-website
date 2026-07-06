@@ -13,7 +13,7 @@
 //   • title           — the article headline.
 //   • excerpt         — a 1–2 sentence summary shown on cards and previews.
 //   • category        — a short label (e.g. "Solar"); also drives the filter.
-//   • image           — a path under public/ (e.g. "/images/articles/foo.jpg").
+//   • image           — a path under public/ (e.g. "/images/articles/foo.webp").
 //                       Replace the file at that path to change the picture.
 //   • author          — who wrote it (shown on the article).
 //   • publishDate     — ISO date (YYYY-MM-DD); newest dates appear first.
@@ -53,7 +53,7 @@ export const blogPosts: BlogPost[] = [
     excerpt:
       "A practical guide to matching inverter capacity, solar array size and battery bank for reliable day-and-night backup.",
     category: "Solar",
-    image: "/images/articles/hybrid-solar-inverter.jpg",
+    image: "/images/articles/hybrid-solar-inverter.webp",
     author: "OCS OORJA Engineering",
     publishDate: "2026-06-18",
     readingTime: "5 min read",
@@ -104,7 +104,7 @@ export const blogPosts: BlogPost[] = [
     excerpt:
       "Cycle life, depth of discharge, safety and total cost of ownership — how lithium iron phosphate compares for solar and backup.",
     category: "Lithium",
-    image: "/images/articles/lifepo4-vs-lead-acid.jpg",
+    image: "/images/articles/lifepo4-vs-lead-acid.webp",
     author: "OCS OORJA Engineering",
     publishDate: "2026-06-02",
     readingTime: "6 min read",
@@ -151,7 +151,7 @@ export const blogPosts: BlogPost[] = [
     excerpt:
       "Understand charging speeds, site requirements and use-cases to pick between AC and DC fast charging for your fleet or facility.",
     category: "EV Charging",
-    image: "/images/articles/ac-vs-dc-ev-chargers.jpg",
+    image: "/images/articles/ac-vs-dc-ev-chargers.webp",
     author: "OCS OORJA Engineering",
     publishDate: "2026-05-20",
     readingTime: "4 min read",

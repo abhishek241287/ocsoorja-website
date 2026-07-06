@@ -8,7 +8,7 @@
 //   • icon  — a lucide-react icon NAME (a string). The UI layer maps the name to
 //             a real icon component, so this file stays plain, editable data.
 //             Browse names at https://lucide.dev/icons.
-//   • image — a path under public/ (e.g. "/images/home/manufacturing-testing.jpg").
+//   • image — a path under public/ (e.g. "/images/home/manufacturing-testing.webp").
 //             Replace the file at that path to change the picture — no code edit.
 //   • This file has no imports on purpose, so it stays easy and safe to edit.
 //
@@ -115,27 +115,27 @@ export const MANUFACTURING_STEPS: ManufacturingStep[] = [
   {
     title: "Engineering",
     body: "Our engineers design power electronics and battery systems tuned to Indian grid, voltage and temperature conditions.",
-    image: "/images/home/manufacturing-engineering.jpg",
+    image: "/images/home/manufacturing-engineering.webp",
   },
   {
     title: "Manufacturing",
     body: "Inverters and LiFePO₄ packs are assembled on controlled production lines at our Lucknow facility.",
-    image: "/images/home/manufacturing-assembly.jpg",
+    image: "/images/home/manufacturing-assembly.webp",
   },
   {
     title: "Testing",
     body: "Every unit undergoes electrical, thermal and safety testing to validate real-world performance.",
-    image: "/images/home/manufacturing-testing.jpg",
+    image: "/images/home/manufacturing-testing.webp",
   },
   {
     title: "Quality Inspection",
     body: "Multi-point inspection checks welds, BMS behaviour and finish before a unit is cleared for dispatch.",
-    image: "/images/home/manufacturing-quality.jpg",
+    image: "/images/home/manufacturing-quality.webp",
   },
   {
     title: "Delivery",
     body: "Cleared units are packed and dispatched pan-India with full documentation and after-sales support.",
-    image: "/images/home/manufacturing-dispatch.jpg",
+    image: "/images/home/manufacturing-dispatch.webp",
   },
 ];
 
@@ -171,7 +171,7 @@ export const HERO_ECOSYSTEM = {
     {
       label: "Solar Generation",
       note: "High-efficiency solar energy",
-      image: "/images/home/hero-solar.jpg",
+      image: "/images/home/hero-solar.webp",
       fit: "cover",
     },
     {

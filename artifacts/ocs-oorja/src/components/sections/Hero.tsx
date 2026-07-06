@@ -4,9 +4,12 @@ import { Button } from "@/components/ui/Button";
 import HeroEcosystem from "@/components/sections/HeroEcosystem";
 import { HEADLINES, CTAS } from "@/data/brand";
 
-// Hero background image. To change it, replace this ONE file:
-//   public/images/home/hero-background.jpg
-const HERO_IMAGE = "/images/home/hero-background.jpg";
+// Hero background image (the page's LCP). To change it, replace this ONE file:
+//   public/images/home/hero-background.webp
+// A smaller phone-sized copy (hero-background-768.webp) is served to small
+// screens via srcSet — regenerate both if you swap the picture.
+const HERO_IMAGE = "/images/home/hero-background.webp";
+const HERO_IMAGE_MOBILE = "/images/home/hero-background-768.webp";
 
 export default function Hero() {
   return (
@@ -14,9 +17,13 @@ export default function Hero() {
       <div className="absolute inset-0 -z-10 overflow-hidden">
         <img
           src={HERO_IMAGE}
+          srcSet={`${HERO_IMAGE_MOBILE} 768w, ${HERO_IMAGE} 1410w`}
+          sizes="100vw"
           alt=""
           aria-hidden="true"
+          loading="eager"
           fetchPriority="high"
+          decoding="async"
           className="absolute inset-0 h-full w-full object-cover"
         />
 
