@@ -39,10 +39,10 @@ export default function Footer() {
         <div className="space-y-5">
           <h3 className="text-sm font-semibold">Contact</h3>
           <ul className="space-y-3 text-sm text-foreground/70">
-            <li className="flex items-start gap-3"><Phone className="mt-1 h-4 w-4 flex-shrink-0" /> <span>7521803995</span></li>
+            <li className="flex items-start gap-3"><Phone className="mt-1 h-4 w-4 flex-shrink-0" /> <a href="tel:+917521803995" className="hover:text-foreground">7521803995</a></li>
             <li className="flex items-start gap-3"><Mail className="mt-1 h-4 w-4 flex-shrink-0" /> <a href={CONTACT.emailHref} className="hover:text-foreground">{CONTACT.email}</a></li>
             <li className="flex items-start gap-3"><MapPin className="mt-1 h-4 w-4 flex-shrink-0" />
-              <span>Commercial Unit No. 304 on 3rd Floor Royal Plaza, Block-3 in IT Park-2, at Sushant Golf City, Lucknow</span>
+              <a href="https://www.google.com/maps/search/?api=1&query=Royal+Plaza+IT+Park-2+Sushant+Golf+City+Lucknow" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">Commercial Unit No. 304 on 3rd Floor Royal Plaza, Block-3 in IT Park-2, at Sushant Golf City, Lucknow</a>
             </li>
           </ul>
         </div>

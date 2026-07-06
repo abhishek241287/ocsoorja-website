@@ -3,6 +3,7 @@
  */
 
 import { BRAND, CONTACT } from "@/data/brand";
+import { SITE } from "@/data/site";
 
 interface OrganizationSchema {
   "@context": string;
@@ -81,8 +82,8 @@ export function getOrganizationSchema(): OrganizationSchema {
     "@type": "Organization",
     name: "OCS OORJA",
     alternateName: "OCS OORJA Green Energy Solutions",
-    url: "https://www.ocsoorja.com",
-    logo: "https://www.ocsoorja.com/images/OCS_OORJA_logo_landscape.png",
+    url: SITE.url,
+    logo: `${SITE.url}/images/OCS_OORJA_logo_landscape.png`,
     description: BRAND.positioning,
     address: {
       "@type": "PostalAddress",

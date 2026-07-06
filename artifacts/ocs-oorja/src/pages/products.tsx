@@ -2,6 +2,7 @@ import { useState, useCallback, useMemo, useRef, useLayoutEffect } from "react";
 import { Link, useSearch } from "wouter";
 import { Search } from "lucide-react";
 import { Seo } from "@/components/Seo";
+import { SITE as siteConfig } from "@/data/site";
 import {
   products,
   productsSortedByDateDesc,
@@ -21,7 +22,7 @@ import {
   renderJsonLd,
 } from "@/lib/seo";
 
-const SITE = "https://www.ocsoorja.com";
+const SITE = siteConfig.url;
 
 export default function Products() {
   const sortedProducts = useMemo(() => productsSortedByDateDesc(products), []);

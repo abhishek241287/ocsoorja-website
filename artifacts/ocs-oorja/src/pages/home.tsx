@@ -9,6 +9,7 @@ import FeaturedProducts from "@/components/sections/FeaturedProducts";
 import Insights from "@/components/sections/Insights";
 import FinalCta from "@/components/sections/FinalCta";
 import { getOrganizationSchema, getLocalBusinessSchema, renderJsonLd } from "@/lib/seo";
+import { SITE } from "@/data/site";
 
 export default function Home() {
   const organizationSchema = getOrganizationSchema();
@@ -19,7 +20,7 @@ export default function Home() {
       <Seo
         title="OCS OORJA — LiFePO₄ Batteries, Inverters & EV Chargers | Lucknow"
         description="Indian manufacturer of LiFePO₄ batteries, hybrid inverters and EV chargers based in Lucknow. We supply lithium battery packs and solar energy storage systems across India."
-        canonical="https://www.ocsoorja.com/"
+        canonical={`${SITE.url}/`}
       />
       {/* Structured Data for SEO */}
       <script

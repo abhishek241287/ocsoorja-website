@@ -3,6 +3,36 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
 import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
+import fs from "fs";
+import { SITE } from "./src/data/site";
+import { products } from "./src/data/products";
+
+// Generate public/sitemap.xml from the current routes + product catalog so it
+// stays in sync automatically — adding a product never requires editing the
+// sitemap. Runs on every `vite` / `vite build` invocation.
+function generateSitemap() {
+  try {
+    const staticPaths = ["/", "/about", "/contact", "/products"];
+    const productPaths = products.map((p) => `/products/${p.slug}`);
+    const today = new Date().toISOString().slice(0, 10);
+    const urls = [...staticPaths, ...productPaths]
+      .map((p) => {
+        const priority =
+          p === "/" ? "1.0" : p.startsWith("/products/") ? "0.7" : "0.8";
+        return `  <url>\n    <loc>${SITE.url}${p}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>${priority}</priority>\n  </url>`;
+      })
+      .join("\n");
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`;
+    fs.writeFileSync(
+      path.resolve(import.meta.dirname, "public/sitemap.xml"),
+      xml,
+    );
+  } catch (err) {
+    console.warn("[sitemap] generation skipped:", err);
+  }
+}
+
+generateSitemap();
 
 const rawPort = process.env.PORT;
 

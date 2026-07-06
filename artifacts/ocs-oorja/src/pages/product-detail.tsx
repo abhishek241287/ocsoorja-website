@@ -1,4 +1,5 @@
 import { Seo } from "@/components/Seo";
+import { SITE as siteConfig } from "@/data/site";
 import { Link, useParams } from "wouter";
 import {
   getProductBySlug,
@@ -39,7 +40,7 @@ import {
 } from "@/lib/seo";
 import { HEADLINES, CTAS } from "@/data/brand";
 
-const SITE = "https://www.ocsoorja.com";
+const SITE = siteConfig.url;
 
 // Map the lucide icon NAME stored in family data to its component (UI layer).
 const FAMILY_ICONS: Record<string, LucideIcon> = {

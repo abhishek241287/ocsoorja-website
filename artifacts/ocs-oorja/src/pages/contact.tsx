@@ -1,4 +1,5 @@
 import { Seo } from "@/components/Seo";
+import { SITE } from "@/data/site";
 import { Container } from "@/components/layout/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import ContactForm from "@/components/contact/ContactForm";
@@ -11,7 +12,7 @@ export default function ContactPage() {
       <Seo
         title="Contact Us - OCS OORJA | LiFePO₄ Battery Manufacturer Lucknow"
         description={`${BRAND.positioning} Request a quote for hybrid solar inverters, LiFePO₄ batteries, energy storage, or EV chargers — Phone: 7521803995 | Email: ${CONTACT.email}`}
-        canonical="https://www.ocsoorja.com/contact"
+        canonical={`${SITE.url}/contact`}
       />
       <Container>
         <SectionHeading

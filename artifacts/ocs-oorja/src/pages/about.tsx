@@ -1,4 +1,5 @@
 import { Seo } from "@/components/Seo";
+import { SITE } from "@/data/site";
 import { Container } from "@/components/layout/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { CheckCircle2, Leaf, ShieldCheck, Cpu, Sparkles, ArrowRight } from "lucide-react";
@@ -11,7 +12,7 @@ export default function AboutPage() {
       <Seo
         title="About OCS OORJA"
         description={`${BRAND.positioning} Learn about our engineering expertise, capabilities, and commitment to safe, reliable clean-energy systems.`}
-        canonical="https://www.ocsoorja.com/about"
+        canonical={`${SITE.url}/about`}
       />
       <Container>
         <SectionHeading

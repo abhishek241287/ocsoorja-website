@@ -6,3 +6,4 @@
 - [TS data eval in sandbox](ts-data-extraction-in-sandbox.md) — code_execution can't import workspace deps; read the data file as text, bracket-aware scan the literal, then eval to get values.
 - [wouter scroll restoration](wouter-scroll-restoration.md) — key each history entry (not a pop flag), restore in useLayoutEffect, re-apply on rAF since the Back commit isn't full-height yet.
 - [wouter Link breaks mailto:/tel:](wouter-link-external-schemes.md) — non-http hrefs must use plain <a>; wouter <Link> pushState-intercepts them so the link silently does nothing.
+- [SEO & launch config](ocs-oorja-seo-launch.md) — site.ts is single source for url/GA4/Search-Console (empty=off); sitemap generated in vite.config from product data, so editing a product restarts the dev server.
