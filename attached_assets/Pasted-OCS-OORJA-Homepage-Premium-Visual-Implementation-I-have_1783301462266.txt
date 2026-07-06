@@ -1,0 +1,318 @@
+OCS OORJA Homepage Premium Visual Implementation
+
+I have uploaded the final approved homepage images.
+
+Use ONLY these uploaded images.
+
+Do NOT search for stock photography.
+
+Do NOT replace them with AI-generated images.
+
+Do NOT download any other photos.
+
+These uploaded images are now the official visual assets for the homepage.
+
+Image Folder
+
+Save every uploaded image inside
+
+public/images/home/
+
+using the exact filenames shown below.
+
+01-hero-solar-panels-sunrise.jpg
+
+02-hero-hybrid-inverter.jpg
+
+03-hero-lifepo4-battery.jpg
+
+04-hero-ev-charging.jpg
+
+05-hero-home-energy.jpg
+
+06-industry-residential-solar.jpg
+
+07-industry-commercial-building.jpg
+
+08-industry-industrial-plant.jpg
+
+09-industry-agriculture-pump.jpg
+
+10-industry-ev-charging.jpg
+
+11-industry-telecom-tower.jpg
+
+12-industry-logistics-warehouse.jpg
+
+13-manufacturing-engineering-design.jpg
+
+14-manufacturing-smt-assembly-line.jpg
+
+15-manufacturing-testing-lab.jpg
+
+16-manufacturing-quality-inspection.jpg
+
+17-manufacturing-packaging.jpg
+
+18-manufacturing-dispatch.jpg
+
+19-team-ocs-oorja.jpg
+
+20-sustainability-green-future.jpg
+Hero
+
+Keep the cinematic background.
+
+Remove every rotating product card.
+
+Remove the floating product slider.
+
+Instead create one premium energy ecosystem panel.
+
+Use
+
+02-hero-hybrid-inverter.jpg
+
+03-hero-lifepo4-battery.jpg
+
+04-hero-ev-charging.jpg
+
+05-hero-home-energy.jpg
+
+Display them as one connected ecosystem.
+
+Solar
+
+↓
+
+Hybrid Inverter
+
+↓
+
+Battery Storage
+
+↓
+
+EV Charging
+
+The hero should sell the company, not individual products.
+
+Industries Section
+
+Replace icons completely.
+
+Every industry card must use a real image.
+
+Residential
+
+→
+
+06-industry-residential-solar.jpg
+
+Commercial
+
+→
+
+07-industry-commercial-building.jpg
+
+Industrial
+
+→
+
+08-industry-industrial-plant.jpg
+
+Agriculture
+
+→
+
+09-industry-agriculture-pump.jpg
+
+EV Charging
+
+→
+
+10-industry-ev-charging.jpg
+
+Telecom
+
+→
+
+11-industry-telecom-tower.jpg
+
+Logistics
+
+→
+
+12-industry-logistics-warehouse.jpg
+
+Each card should have
+
+• rounded corners
+
+• dark overlay
+
+• white text
+
+• subtle hover animation
+
+No icons.
+
+Manufacturing Excellence
+
+Replace every image.
+
+Engineering
+
+→
+
+13-manufacturing-engineering-design.jpg
+
+Manufacturing
+
+→
+
+14-manufacturing-smt-assembly-line.jpg
+
+Testing
+
+→
+
+15-manufacturing-testing-lab.jpg
+
+Quality Inspection
+
+→
+
+16-manufacturing-quality-inspection.jpg
+
+Packaging
+
+→
+
+17-manufacturing-packaging.jpg
+
+Dispatch
+
+→
+
+18-manufacturing-dispatch.jpg
+
+All cards should have the same height.
+
+Same image ratio.
+
+Premium industrial appearance.
+
+Team Section
+
+Add a new section before the final CTA.
+
+Use
+
+19-team-ocs-oorja.jpg
+
+Title
+
+Meet the OCS OORJA Team
+
+Subtitle
+
+Engineering, manufacturing and customer support working together to build reliable energy solutions.
+
+Sustainability Section
+
+Add a slim premium banner above the footer.
+
+Use
+
+20-sustainability-green-future.jpg
+
+Heading
+
+Building India's Cleaner Energy Future
+
+Text
+
+Supporting India's transition to clean, reliable and sustainable energy through advanced power electronics, lithium energy storage and EV charging infrastructure.
+
+Featured Products
+
+Remove the discontinued
+
+Hybrid Solar Inverter 1600W
+
+from the homepage.
+
+Do not replace it.
+
+Only show products with real photos.
+
+Hide products without images.
+
+Blog / Insights
+
+Currently the section shows only cards.
+
+Instead:
+
+Create three complete featured articles.
+
+Each article must contain
+
+• Cover image
+
+• Category
+
+• Date
+
+• Author
+
+• 3–5 minute reading time
+
+• Summary
+
+Clicking
+
+Read More
+
+should open a premium modal.
+
+No external page.
+
+No dead links.
+
+Visual Quality Rules
+
+Never stretch images.
+
+Crop consistently.
+
+Use object-cover.
+
+WebP where possible.
+
+Lazy-load below-the-fold images.
+
+Maintain equal spacing.
+
+Use premium hover effects only.
+
+No glassmorphism.
+
+No neon.
+
+No AI glow.
+
+No oversized shadows.
+
+Important
+
+Do NOT search for any more images.
+
+Only use the uploaded images.
+
+If any image is missing,
+
+leave that section unchanged instead of replacing it with another stock image.
+
+Verify the homepage at Desktop, Tablet and Mobile before finishing.
