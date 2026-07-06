@@ -108,3 +108,9 @@ id = "ocq_6oz3lQEvmwEfE9Mdx"
 uri = "file://attached_assets/stock_images/manufacturing-quality-inspection.jpg"
 type = "image"
 title = "worker inspecting electronic circuit boards in a factory"
+
+[[outputs]]
+id = "yHU3HU3SZT3Hj_vgYJhL1"
+uri = "file://artifacts/ocs-oorja/.local/screenshots/testimonials-verification.png"
+type = "image"
+title = "Customer Success section — all 3 testimonials visible (3-column desktop grid)"
