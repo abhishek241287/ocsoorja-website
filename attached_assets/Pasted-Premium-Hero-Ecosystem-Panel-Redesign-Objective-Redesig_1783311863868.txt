@@ -1,0 +1,144 @@
+Premium Hero Ecosystem Panel Redesign
+Objective
+
+Redesign ONLY the right-side "One Energy Ecosystem" panel in the homepage hero.
+
+Keep the current hero background video, left-side heading, CTA buttons, and layout exactly as they are.
+
+Do not redesign any other homepage section.
+
+Problems with the current panel
+Images are too small.
+Too much text.
+Looks like a specification list instead of a premium manufacturer showcase.
+Doesn't immediately communicate the complete OCS ecosystem.
+Card is too tall.
+New Design
+
+The panel should feel like something from:
+
+Schneider Electric
+ABB
+Sungrow
+Delta
+Siemens Energy
+
+Minimal.
+
+Premium.
+
+Engineering-focused.
+
+Layout
+
+Use a clean white rounded card.
+
+Inside the card show 4 large visual blocks.
+
+Each block contains:
+
+Large square image (80–100 px)
+Product title
+One short description only
+
+Example:
+
+☀ Solar Generation
+High-efficiency solar energy
+
+↓
+
+⚡ Hybrid Inverter
+Smart energy conversion
+
+↓
+
+🔋 LiFePO₄ Battery Storage
+Reliable long-life backup
+
+↓
+
+🚗 EV Charging
+Fast AC & DC charging
+
+Use subtle arrows or connecting lines between blocks to show the energy flow.
+
+Images
+
+Use the official OCS images already uploaded.
+
+Do NOT use icons.
+
+Do NOT use stock illustrations.
+
+Images should be much larger than the current version.
+
+Rounded corners.
+
+Equal size.
+
+Text
+
+Keep descriptions under 10 words.
+
+No paragraphs.
+
+No technical specifications.
+
+Bottom Trust Badge
+
+At the bottom of the card show only:
+
+✔ Designed & Manufactured in Lucknow, India
+
+Remove:
+
+Homes
+Industries
+Commercial
+
+These tags add clutter.
+
+Styling
+White background
+Thin border
+Soft shadow only
+24px padding
+16px spacing
+Premium typography
+Large images
+Green accent only where necessary
+
+No glassmorphism.
+
+No gradients.
+
+No glow.
+
+No neon.
+
+No oversized shadows.
+
+Constraints
+
+Modify only the Hero Ecosystem panel.
+
+Do not change:
+
+Hero background
+Left headline
+CTA buttons
+Navigation
+Any other homepage section
+Product data
+Routing
+SEO
+Acceptance Criteria
+Card height reduced by approximately 20–25%.
+Images become the visual focus.
+Text reduced by approximately 60%.
+User understands the complete OCS energy ecosystem within 3 seconds.
+Looks comparable to premium industrial technology brands rather than an e-commerce product list.
+Fully responsive.
+No layout regressions.
+Typecheck passes.

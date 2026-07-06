@@ -170,27 +170,26 @@ export const HERO_ECOSYSTEM = {
   nodes: [
     {
       label: "Solar Generation",
-      note: "Capture clean solar power with high-efficiency MPPT.",
+      note: "High-efficiency solar energy",
       image: "/images/hero/solar-panels.jpg",
     },
     {
-      label: "Hybrid Inverters",
-      note: "Convert and manage power intelligently, around the clock.",
+      label: "Hybrid Inverter",
+      note: "Smart energy conversion",
       productSlug: "solar-hybrid-inverter-48v-6kw",
     },
     {
-      label: "LiFePO₄ Storage",
-      note: "Store safely with long, dependable cycle life.",
+      label: "LiFePO₄ Battery Storage",
+      note: "Reliable long-life backup",
       productSlug: "12v-100ah-home-power-storage",
     },
     {
       label: "EV Charging",
-      note: "Power mobility with AC and DC fast charging.",
+      note: "Fast AC & DC charging",
       productSlug: "ev-charger-ac",
     },
   ] as EcosystemNode[],
-  applications: ["Homes", "Industries", "Commercial"],
-  badge: "Designed & built in-house · Lucknow, India",
+  badge: "Designed & Manufactured in Lucknow, India",
 } as const;
 
 // --- Final call-to-action banner ---------------------------------------------
