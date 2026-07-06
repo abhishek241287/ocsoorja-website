@@ -1,10 +1,11 @@
 import {
+  IndianRupee,
   Factory,
-  ShieldCheck,
-  BatteryCharging,
-  BadgeCheck,
+  Cpu,
   Headphones,
   Settings2,
+  Truck,
+  ShieldCheck,
   type LucideIcon,
 } from "lucide-react";
 import { Container } from "@/components/layout/Container";
@@ -12,14 +13,15 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { HOME_SECTIONS, WHY_OCS_OORJA } from "@/data/home";
 
 // Resolve an icon NAME (stored in data) to a lucide component here in the UI
-// layer. Components are never stored in the data files.
+// layer. Components are never stored in the data files. When you add a new icon
+// NAME in src/data/home.ts, add it here too (import + map entry).
 const iconByName: Record<string, LucideIcon> = {
+  IndianRupee,
   Factory,
-  ShieldCheck,
-  BatteryCharging,
-  BadgeCheck,
+  Cpu,
   Headphones,
   Settings2,
+  Truck,
 };
 
 export default function WhyOcsOorja() {

@@ -18,3 +18,93 @@ id = "cb8CQEItCG4HKxOSOHIyQ"
 uri = "file://artifacts/ocs-oorja/HOW-TO-UPDATE-WEBSITE.md"
 type = "text"
 title = "OCS OORJA Website Update Guide"
+
+[[outputs]]
+id = "hCfuteB9ijYSCFXjAHRxR"
+uri = "file://attached_assets/stock_images/industries-agriculture.jpg"
+type = "image"
+title = "solar powered irrigation water pump in a green agricultural farm field, rural, sunny day"
+
+[[outputs]]
+id = "HwlvhPxUO66gI0LGywx94"
+uri = "file://attached_assets/stock_images/industries-ev-infrastructure.jpg"
+type = "image"
+title = "electric vehicles charging at a modern public EV charging station, clean energy mobility"
+
+[[outputs]]
+id = "vITZUXYehQESvbxM4TrVr"
+uri = "file://attached_assets/stock_images/industries-telecom.jpg"
+type = "image"
+title = "telecommunications cell tower at dusk with clear sky, telecom infrastructure"
+
+[[outputs]]
+id = "xP6kP1J2zPTeHwde0H5Qu"
+uri = "file://attached_assets/stock_images/manufacturing-delivery.jpg"
+type = "image"
+title = "logistics warehouse workers loading packaged boxes onto a delivery truck, dispatch and shipping"
+
+[[outputs]]
+id = "On3a22FXn69xM6wXRt3-g"
+uri = "file://attached_assets/stock_images/articles-hybrid-solar-inverter.jpg"
+type = "image"
+title = "wall mounted hybrid solar inverter connected to a home solar power system, clean installation"
+
+[[outputs]]
+id = "7pgEB8Gw0x5u4WHravbXo"
+uri = "file://attached_assets/stock_images/manufacturing-manufacturing.jpg"
+type = "image"
+title = "automated electronics and battery assembly line in a clean modern factory, production manufacturing"
+
+[[outputs]]
+id = "5xRb1sc-Nfl0zFICHvzYy"
+uri = "file://attached_assets/stock_images/articles-ac-vs-dc-ev-chargers.jpg"
+type = "image"
+title = "electric car plugged into a DC fast charging station, EV charging cable close up"
+
+[[outputs]]
+id = "b0hMnpqZdNj3Urt3d2St-"
+uri = "file://attached_assets/stock_images/hero-solar-panels.jpg"
+type = "image"
+title = "aerial view of a large solar panel farm array at sunrise, clean renewable energy, premium wide shot"
+
+[[outputs]]
+id = "7xuqEBznEPGPTopBQfxMS"
+uri = "file://attached_assets/stock_images/articles-lifepo4-vs-lead-acid.jpg"
+type = "image"
+title = "close up of a modern lithium iron phosphate LiFePO4 battery energy storage pack"
+
+[[outputs]]
+id = "BDdxkue94x3Hw12SExM1H"
+uri = "file://attached_assets/stock_images/industries-residential-solar.jpg"
+type = "image"
+title = "rooftop solar panels on a modern residential house, home solar installation, sunny day"
+
+[[outputs]]
+id = "aSEYjW-hYqFhKofcrphOR"
+uri = "file://attached_assets/stock_images/industries-commercial-buildings.jpg"
+type = "image"
+title = "modern commercial office building exterior with blue sky"
+
+[[outputs]]
+id = "MF9FsPXYC1C40KSDC5gFM"
+uri = "file://attached_assets/stock_images/industries-industrial-plants.jpg"
+type = "image"
+title = "large modern factory industrial building exterior"
+
+[[outputs]]
+id = "MA-LXc52KIJk5BYLM6jSA"
+uri = "file://attached_assets/stock_images/manufacturing-engineering.jpg"
+type = "image"
+title = "engineers working on electronics design in a modern laboratory"
+
+[[outputs]]
+id = "8MPbRGbelpwrLGojgWU9N"
+uri = "file://attached_assets/stock_images/manufacturing-testing.jpg"
+type = "image"
+title = "engineer testing electronics with laboratory instruments"
+
+[[outputs]]
+id = "ocq_6oz3lQEvmwEfE9Mdx"
+uri = "file://attached_assets/stock_images/manufacturing-quality-inspection.jpg"
+type = "image"
+title = "worker inspecting electronic circuit boards in a factory"

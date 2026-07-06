@@ -2,10 +2,10 @@ import { Seo } from "@/components/Seo";
 import Hero from "@/components/sections/Hero";
 import WhyOcsOorja from "@/components/sections/WhyOcsOorja";
 import Industries from "@/components/sections/Industries";
-import FeaturedProducts from "@/components/sections/FeaturedProducts";
-import Testimonials from "@/components/sections/Testimonials";
 import ManufacturingExcellence from "@/components/sections/ManufacturingExcellence";
 import CertificationsStrip from "@/components/sections/CertificationsStrip";
+import Testimonials from "@/components/sections/Testimonials";
+import FeaturedProducts from "@/components/sections/FeaturedProducts";
 import Insights from "@/components/sections/Insights";
 import FinalCta from "@/components/sections/FinalCta";
 import { getOrganizationSchema, getLocalBusinessSchema, renderJsonLd } from "@/lib/seo";
@@ -31,14 +31,16 @@ export default function Home() {
         dangerouslySetInnerHTML={renderJsonLd(localBusinessSchema)}
       />
 
+      {/* Company-first flow: who we are → who we serve → how we build →
+          proof (certifications + customers) → products → expertise → CTA. */}
       <div>
         <Hero />
         <WhyOcsOorja />
         <Industries />
-        <FeaturedProducts />
-        <Testimonials />
         <ManufacturingExcellence />
         <CertificationsStrip />
+        <Testimonials />
+        <FeaturedProducts />
         <Insights />
         <FinalCta />
       </div>

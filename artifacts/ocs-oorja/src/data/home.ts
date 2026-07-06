@@ -8,6 +8,8 @@
 //   • icon  — a lucide-react icon NAME (a string). The UI layer maps the name to
 //             a real icon component, so this file stays plain, editable data.
 //             Browse names at https://lucide.dev/icons.
+//   • image — a path under public/ (e.g. "/images/manufacturing/testing.jpg").
+//             Replace the file at that path to change the picture — no code edit.
 //   • This file has no imports on purpose, so it stays easy and safe to edit.
 //
 // Product-specific copy lives in src/data/products/. Shared brand wording (hero,
@@ -38,15 +40,21 @@ export const HOME_SECTIONS = {
   },
   manufacturing: {
     eyebrow: "Manufacturing Excellence",
-    title: "Made in our own facility, tested end to end",
+    title: "Engineered, built and tested under one roof",
     subtitle:
-      "Every OCS OORJA system is built and quality-checked in-house in Lucknow — from cell selection to final dispatch.",
+      "From engineering and in-house manufacturing to rigorous testing, quality inspection and dispatch — every OCS OORJA system is verified before it leaves Lucknow.",
   },
   certifications: {
     eyebrow: "Certifications & Standards",
     title: "Quality you can verify",
     subtitle:
       "Our products and processes are built to recognised safety and quality standards.",
+  },
+  testimonials: {
+    eyebrow: "Customer Success",
+    title: "Trusted by teams across India",
+    subtitle:
+      "From e-mobility fleets to solar EPCs and OEM partners — here's what our customers say about working with OCS OORJA.",
   },
   insights: {
     eyebrow: "Latest Insights",
@@ -61,71 +69,73 @@ export type HomeFeature = { icon: string; title: string; description: string };
 
 export const WHY_OCS_OORJA: HomeFeature[] = [
   {
+    icon: "IndianRupee",
+    title: "Factory-Direct Pricing",
+    description:
+      "Buy straight from the manufacturer — engineering-grade quality without distributor markups.",
+  },
+  {
     icon: "Factory",
-    title: "Factory-Direct Manufacturing",
+    title: "Indian Manufacturing",
     description:
-      "Built in our own Lucknow facility and sold factory-direct — engineering-grade quality without distributor markups.",
+      "Designed and built in our own Lucknow facility for real Indian grid, voltage and heat conditions.",
   },
   {
-    icon: "ShieldCheck",
-    title: "Engineered for Indian Conditions",
+    icon: "Cpu",
+    title: "Advanced BMS",
     description:
-      "Designed and tested for real Indian grid, voltage and temperature realities — from high-heat summers to unstable supply.",
-  },
-  {
-    icon: "BatteryCharging",
-    title: "Safe LiFePO₄ Technology",
-    description:
-      "Grade-A LiFePO₄ cells with robust BMS and thermal protection for long, safe and dependable service life.",
-  },
-  {
-    icon: "BadgeCheck",
-    title: "Certified Quality",
-    description:
-      "Products built to recognised safety and quality standards — UN 38.3, IEC 62133 and ISO-certified systems.",
+      "Grade-A LiFePO₄ cells with an intelligent battery management system and thermal protection for long, safe service life.",
   },
   {
     icon: "Headphones",
-    title: "Responsive Technical Support",
+    title: "Engineering Support",
     description:
-      "In-house engineers for sizing, product selection, installation and after-sales support across India.",
+      "In-house engineers help with sizing, product selection, installation and after-sales support.",
   },
   {
     icon: "Settings2",
-    title: "OEM & Custom Solutions",
+    title: "Custom Solutions",
     description:
-      "Custom battery packs and power systems engineered to your voltage, capacity and form-factor requirements.",
+      "OEM and custom battery packs and power systems built to your voltage, capacity and form-factor needs.",
+  },
+  {
+    icon: "Truck",
+    title: "Pan-India Delivery",
+    description:
+      "Reliable dispatch and logistics to sites across India, backed by clear documentation and support.",
   },
 ];
 
-// --- "Manufacturing Excellence" — five process steps -------------------------
-export type ManufacturingStep = { icon: string; title: string; body: string };
+// --- "Manufacturing Excellence" — five-stage process timeline ----------------
+// Each stage renders one step of the homepage manufacturing timeline. Replace
+// the image file at `image` to change the picture — no code changes needed.
+export type ManufacturingStep = { title: string; body: string; image: string };
 
 export const MANUFACTURING_STEPS: ManufacturingStep[] = [
   {
-    icon: "Factory",
-    title: "In-House Assembly",
-    body: "Inverters and power systems are assembled and burned-in at our Lucknow facility under strict process control.",
+    title: "Engineering",
+    body: "Our engineers design power electronics and battery systems tuned to Indian grid, voltage and temperature conditions.",
+    image: "/images/manufacturing/engineering.jpg",
   },
   {
-    icon: "BatteryCharging",
-    title: "LiFePO₄ Battery Pack Production",
-    body: "Grade-A prismatic cells are matched, welded and paired with an intelligent BMS into rugged, long-cycle-life packs.",
+    title: "Manufacturing",
+    body: "Inverters and LiFePO₄ packs are assembled on controlled production lines at our Lucknow facility.",
+    image: "/images/manufacturing/manufacturing.jpg",
   },
   {
-    icon: "ClipboardCheck",
-    title: "Testing & Quality Control",
-    body: "Every unit passes electrical, thermal and safety testing before dispatch — no shortcuts on reliability.",
+    title: "Testing",
+    body: "Every unit undergoes electrical, thermal and safety testing to validate real-world performance.",
+    image: "/images/manufacturing/testing.jpg",
   },
   {
-    icon: "Ruler",
-    title: "Engineering & Sizing Support",
-    body: "Our engineers help size systems and integrate them into solar, telecom, e-mobility and industrial applications.",
+    title: "Quality Inspection",
+    body: "Multi-point inspection checks welds, BMS behaviour and finish before a unit is cleared for dispatch.",
+    image: "/images/manufacturing/quality-inspection.jpg",
   },
   {
-    icon: "Wrench",
-    title: "OEM & Custom Manufacturing",
-    body: "Scalable capacity for OEM partners who need custom voltage, capacity and form-factor power solutions.",
+    title: "Delivery",
+    body: "Cleared units are packed and dispatched pan-India with full documentation and after-sales support.",
+    image: "/images/manufacturing/delivery.jpg",
   },
 ];
 
@@ -134,45 +144,52 @@ export const MANUFACTURING_STEPS: ManufacturingStep[] = [
 // product `slug` from src/data/products/. To feature a different product, swap
 // the slug — no code changes needed.
 export const FEATURED_PRODUCT_SLUGS: string[] = [
-  "mppt-solar-inverter-12v-1600w", // Hybrid inverter
-  "solar-hybrid-inverter-48v-6kw", // Hybrid inverter
+  "solar-hybrid-inverter-48v-6kw", // Hybrid solar inverter
   "lithium-inverter-ocs-li-1000", // Inbuilt lithium inverter
-  "12v-100ah-home-power-storage", // LiFePO₄ battery
+  "12v-100ah-home-power-storage", // LiFePO₄ battery (12V)
+  "24v-100ah-home-power-storage", // LiFePO₄ battery (24V)
   "ev-charger-ac", // AC EV charger
   "ev-charger-dc-fast", // DC fast charger
 ];
 
 // --- Hero "energy ecosystem" visual ------------------------------------------
-// The hero's right-hand visual: an at-a-glance map of the complete OCS OORJA
-// energy ecosystem (generate → convert → store → charge). Edit the nodes here;
-// icons are lucide NAME strings resolved in the UI layer.
-export type EcosystemNode = { icon: string; label: string; note: string };
+// The hero's right-hand visual: a premium, at-a-glance map of the complete
+// OCS OORJA energy ecosystem (generate → convert → store → charge). Each stage
+// shows a real image: either a product photo (via `productSlug`, resolved from
+// the catalogue) or a direct `image` path under public/.
+export type EcosystemNode = {
+  label: string;
+  note: string;
+  productSlug?: string; // resolves to that product's photo from the catalogue
+  image?: string; // direct public/ path (used when there is no productSlug)
+};
 
 export const HERO_ECOSYSTEM = {
   eyebrow: "Integrated System",
   title: "One energy ecosystem, engineered end-to-end",
   nodes: [
     {
-      icon: "SunMedium",
       label: "Solar Generation",
       note: "Capture clean solar power with high-efficiency MPPT.",
+      image: "/images/hero/solar-panels.jpg",
     },
     {
-      icon: "Cpu",
       label: "Hybrid Inverters",
-      note: "Convert and manage power intelligently, 24/7.",
+      note: "Convert and manage power intelligently, around the clock.",
+      productSlug: "solar-hybrid-inverter-48v-6kw",
     },
     {
-      icon: "BatteryCharging",
       label: "LiFePO₄ Storage",
       note: "Store safely with long, dependable cycle life.",
+      productSlug: "12v-100ah-home-power-storage",
     },
     {
-      icon: "PlugZap",
       label: "EV Charging",
       note: "Power mobility with AC and DC fast charging.",
+      productSlug: "ev-charger-ac",
     },
   ] as EcosystemNode[],
+  applications: ["Homes", "Industries", "Commercial"],
   badge: "Designed & built in-house · Lucknow, India",
 } as const;
 

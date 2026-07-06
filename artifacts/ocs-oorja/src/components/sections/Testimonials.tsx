@@ -1,95 +1,66 @@
-
-
+import { Star } from "lucide-react";
 import { testimonials } from "@/data/testimonials";
 import { Container } from "@/components/layout/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { TestimonialsColumn, type TestimonialItem } from "@/components/ui/testimonials-columns-1";
-import { motion } from "framer-motion";
+import { HOME_SECTIONS } from "@/data/home";
+
+function initials(name: string): string {
+  return name
+    .split(" ")
+    .map((part) => part[0])
+    .filter(Boolean)
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+}
 
 export default function Testimonials() {
-  // Map existing testimonials to gender-aware avatar metadata
-  const base: TestimonialItem[] = testimonials.map((t) => ({
-    text: t.quote,
-    name: t.author,
-    role: `${t.role} • ${t.company}`,
-    gender: t.gender,
-  }));
-
-  // Add a few more items to create 9 entries total for 3 columns
-  const extras: TestimonialItem[] = [
-    {
-      text:
-        "Implementation was smooth and the team was responsive. We saw measurable efficiency gains in weeks.",
-      name: "Ananya Gupta",
-      role: "Program Manager • GridWorks",
-      gender: "female",
-    },
-    {
-      text:
-        "Excellent cycle life and thermal performance. Documentation made compliance straightforward.",
-      name: "Rahul Mehta",
-      role: "Head of QA • ElectroFab",
-      gender: "male",
-    },
-    {
-      text:
-        "Great support during our pilot. The packs integrated cleanly with our existing BMS tooling.",
-      name: "Neha Sharma",
-      role: "Engineering Lead • SwiftEV",
-      gender: "female",
-    },
-    {
-      text:
-        "Their ESS deployment helped us ride out peak demand reliably—fantastic stability under load.",
-      name: "Vikram Singh",
-      role: "OPS Director • UrbanGrid",
-      gender: "male",
-    },
-    {
-      text:
-        "We appreciated the fast iterations and willingness to co-design interfaces to our needs.",
-      name: "Priya Nair",
-      role: "Product Manager • RoboWorks",
-      gender: "female",
-    },
-    {
-      text:
-        "From sampling to ramp, the experience was top-notch. Highly recommended team and tech.",
-      name: "Arjun Desai",
-      role: "Founder • VoltEdge Labs",
-      gender: "male",
-    },
-  ];
-
-  const all: TestimonialItem[] = [...base, ...extras].slice(0, 9);
-  const firstColumn = all.slice(0, 3);
-  const secondColumn = all.slice(3, 6);
-  const thirdColumn = all.slice(6, 9);
-
   return (
-    <section className="py-12 md:py-16 bg-background relative">
+    <section className="py-16 md:py-24">
       <Container>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-          viewport={{ once: true }}
-          className="flex flex-col items-center justify-center max-w-[540px] mx-auto"
-        >
-          <SectionHeading
-            eyebrow="Testimonials"
-            title="What our users say"
-            subtitle="See what our customers have to say about us."
-          />
-        </motion.div>
+        <SectionHeading
+          eyebrow={HOME_SECTIONS.testimonials.eyebrow}
+          title={HOME_SECTIONS.testimonials.title}
+          subtitle={HOME_SECTIONS.testimonials.subtitle}
+        />
 
-        <div className="flex justify-center gap-6 mt-10 [mask-image:linear-gradient(to_bottom,transparent,black_25%,black_75%,transparent)] max-h-[740px] overflow-hidden">
-          <TestimonialsColumn testimonials={firstColumn} duration={15} />
-          <TestimonialsColumn testimonials={secondColumn} className="hidden md:block" duration={19} />
-          <TestimonialsColumn testimonials={thirdColumn} className="hidden lg:block" duration={17} />
+        <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
+          {testimonials.map((t) => (
+            <figure
+              key={t.author}
+              className="flex flex-col rounded-2xl border border-card-border bg-card p-8 shadow-sm"
+            >
+              <div
+                className="flex gap-0.5 text-amber-400"
+                aria-label="Rated 5 out of 5"
+              >
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Star key={i} className="h-4 w-4 fill-current" aria-hidden="true" />
+                ))}
+              </div>
+              <blockquote className="mt-5 flex-1 text-base leading-relaxed text-foreground">
+                “{t.quote}”
+              </blockquote>
+              <figcaption className="mt-6 flex items-center gap-4 border-t border-border pt-6">
+                <div
+                  className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary-strong"
+                  aria-hidden="true"
+                >
+                  {initials(t.author)}
+                </div>
+                <div>
+                  <div className="text-sm font-semibold text-foreground">
+                    {t.author}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    {t.role} · {t.company}
+                  </div>
+                </div>
+              </figcaption>
+            </figure>
+          ))}
         </div>
       </Container>
     </section>
   );
 }
-

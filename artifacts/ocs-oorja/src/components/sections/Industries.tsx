@@ -1,29 +1,9 @@
 import { Link } from "wouter";
-import {
-  Home,
-  Building2,
-  SunMedium,
-  Zap,
-  RadioTower,
-  Wrench,
-  ArrowRight,
-  type LucideIcon,
-} from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { HOME_SECTIONS } from "@/data/home";
 import { industries } from "@/data/industries";
-
-// Resolve an icon NAME (stored in data) to a lucide component here in the UI
-// layer. Components are never stored in the data files.
-const iconByName: Record<string, LucideIcon> = {
-  Home,
-  Building2,
-  SunMedium,
-  Zap,
-  RadioTower,
-  Wrench,
-};
 
 export default function Industries() {
   return (
@@ -36,33 +16,41 @@ export default function Industries() {
         />
 
         <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {industries.map((industry) => {
-            const Icon = iconByName[industry.icon] ?? Building2;
-            return (
-              <Link
-                key={industry.id}
-                href={industry.href}
-                className="group flex flex-col gap-4 rounded-2xl border border-card-border bg-card p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg motion-reduce:transition-none motion-reduce:hover:translate-y-0"
-              >
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-card-border bg-primary/5">
-                  <Icon className="h-6 w-6 text-primary-strong" aria-hidden="true" />
-                </div>
-                <h3 className="text-lg font-semibold tracking-tight text-foreground">
+          {industries.map((industry) => (
+            <Link
+              key={industry.id}
+              href={industry.href}
+              className="group flex flex-col overflow-hidden rounded-2xl border border-card-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+            >
+              <div className="relative aspect-[16/10] overflow-hidden">
+                <img
+                  src={industry.image}
+                  alt={industry.name}
+                  loading="lazy"
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none"
+                />
+                <div
+                  className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"
+                  aria-hidden="true"
+                />
+                <h3 className="absolute inset-x-4 bottom-3 text-lg font-semibold tracking-tight text-white">
                   {industry.name}
                 </h3>
+              </div>
+              <div className="flex flex-1 flex-col p-5">
                 <p className="text-sm leading-relaxed text-muted-foreground">
                   {industry.description}
                 </p>
-                <span className="mt-auto inline-flex items-center gap-1.5 pt-2 text-sm font-medium text-primary-strong">
+                <span className="mt-4 inline-flex items-center gap-1.5 pt-1 text-sm font-medium text-primary-strong">
                   Explore solutions
                   <ArrowRight
                     className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 motion-reduce:transition-none"
                     aria-hidden="true"
                   />
                 </span>
-              </Link>
-            );
-          })}
+              </div>
+            </Link>
+          ))}
         </div>
       </Container>
     </section>

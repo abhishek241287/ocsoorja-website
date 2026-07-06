@@ -1,0 +1,312 @@
+Homepage Premium Redesign (Final)
+Objective
+
+Redesign ONLY the Homepage of the OCS OORJA website.
+
+The Design System (#4), Product Information Management (#3), Brand Communication (#5), and Header (#2) are complete.
+
+This task is purely customer-facing.
+
+The homepage should look like the website of a premium Indian manufacturer, not an online product catalogue.
+
+Think Schneider Electric, ABB, Siemens Energy, Delta Electronics, Exide Energy, Waaree, Tata Power Solar, not an ecommerce store.
+
+IMPORTANT
+
+The homepage must sell OCS OORJA as a company first.
+
+Products are only one part of the story.
+
+The visitor should immediately understand:
+
+• Who we are
+
+• What we manufacture
+
+• Why we are different
+
+• Which industries we serve
+
+• Why customers trust us
+
+• Then explore products.
+
+Product Changes
+
+The old 1600W Hybrid Solar Inverter has been discontinued.
+
+Remove it completely from:
+
+Homepage
+Hero
+Featured Products
+Any slider
+Any showcase
+
+Do NOT create a replacement product.
+
+Leave the catalogue exactly as-is otherwise.
+
+Hero
+
+Remove the rotating product showcase.
+
+Replace it with a premium manufacturer presentation.
+
+The right side should show a visual ecosystem using high-quality visuals.
+
+Example flow:
+
+Solar Panels
+
+↓
+
+Hybrid Solar Inverter
+
+↓
+
+LiFePO₄ Battery
+
+↓
+
+EV Charging
+
+↓
+
+Homes • Industries • Commercial Buildings
+
+Use premium illustrations or royalty-free engineering visuals.
+
+Do NOT use simple outline icons.
+
+Do NOT use cartoon icons.
+
+Use clean industrial visuals.
+
+Remove Catalogue Feel
+
+The homepage currently shows products too many times.
+
+Reduce this.
+
+Products should appear only once on the homepage.
+
+Only ONE Featured Products section.
+
+6 featured products maximum.
+
+Everything else should focus on OCS OORJA.
+
+Replace Product-heavy Sections With Company Sections
+
+Add sections like:
+
+Why Choose OCS OORJA
+
+Factory Direct
+
+Indian Manufacturing
+
+Advanced BMS
+
+Engineering Support
+
+Custom Solutions
+
+Pan India Delivery
+
+Industries We Serve
+
+Use premium photographs instead of icons.
+
+Examples:
+
+Residential Solar
+
+Commercial Buildings
+
+Industrial Plants
+
+Hospitals
+
+Schools
+
+Hotels
+
+Warehouses
+
+Factories
+
+Telecom
+
+Agriculture
+
+EV Infrastructure
+
+Solar EPC
+
+Each card should have a beautiful real-world image.
+
+Manufacturing Excellence
+
+Professional timeline.
+
+Example:
+
+Engineering
+
+↓
+
+Manufacturing
+
+↓
+
+Testing
+
+↓
+
+Quality Inspection
+
+↓
+
+Delivery
+
+Use elegant illustrations or manufacturing visuals.
+
+Certifications
+
+Use certification logos.
+
+UN38.3
+
+IEC62133
+
+ISO
+
+BIS (keep)
+
+Customer Success
+
+Move testimonials higher.
+
+Use larger testimonial cards.
+
+Add company designation if available.
+
+Featured Products
+
+Keep only one premium product showcase.
+
+Maximum 6 products.
+
+Beautiful cards.
+
+Real product images.
+
+No duplicate catalogue below.
+
+Insights / Blog
+
+The blog section currently only shows cards.
+
+It must become useful.
+
+Create 3 real articles using existing company expertise.
+
+Examples:
+
+How to Choose the Right Hybrid Solar Inverter
+LiFePO₄ vs Lead Acid Batteries
+AC vs DC EV Chargers Explained
+
+Each article should include:
+
+featured image
+category
+short summary
+Read More button
+
+Do NOT link to a non-existent blog page.
+
+If no blog exists yet, clicking Read More should open the complete article in a clean modal or expandable panel on the homepage.
+
+Visual Quality
+
+Use premium industrial photography.
+
+Avoid cartoon icons.
+
+Avoid flat clipart.
+
+Avoid emoji-style graphics.
+
+Use:
+
+• modern energy facilities
+
+• solar installations
+
+• manufacturing
+
+• EV charging
+
+• battery storage
+
+• commercial buildings
+
+• factories
+
+All visuals should feel premium.
+
+Design Rules
+
+Keep existing color palette.
+
+No glassmorphism.
+
+No neon.
+
+No AI glow.
+
+No oversized shadows.
+
+Maintain premium spacing.
+
+Elegant typography.
+
+Consistent cards.
+
+SEO
+
+Keep existing SEO.
+
+Do not remove structured data.
+
+Do not modify routing.
+
+Hard Constraints
+
+Do NOT touch:
+
+PIM
+Product data
+Header
+Footer
+Routing
+Backend
+Design System
+Brand System
+
+Homepage only.
+
+No new dependencies.
+
+No new architecture.
+
+No placeholders.
+
+No Lorem Ipsum.
+
+Everything must feel production-ready.
+
+This prompt is focused on quality rather than quantity, and it should produce a homepage that feels like a professional clean-energy manufacturer's website instead of a product catalog.

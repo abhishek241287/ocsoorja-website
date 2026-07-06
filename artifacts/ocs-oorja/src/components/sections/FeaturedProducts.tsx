@@ -29,7 +29,7 @@ export default function FeaturedProducts() {
   const products = useFeaturedProducts();
 
   return (
-    <section className="py-16 md:py-24">
+    <section className="border-y border-border bg-foreground/[0.02] py-16 md:py-24">
       <Container>
         <SectionHeading
           eyebrow={HOME_SECTIONS.featured.eyebrow}

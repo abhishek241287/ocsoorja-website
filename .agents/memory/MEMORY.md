@@ -1,1 +1,7 @@
-- [Homepage screenshot gotcha](homepage-screenshot-gotcha.md) — full-height Hero (min-h-100svh) defeats top-anchored app_preview screenshots; use the testing/Playwright subagent to capture below-fold homepage sections.
+- [Homepage screenshot gotcha](homepage-screenshot-gotcha.md) — full-height Hero (min-h-100svh) defeats top-anchored app_preview; use the testing/Playwright subagent to capture below-fold homepage sections.
+- [Icon-name indirection fails silently](ocs-oorja-icon-name-indirection.md) — homepage sections map lucide icon NAME→component with a fallback; a missing map entry silently renders the wrong icon and tsc won't catch it.
+- [Design tokens (Tailwind v4)](ocs-oorja-design-tokens.md) — a color utility needs BOTH a :root HSL var and an @theme mapping or it silently won't exist; bg-primary = fills, text-primary-strong = brand text (dark-mode AA).
+- [Product catalog model](product-catalog-model.md) — adding a product family = 4 edits in lockstep; icons stored as name strings; never rename slugs; placeholder/awaiting drives "coming soon".
+- [SPA "dead link" symptom](spa-broken-route-symptom.md) — a click that "does nothing" in the wouter SPA is usually the DESTINATION route failing to compile; trust the Vite dev log over tsc.
+- [TS data eval in sandbox](ts-data-extraction-in-sandbox.md) — code_execution can't import workspace deps; read the data file as text, bracket-aware scan the literal, then eval to get values.
+- [wouter scroll restoration](wouter-scroll-restoration.md) — key each history entry (not a pop flag), restore in useLayoutEffect, re-apply on rAF since the Back commit isn't full-height yet.
