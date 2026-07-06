@@ -69,6 +69,15 @@ export const CTAS = {
   contactUs: { label: "Contact Us", href: "/contact" } as Cta,
 };
 
+// --- Company contact details (SINGLE SOURCE for the customer-facing email) -----
+// Change the email HERE and it updates everywhere it appears — header, footer,
+// contact page, chat widget, and the SEO / JSON-LD Organization schema. You do
+// NOT need to edit any component. `emailHref` is the ready-made mailto: link.
+export const CONTACT = {
+  email: "customercare@ocsoorja.com",
+  emailHref: "mailto:customercare@ocsoorja.com",
+} as const;
+
 // --- Standard headlines & subheads (per page / section) -----------------------
 // Edit the customer-facing headlines and supporting lines for each area here.
 export const HEADLINES = {

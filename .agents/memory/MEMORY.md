@@ -5,3 +5,4 @@
 - [SPA "dead link" symptom](spa-broken-route-symptom.md) — a click that "does nothing" in the wouter SPA is usually the DESTINATION route failing to compile; trust the Vite dev log over tsc.
 - [TS data eval in sandbox](ts-data-extraction-in-sandbox.md) — code_execution can't import workspace deps; read the data file as text, bracket-aware scan the literal, then eval to get values.
 - [wouter scroll restoration](wouter-scroll-restoration.md) — key each history entry (not a pop flag), restore in useLayoutEffect, re-apply on rAF since the Back commit isn't full-height yet.
+- [wouter Link breaks mailto:/tel:](wouter-link-external-schemes.md) — non-http hrefs must use plain <a>; wouter <Link> pushState-intercepts them so the link silently does nothing.

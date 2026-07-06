@@ -1,7 +1,7 @@
 import { Link } from "wouter";
 import { Container } from "./Container";
 import { Mail, MapPin, Phone, Instagram, Youtube } from "lucide-react";
-import { BRAND } from "@/data/brand";
+import { BRAND, CONTACT } from "@/data/brand";
 
 export default function Footer() {
   return (
@@ -40,7 +40,7 @@ export default function Footer() {
           <h3 className="text-sm font-semibold">Contact</h3>
           <ul className="space-y-3 text-sm text-foreground/70">
             <li className="flex items-start gap-3"><Phone className="mt-1 h-4 w-4 flex-shrink-0" /> <span>7521803995</span></li>
-            <li className="flex items-start gap-3"><Mail className="mt-1 h-4 w-4 flex-shrink-0" /> <span>Ocsoorja@gmail.com</span></li>
+            <li className="flex items-start gap-3"><Mail className="mt-1 h-4 w-4 flex-shrink-0" /> <a href={CONTACT.emailHref} className="hover:text-foreground">{CONTACT.email}</a></li>
             <li className="flex items-start gap-3"><MapPin className="mt-1 h-4 w-4 flex-shrink-0" />
               <span>Commercial Unit No. 304 on 3rd Floor Royal Plaza, Block-3 in IT Park-2, at Sushant Golf City, Lucknow</span>
             </li>

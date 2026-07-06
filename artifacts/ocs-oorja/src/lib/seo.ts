@@ -2,7 +2,7 @@
  * SEO Utility - Structured Data and Schema.org markup for better search engine visibility
  */
 
-import { BRAND } from "@/data/brand";
+import { BRAND, CONTACT } from "@/data/brand";
 
 interface OrganizationSchema {
   "@context": string;
@@ -95,7 +95,7 @@ export function getOrganizationSchema(): OrganizationSchema {
       "@type": "ContactPoint",
       telephone: "+91-75218-03995",
       contactType: "Sales",
-      email: "Ocsoorja@gmail.com",
+      email: CONTACT.email,
       areaServed: "IN",
       availableLanguage: ["English", "Hindi"],
     },

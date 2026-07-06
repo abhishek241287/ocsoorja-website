@@ -6,15 +6,15 @@ import { FAMILIES } from "@/data/products";
 import { Container } from "./Container";
 import { Button } from "@/components/ui/Button";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
-import { CTAS } from "@/data/brand";
+import { CTAS, CONTACT } from "@/data/brand";
 import { cn } from "@/lib/utils";
 
 // Contact details shown in the header. Kept alongside the component (header-only
 // scope); the rest of the site sources contact info from the footer/contact page.
 const PHONE_DISPLAY = "7521803995";
 const PHONE_HREF = "tel:+917521803995";
-const EMAIL_DISPLAY = "Ocsoorja@gmail.com";
-const EMAIL_HREF = "mailto:Ocsoorja@gmail.com";
+const EMAIL_DISPLAY = CONTACT.email;
+const EMAIL_HREF = CONTACT.emailHref;
 
 function isActiveHref(href: string, location: string): boolean {
   if (href === "/") return location === "/";

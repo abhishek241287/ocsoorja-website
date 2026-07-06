@@ -2,16 +2,15 @@ import { Seo } from "@/components/Seo";
 import { Container } from "@/components/layout/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import ContactForm from "@/components/contact/ContactForm";
-import { Link } from "wouter";
 import { Phone, Mail, MapPin } from "lucide-react";
-import { BRAND, HEADLINES } from "@/data/brand";
+import { BRAND, HEADLINES, CONTACT } from "@/data/brand";
 
 export default function ContactPage() {
   return (
     <div className="py-12 md:py-16">
       <Seo
         title="Contact Us - OCS OORJA | LiFePO₄ Battery Manufacturer Lucknow"
-        description={`${BRAND.positioning} Request a quote for hybrid solar inverters, LiFePO₄ batteries, energy storage, or EV chargers — Phone: 7521803995 | Email: Ocsoorja@gmail.com`}
+        description={`${BRAND.positioning} Request a quote for hybrid solar inverters, LiFePO₄ batteries, energy storage, or EV chargers — Phone: 7521803995 | Email: ${CONTACT.email}`}
         canonical="https://www.ocsoorja.com/contact"
       />
       <Container>
@@ -29,11 +28,11 @@ export default function ContactPage() {
               <ul className="mt-4 space-y-3 text-sm text-foreground/80">
                 <li className="flex items-center gap-2">
                   <Phone className="h-4 w-4" />
-                  <Link href="tel:+917521803995" className="hover:underline">7521803995</Link>
+                  <a href="tel:+917521803995" className="hover:underline">7521803995</a>
                 </li>
                 <li className="flex items-center gap-2">
                   <Mail className="h-4 w-4" />
-                  <Link href="mailto:Ocsoorja@gmail.com" className="hover:underline">Ocsoorja@gmail.com</Link>
+                  <a href={CONTACT.emailHref} className="hover:underline">{CONTACT.email}</a>
                 </li>
               </ul>
             </div>

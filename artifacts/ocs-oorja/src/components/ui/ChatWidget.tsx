@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { MessageCircle, X, Send, Sparkles } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
+import { CONTACT } from "@/data/brand";
 
 interface Message {
   id: string;
@@ -21,7 +22,7 @@ export default function ChatWidget() {
 
   const COMPANY_PHONE = "917521803995"; // WhatsApp format (no + or spaces)
   const COMPANY_PHONE_DISPLAY = "7521803995";
-  const COMPANY_EMAIL = "Ocsoorja@gmail.com";
+  const COMPANY_EMAIL = CONTACT.email;
   const COMPANY_ADDRESS = "Commercial Unit No. 304, Royal Plaza, Block-3, IT Park-2, Sushant Golf City, Lucknow";
 
   // Intelligence functions for message analysis
