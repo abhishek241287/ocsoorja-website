@@ -7,10 +7,12 @@ file name** (keep the name AND the extension identical) and it appears
 automatically — no code changes needed. For best results use the same
 shape/orientation as the file you replace.
 
-> **File formats:** the photographic/scene images are **`.webp`** (much smaller =
-> faster page loads, with no visible quality loss). The three hero *product*
-> tiles are kept as high-quality **`.jpg`** on purpose (product photography is
-> never recompressed). When you replace a `.webp` file, save the new one as
+> **File formats:** most photographic/scene images are **`.webp`** (much smaller =
+> faster page loads, with no visible quality loss). The `hero-solar.png` tile and
+> the three hero *product* tiles are kept in their uploaded format
+> (`.png` / `.jpg`) on purpose (uploaded photos are used as-is, never recompressed).
+> The `hero-solar.png` tile must stay a **square 1:1** image (e.g. 512×512 or
+> 1024×1024) so it fills the square ecosystem tile without distortion. When you replace a `.webp` file, save the new one as
 > `.webp` too — any tool like [Squoosh](https://squoosh.app), Photoshop, or a
 > free online converter can export WebP. Replace `.jpg` files with `.jpg`.
 
@@ -20,7 +22,7 @@ shape/orientation as the file you replace.
 | File | Where it shows |
 |---|---|
 | `hero-background.webp` | The large photo behind the homepage headline |
-| `hero-solar.webp` | "Solar Generation" tile in the hero ecosystem card |
+| `hero-solar.png` | "Solar Generation" tile in the hero ecosystem card (square 1:1 image) |
 | `hero-hybrid-inverter.jpg` | "Hybrid Inverter" tile (product render — kept as JPG) |
 | `hero-lifepo4-battery.jpg` | "LiFePO₄ Battery Storage" tile (product render — kept as JPG) |
 | `hero-ev-charger.jpg` | "EV Charging" tile (product render — kept as JPG) |

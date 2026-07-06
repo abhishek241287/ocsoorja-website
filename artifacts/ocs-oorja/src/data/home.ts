@@ -171,7 +171,7 @@ export const HERO_ECOSYSTEM = {
     {
       label: "Solar Generation",
       note: "High-efficiency solar energy",
-      image: "/images/home/hero-solar.webp",
+      image: "/images/home/hero-solar.png",
       fit: "cover",
     },
     {
