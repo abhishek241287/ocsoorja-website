@@ -171,22 +171,22 @@ export const HERO_ECOSYSTEM = {
     {
       label: "Solar Generation",
       note: "Capture clean solar power with high-efficiency MPPT.",
-      image: "/images/hero/solar-panels.jpg",
+      image: "/images/home/01-hero-solar-panels-sunrise.jpg",
     },
     {
       label: "Hybrid Inverters",
       note: "Convert and manage power intelligently, around the clock.",
-      productSlug: "solar-hybrid-inverter-48v-6kw",
+      image: "/images/home/02-hero-hybrid-inverter.jpg",
     },
     {
       label: "LiFePO₄ Storage",
       note: "Store safely with long, dependable cycle life.",
-      productSlug: "12v-100ah-home-power-storage",
+      image: "/images/home/03-hero-lifepo4-battery.jpg",
     },
     {
       label: "EV Charging",
       note: "Power mobility with AC and DC fast charging.",
-      productSlug: "ev-charger-ac",
+      image: "/images/home/04-hero-ev-charging.jpg",
     },
   ] as EcosystemNode[],
   applications: ["Homes", "Industries", "Commercial"],
