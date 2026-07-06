@@ -28,6 +28,11 @@ The homepage photographic/SCENE images (hero background, the manufacturing/indus
 **Why:** the user wants WebP "where it reduces size without visible quality loss" but has a permanent rule never to recompress PRODUCT photography (they once rejected WebP product photos as blurry). Scenes are safe to optimize; product renders are not.
 **How to apply:** Optimize scenes to WebP, never the product renders. WebP still satisfies the "replace one same-named file" non-dev rule (just `.webp`). Multi-width `srcset` belongs ONLY on the full-bleed hero background, not the card grids — per-image variants would break the single-file non-dev workflow for marginal desktop-only gains.
 
+## Hero background is a 3-video auto-cycling crossfade slideshow (restorable)
+The homepage Hero (`src/components/sections/Hero.tsx`) supports an animated background: three clips (`hero-background-1/2/3`, each as BOTH `.webm` and `.mp4`) in `public/videos/`, auto-cycling with a ~1.5s crossfade. These video files live on disk but are NOT committed to git (untracked large binaries), so `git log` won't show them — verify with `ls public/videos/`. A past commit ("Update hero section to display a static background image") swapped this for a single static `hero-background.webp`; the user later asked for the animation back. `hero-background.webp` (+ `-768.webp`) doubles as the poster / first-frame / static fallback.
+**Why:** the user considers the moving video hero the intended look (called it the "old hero animation"). Do NOT "optimize" it back to a static image without asking — it's a deliberate design choice and the videos already exist on disk.
+**How to apply:** to swap a clip, replace the same-named `.webm` + `.mp4` pair in `public/videos/`. Note `hero-background-2` is heavy (~7MB mp4 / ~4MB webm); only slide 0 uses `preload="auto"`, the rest use `metadata`. If asked to make the hero lighter, re-encode the clips (esp. #2), don't remove the animation.
+
 ## Verifying deleted/added public/ assets in Vite dev — check Content-Type, not status
 In Vite dev, requesting a NON-existent path under `public/` returns HTTP **200** with the SPA `index.html` (`Content-Type: text/html`), NOT a 404. So `curl -o /dev/null -w %{http_code}` reads 200 for a file you just deleted.
 **Why:** Vite's dev server falls back to `index.html` for unmatched routes (SPA history fallback).
