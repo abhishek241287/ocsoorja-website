@@ -1,5 +1,4 @@
-import type { ReactNode } from "react";
-import { ArrowRight, ArrowLeft, ArrowDown, Check } from "lucide-react";
+import { Check } from "lucide-react";
 import { getProductBySlug } from "@/data/products";
 import { HERO_ECOSYSTEM } from "@/data/home";
 
@@ -12,21 +11,30 @@ function nodeImage(node: EcosystemNode): string | undefined {
     : node.image;
 }
 
+// One product tile: a large product render on a clean white background.
+// Product renders (linked via `productSlug`) use object-contain so the whole
+// unit is visible and never cropped; the solar scene uses object-cover.
 function Tile({ node }: { node: EcosystemNode }) {
   const image = nodeImage(node);
+  const isProduct = Boolean(node.productSlug);
   return (
-    <div className="flex-1 text-center">
-      <div className="mx-auto h-20 w-20 overflow-hidden rounded-2xl border border-card-border bg-background">
+    <div className="text-center">
+      <div className="aspect-square w-full overflow-hidden rounded-2xl border border-card-border bg-white">
         {image ? (
           <img
             src={image}
             alt={node.label}
-            loading="lazy"
-            className="h-full w-full object-cover"
+            width={320}
+            height={320}
+            className={
+              isProduct
+                ? "h-full w-full object-contain p-2.5 sm:p-3"
+                : "h-full w-full object-cover"
+            }
           />
         ) : null}
       </div>
-      <div className="mt-2 text-sm font-semibold leading-tight text-foreground">
+      <div className="mt-2.5 text-sm font-semibold leading-tight text-foreground">
         {node.label}
       </div>
       <div className="mt-0.5 text-xs leading-snug text-muted-foreground">
@@ -36,26 +44,13 @@ function Tile({ node }: { node: EcosystemNode }) {
   );
 }
 
-// Small, subtle flow arrow aligned to the vertical center of the 80px images.
-function FlowArrow({ children }: { children: ReactNode }) {
-  return (
-    <div
-      className="flex w-6 shrink-0 justify-center pt-8 text-primary-strong/50"
-      aria-hidden="true"
-    >
-      {children}
-    </div>
-  );
-}
-
 // The hero's single premium visual: a clean, engineered map of the complete
-// OCS OORJA energy ecosystem built from real product photography. The four
-// stages read as an energy flow — Solar → Inverter ↓ Battery ← EV — so the
-// full ecosystem is legible at a glance. No outline icons.
+// OCS OORJA energy ecosystem built from real product photography. Four large
+// product renders — Solar, Inverter, Battery, EV — read as the full ecosystem
+// at a glance. No tiny thumbnails, no outline icons.
 export default function HeroEcosystem() {
-  const [solar, inverter, battery, ev] = HERO_ECOSYSTEM.nodes;
   return (
-    <div className="rounded-3xl border border-card-border bg-card p-6 shadow-lg">
+    <div className="rounded-3xl border border-card-border bg-card p-5 shadow-lg sm:p-6">
       <div className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-strong">
         {HERO_ECOSYSTEM.eyebrow}
       </div>
@@ -63,33 +58,10 @@ export default function HeroEcosystem() {
         {HERO_ECOSYSTEM.title}
       </h2>
 
-      <div className="mt-5">
-        {/* Top row: Solar → Inverter */}
-        <div className="flex items-start">
-          <Tile node={solar} />
-          <FlowArrow>
-            <ArrowRight className="h-4 w-4" />
-          </FlowArrow>
-          <Tile node={inverter} />
-        </div>
-
-        {/* Down connector, aligned under the right column */}
-        <div className="flex py-1" aria-hidden="true">
-          <div className="flex-1" />
-          <div className="w-6 shrink-0" />
-          <div className="flex flex-1 justify-center text-primary-strong/50">
-            <ArrowDown className="h-4 w-4" />
-          </div>
-        </div>
-
-        {/* Bottom row: EV ← Battery */}
-        <div className="flex items-start">
-          <Tile node={ev} />
-          <FlowArrow>
-            <ArrowLeft className="h-4 w-4" />
-          </FlowArrow>
-          <Tile node={battery} />
-        </div>
+      <div className="mt-5 grid grid-cols-2 gap-3 sm:gap-4">
+        {HERO_ECOSYSTEM.nodes.map((node) => (
+          <Tile key={node.label} node={node} />
+        ))}
       </div>
 
       <div className="mt-5 flex items-center justify-center gap-2 border-t border-card-border pt-3.5">

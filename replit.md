@@ -54,6 +54,7 @@ A premium industrial site presenting OCS OORJA's product families (inverters, Li
   4. Is there a single source of truth, so one edit propagates everywhere that value appears?
 - **Visual direction:** premium industrial clean-energy brand — deep green + energy yellow/orange accents; none of glassmorphism, neon, heavy gradients, AI-style glows, oversized shadows, or cartoon icons.
 - **Scope directive (permanent, set 2026-07-05):** The foundation (design system + PIM) is complete and sufficient. From now on, work ONLY on visible, customer-facing improvements — UX/UI polish, content, SEO, and lead generation. Do NOT introduce new architectural layers, internal frameworks, or backend integrations unless the user explicitly requests them. Keep implementations simple, maintainable, and within scope.
+- **Uploaded product photos (set 2026-07-06):** use the original uploaded image files as-is at native resolution (PNG/WebP exactly as uploaded) — do NOT recompress or resize product photography; the user prioritizes image quality over file size for product imagery. Product photos are portrait/landscape renders on white, so any tile/thumbnail must use `object-fit: contain` on a white background (never `object-cover`, which crops them). Full-bleed scene/background images may still be optimized.
 
 ## Gotchas
 
