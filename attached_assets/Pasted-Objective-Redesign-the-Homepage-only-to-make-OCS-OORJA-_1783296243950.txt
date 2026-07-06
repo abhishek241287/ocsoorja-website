@@ -1,0 +1,304 @@
+Objective
+
+Redesign the Homepage only to make OCS OORJA feel like a premium Indian clean-energy manufacturer.
+
+Do NOT change architecture.
+
+Do NOT change backend.
+
+Do NOT change routing.
+
+Do NOT change PIM.
+
+Do NOT change Design System.
+
+Do NOT change Brand Communication.
+
+Use the existing design system, product data and brand copy.
+
+The goal is to improve customer experience, trust, lead generation and SEO.
+
+Hard Constraints
+
+Modify ONLY homepage sections.
+
+Do not redesign:
+
+Header
+Footer
+Products page
+Product Detail
+Contact
+About
+
+No new dependencies.
+
+No routing changes.
+
+No backend.
+
+No analytics.
+
+No new framework.
+
+No visual regressions.
+
+No glassmorphism.
+
+No neon.
+
+No AI glow.
+
+No oversized shadows.
+
+Maintain existing brand colors.
+
+Homepage Flow
+
+Replace the current homepage flow with this sequence.
+
+1 Hero
+
+Keep existing hero.
+
+Improve only if necessary.
+
+Do not redesign completely.
+
+Keep existing CTA buttons.
+
+2 Why OCS OORJA
+
+Replace the current "Products" section immediately below the hero.
+
+Instead create a premium trust section.
+
+Six feature cards.
+
+Examples:
+
+Factory Direct Manufacturing
+
+Indian Engineering
+
+LiFePO₄ Technology
+
+Fast Technical Support
+
+Quality Tested
+
+OEM & Custom Solutions
+
+Use existing icons where possible.
+
+Large spacing.
+
+Premium layout.
+
+3 Industries We Serve
+
+Add a new section.
+
+Large icon cards.
+
+Residential
+
+Commercial
+
+Industrial
+
+Solar EPC
+
+EV Infrastructure
+
+Battery Energy Storage
+
+Each card should have
+
+icon
+
+title
+
+one-line description
+
+CTA linking to Products.
+
+4 Featured Products
+
+Replace the current large product listing.
+
+Show ONLY six featured products.
+
+Two from Hybrid Inverters.
+
+One Lithium Inverter.
+
+One Battery.
+
+One AC Charger.
+
+One DC Charger.
+
+Button below
+
+Explore Complete Catalogue
+
+Link
+
+/products
+
+Do not display the complete catalogue on the homepage.
+
+5 Customer Testimonials
+
+Move this section ABOVE manufacturing/certifications.
+
+Improve spacing.
+
+Improve typography.
+
+Use existing testimonials.
+
+No redesign of the testimonial cards.
+
+6 Manufacturing Excellence
+
+Create a premium section.
+
+Use existing assets if available.
+
+Otherwise placeholders.
+
+Highlight
+
+Factory Assembly
+
+Battery Pack Manufacturing
+
+Testing & QC
+
+Engineering Support
+
+OEM Manufacturing
+
+Each item
+
+icon
+
+title
+
+short paragraph
+
+7 Certifications
+
+Premium logo section.
+
+Use existing certifications.
+
+Large spacing.
+
+Professional appearance.
+
+8 Latest Insights
+
+Show latest three blog articles.
+
+If blog data doesn't exist
+
+create three placeholder articles
+
+Solar
+
+Lithium
+
+EV Charging
+
+Button
+
+View All Articles
+
+9 Final CTA
+
+Large closing section.
+
+Headline
+
+Ready to Power Your Next Project?
+
+Buttons
+
+Request a Quote
+
+Contact Us
+
+Remove
+
+Remove the large multi-category product showcase immediately after the hero.
+
+Remove duplicate product-heavy sections.
+
+Homepage should NOT feel like a catalogue.
+
+The Products page is the catalogue.
+
+Homepage sells the company.
+
+SEO
+
+Improve homepage only.
+
+Single H1.
+
+Proper H2 hierarchy.
+
+Improve internal links.
+
+Improve structured data if already present.
+
+No new SEO framework.
+
+Performance
+
+Reuse existing components.
+
+No duplicated code.
+
+No new dependencies.
+
+Deliverables
+
+Before screenshots
+
+Desktop
+
+Tablet
+
+Mobile
+
+After screenshots
+
+Desktop
+
+Tablet
+
+Mobile
+
+Typecheck
+
+Regression check
+
+Architect review
+
+Short design rationale.
+
+Success Criteria
+
+A first-time visitor should understand within 15 seconds:
+
+What OCS OORJA manufactures.
+Why OCS OORJA is trustworthy.
+Which industries are served.
+What products are offered.
+How to request a quotation.
+
+The homepage should feel like a premium industrial manufacturer, while the Products page remains the complete catalogue.

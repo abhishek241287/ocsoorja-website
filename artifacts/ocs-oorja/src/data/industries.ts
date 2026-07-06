@@ -1,37 +1,71 @@
+// =============================================================================
+// OCS OORJA — Industries We Serve (SINGLE SOURCE for the homepage industries)
+// =============================================================================
+// Non-developers: add, remove or edit an industry by editing THIS list only.
+// Each entry renders one card in the "Industries We Serve" homepage section.
+//
+//   • icon  — a lucide-react icon NAME (a string). The UI layer maps this name
+//             to a real icon component, so this file stays plain data. Browse
+//             names at https://lucide.dev/icons. If you pick a name the site
+//             doesn't know yet, a developer adds it to the section's icon map.
+//   • href  — where the card's link goes. Defaults to the products catalogue.
+// =============================================================================
+
 export type Industry = {
   id: string;
   name: string;
-  image: string;
   description: string;
+  icon: string; // lucide icon name; resolved to a component in the UI layer
+  href: string; // destination for the card's call-to-action
 };
 
 export const industries: Industry[] = [
   {
-    id: "ev",
-    name: "E‑Mobility",
-    image: "/images/industries/emobility.svg",
+    id: "residential",
+    name: "Residential & Home Backup",
     description:
-      "Battery packs for e‑rickshaw, e‑scooter and light EVs with robust BMS and fast charging.",
+      "Hybrid inverters and LiFePO₄ storage for reliable day-and-night power backup in homes and apartments.",
+    icon: "Home",
+    href: "/products",
   },
   {
-    id: "solar-ess",
-    name: "Solar & ESS",
-    image: "/images/industries/solar-ess.svg",
+    id: "commercial-industrial",
+    name: "Commercial & Industrial",
     description:
-      "Residential and C&I energy storage packs with long cycle life and high safety (LFP).",
+      "Scalable energy storage and power systems that cut diesel dependence and keep operations running through outages.",
+    icon: "Building2",
+    href: "/products",
+  },
+  {
+    id: "solar-epc",
+    name: "Solar EPC & Developers",
+    description:
+      "MPPT hybrid inverters and battery banks that EPC partners can specify, size and deploy with confidence.",
+    icon: "SunMedium",
+    href: "/products",
+  },
+  {
+    id: "ev-infrastructure",
+    name: "EV Charging Infrastructure",
+    description:
+      "AC and DC fast chargers for homes, workplaces, fleets and public charging points across India.",
+    icon: "Zap",
+    href: "/products",
   },
   {
     id: "telecom",
-    name: "Telecom",
-    image: "/images/industries/telecom.svg",
+    name: "Telecom & Critical Backup",
     description:
-      "Reliable BTS backup solutions with remote monitoring and wide‑temperature performance.",
+      "Wide-temperature LiFePO₄ backup for telecom towers and mission-critical sites that cannot afford downtime.",
+    icon: "RadioTower",
+    href: "/products",
   },
   {
-    id: "industrial",
-    name: "Industrial OEM",
-    image: "/images/industries/industrial.svg",
+    id: "oem-custom",
+    name: "OEM & Custom Solutions",
     description:
-      "Custom battery engineering for AGVs, power tools, robotics and specialized machinery.",
+      "Custom battery packs and power electronics engineered to your voltage, capacity and form-factor needs.",
+    icon: "Wrench",
+    href: "/products",
   },
 ];

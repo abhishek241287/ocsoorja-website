@@ -1,11 +1,13 @@
 import { Seo } from "@/components/Seo";
 import Hero from "@/components/sections/Hero";
-import USPs from "@/components/sections/USPs";
-import ProductsGrid from "@/components/sections/ProductsGrid";
-import Stats from "@/components/sections/Stats";
+import WhyOcsOorja from "@/components/sections/WhyOcsOorja";
+import Industries from "@/components/sections/Industries";
+import FeaturedProducts from "@/components/sections/FeaturedProducts";
 import Testimonials from "@/components/sections/Testimonials";
-import FAQ from "@/components/sections/FAQ";
-import CTA from "@/components/sections/CTA";
+import ManufacturingExcellence from "@/components/sections/ManufacturingExcellence";
+import CertificationsStrip from "@/components/sections/CertificationsStrip";
+import Insights from "@/components/sections/Insights";
+import FinalCta from "@/components/sections/FinalCta";
 import { getOrganizationSchema, getLocalBusinessSchema, renderJsonLd } from "@/lib/seo";
 
 export default function Home() {
@@ -28,15 +30,17 @@ export default function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={renderJsonLd(localBusinessSchema)}
       />
-      
+
       <div>
         <Hero />
-        <USPs />
-        <ProductsGrid />
-        <Stats />
+        <WhyOcsOorja />
+        <Industries />
+        <FeaturedProducts />
         <Testimonials />
-        <FAQ />
-        <CTA />
+        <ManufacturingExcellence />
+        <CertificationsStrip />
+        <Insights />
+        <FinalCta />
       </div>
     </>
   );
