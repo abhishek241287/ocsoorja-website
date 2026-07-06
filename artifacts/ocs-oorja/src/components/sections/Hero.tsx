@@ -1,9 +1,8 @@
-import { useEffect, useState, useRef, useCallback, useMemo } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { Link } from "wouter";
 import { Container } from "@/components/layout/Container";
 import { Button } from "@/components/ui/Button";
-import { HeroCards } from "@/components/sections/HeroCards";
-import { products, productsSortedByDateDesc, type Product } from "@/data/products";
+import HeroEcosystem from "@/components/sections/HeroEcosystem";
 import { HEADLINES, CTAS } from "@/data/brand";
 
 // Base names for background videos. Actual sources provided as .webm and .mp4
@@ -12,15 +11,6 @@ const videoSlides = [
   "hero-background-2",
   "hero-background-3",
 ] as const;
-
-// Flagship products (real photography) guaranteed to appear first in the hero
-// carousel so a visitor immediately sees all three core businesses:
-// hybrid solar inverters, LiFePO4 batteries, and EV charging.
-const FLAGSHIP_SLUGS = [
-  "lithium-inverter-ocs-li-1000",
-  "24v-100ah-home-power-storage",
-  "ev-charger-dc-fast",
-];
 
 export default function Hero() {
   const [index, setIndex] = useState(0);
@@ -101,27 +91,6 @@ export default function Hero() {
         clearTimeout(transitionTimeoutRef.current);
       }
     };
-  }, []);
-
-  // Curate hero carousel: guarantee the three flagship (real-photo) products
-  // representing each core business appear first, then top up with other
-  // real-photo products for variety (never falls back to placeholder SVGs).
-  const heroCardItems = useMemo(() => {
-    const bySlug = new Map(products.map((p) => [p.slug, p]));
-    const flagship = FLAGSHIP_SLUGS.map((slug) => bySlug.get(slug)).filter(
-      (p): p is Product => Boolean(p),
-    );
-    const seen = new Set(flagship.map((p) => p.id));
-    const rest = productsSortedByDateDesc(products).filter(
-      (p) => !seen.has(p.id) && !p.awaiting?.includes("images"),
-    );
-    const picked = [...flagship, ...rest].slice(0, 5);
-    return picked.map((p) => ({
-      title: p.name,
-      image: p.image,
-      href: `/products/${p.slug}`,
-      cta: "Learn more",
-    }));
   }, []);
 
   return (
@@ -234,9 +203,9 @@ export default function Hero() {
             </p>
           </div>
 
-          <div className="lg:col-span-5">
+          <div className="lg:col-span-5 motion-reduce:animate-none animate-[fade-in-up_850ms_ease-out_300ms_both]">
             <div className="mx-auto w-full max-w-sm sm:max-w-md lg:ml-auto lg:mr-0">
-              <HeroCards items={heroCardItems.length ? heroCardItems : undefined} />
+              <HeroEcosystem />
             </div>
           </div>
         </div>

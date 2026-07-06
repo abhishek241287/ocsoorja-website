@@ -142,6 +142,40 @@ export const FEATURED_PRODUCT_SLUGS: string[] = [
   "ev-charger-dc-fast", // DC fast charger
 ];
 
+// --- Hero "energy ecosystem" visual ------------------------------------------
+// The hero's right-hand visual: an at-a-glance map of the complete OCS OORJA
+// energy ecosystem (generate → convert → store → charge). Edit the nodes here;
+// icons are lucide NAME strings resolved in the UI layer.
+export type EcosystemNode = { icon: string; label: string; note: string };
+
+export const HERO_ECOSYSTEM = {
+  eyebrow: "Integrated System",
+  title: "One energy ecosystem, engineered end-to-end",
+  nodes: [
+    {
+      icon: "SunMedium",
+      label: "Solar Generation",
+      note: "Capture clean solar power with high-efficiency MPPT.",
+    },
+    {
+      icon: "Cpu",
+      label: "Hybrid Inverters",
+      note: "Convert and manage power intelligently, 24/7.",
+    },
+    {
+      icon: "BatteryCharging",
+      label: "LiFePO₄ Storage",
+      note: "Store safely with long, dependable cycle life.",
+    },
+    {
+      icon: "PlugZap",
+      label: "EV Charging",
+      note: "Power mobility with AC and DC fast charging.",
+    },
+  ] as EcosystemNode[],
+  badge: "Designed & built in-house · Lucknow, India",
+} as const;
+
 // --- Final call-to-action banner ---------------------------------------------
 export const HOME_FINAL_CTA = {
   eyebrow: "Get Started",
