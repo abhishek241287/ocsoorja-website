@@ -12,7 +12,7 @@ export const dcFastChargers: Product[] = [
     "slug": "ev-charger-dc-fast",
     "family": "dc-fast-chargers",
     "series": "DC Fast Series",
-    "image": "/images/products/ev-charger-dc-fast.jpeg",
+    "image": "/images/products/dc-fast-chargers/dc-fast-chargers-dc-fast-front.webp",
     "summary": "DC fast charging solution for rapid EV energy top‑ups.",
     "warranty": "Warranty details on request",
     "tags": [

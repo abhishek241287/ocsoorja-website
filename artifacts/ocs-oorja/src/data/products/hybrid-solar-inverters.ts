@@ -244,7 +244,7 @@ export const hybridSolarInverters: Product[] = [
     "slug": "solar-hybrid-inverter-48v-6kw",
     "family": "hybrid-solar-inverters",
     "series": "Solar Hybrid Series",
-    "image": "/images/products/solar-inverter-12v.jpeg",
+    "image": "/images/products/hybrid-solar-inverters/hybrid-solar-inverters-solar-hybrid-48v-6kw-front.webp",
     "summary": "High‑power 48V hybrid inverter for residential and small C&I.",
     "warranty": "Warranty details on request",
     "tags": [
