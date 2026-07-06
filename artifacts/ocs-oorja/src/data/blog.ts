@@ -22,6 +22,11 @@
 //   • seoDescription  — the search-result summary (~150 characters).
 //   • content         — the article body: an ordered list of sections, each
 //                       with an optional `heading` and one or more `paragraphs`.
+//   • featured        — OPTIONAL. Set `featured: true` on ONE article to always
+//                       pin it as the big featured hero at the top of /blog,
+//                       regardless of its date — handy when you publish weekly
+//                       and want editorial control. If no article is marked, the
+//                       newest one is featured automatically.
 // =============================================================================
 
 export type ArticleSection = { heading?: string; paragraphs: string[] };
@@ -38,6 +43,7 @@ export type BlogPost = {
   seoTitle: string;
   seoDescription: string;
   content: ArticleSection[];
+  featured?: boolean; // pin as the /blog featured hero (overrides date order)
 };
 
 export const blogPosts: BlogPost[] = [
@@ -206,6 +212,15 @@ export function getLatestPosts(count: number): BlogPost[] {
 /** Find a single post by its slug. */
 export function getPostBySlug(slug: string): BlogPost | undefined {
   return blogPosts.find((p) => p.slug === slug);
+}
+
+/**
+ * The article to showcase as the /blog featured hero: the newest post explicitly
+ * marked `featured: true`, or — if none is marked — the newest post overall.
+ */
+export function getFeaturedPost(): BlogPost | undefined {
+  const sorted = getSortedPosts();
+  return sorted.find((p) => p.featured) ?? sorted[0];
 }
 
 /** Unique category labels, in newest-first order of first appearance. */

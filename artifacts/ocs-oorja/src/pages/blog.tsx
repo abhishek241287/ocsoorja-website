@@ -8,7 +8,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Button } from "@/components/ui/Button";
 import { HEADLINES, CTAS } from "@/data/brand";
 import { formatDate } from "@/lib/format";
-import { getSortedPosts, getAllCategories } from "@/data/blog";
+import { getSortedPosts, getAllCategories, getFeaturedPost } from "@/data/blog";
 import {
   getItemListSchema,
   getBreadcrumbSchema,
@@ -28,7 +28,7 @@ export default function Blog() {
   const [category, setCategory] = useState<string>("all");
   const [page, setPage] = useState(1);
 
-  const featured = allPosts[0];
+  const featured = useMemo(() => getFeaturedPost(), []);
   const isFiltering = category !== "all" || query.trim() !== "";
 
   // Category → search filtering (client-side; no backend).
@@ -53,10 +53,13 @@ export default function Blog() {
     return list;
   }, [allPosts, category, query]);
 
-  // With no active filter, the newest post is showcased as the featured hero,
-  // so the grid shows the remaining posts. While filtering, the grid shows all
-  // matches (featured hero is hidden) so nothing is missed.
-  const gridPosts = isFiltering ? filtered : allPosts.slice(1);
+  // With no active filter, the featured post is showcased as the hero, so the
+  // grid shows the remaining posts (excluded by slug so it never duplicates,
+  // even when the featured post isn't the newest). While filtering, the grid
+  // shows all matches (featured hero is hidden) so nothing is missed.
+  const gridPosts = isFiltering
+    ? filtered
+    : allPosts.filter((p) => p.slug !== featured?.slug);
 
   const totalPages = Math.max(1, Math.ceil(gridPosts.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
