@@ -9,8 +9,9 @@
 //
 // Review card fields:
 //   • name             — the customer's name.                        (required)
-//   • designation      — their job title / role.                     (required)
-//   • company          — their organisation.                         (required)
+//   • designation      — their job title / role (e.g. "Homeowner").  (required)
+//   • company          — their organisation. Omit for homeowners /
+//                        individuals — the card simply skips it.     (optional)
 //   • review           — the quote, in their words.                  (required)
 //   • rating           — 1–5 stars. Defaults to 5 if omitted.        (optional)
 //   • photo            — path under public/ (e.g. "/images/testimonials/
@@ -33,7 +34,7 @@
 export type Testimonial = {
   name: string;
   designation: string;
-  company: string;
+  company?: string;
   review: string;
   photo?: string;
   rating?: number;
@@ -70,6 +71,42 @@ export const testimonials: Testimonial[] = [
     review:
       "Quick engineering turnaround and quality documentation made our OEM integration smooth.",
     rating: 5,
+  },
+  {
+    name: "Rajesh",
+    designation: "Homeowner",
+    review:
+      "Power cuts used to disturb our evenings daily. Since installing the OCS OORJA hybrid inverter and battery at home, the switchover is instant — fans, lights and the fridge run without a blink. Our electricity bill has also come down.",
+    rating: 5,
+    city: "Lucknow",
+    state: "U.P.",
+  },
+  {
+    name: "Sachin",
+    designation: "Farmhouse Owner",
+    review:
+      "Our farmhouse runs on OCS OORJA solar and battery backup now. The water pump, cattle shed lighting and main house all work even when grid power fails for hours. Solid build quality, and the service team actually picks up the phone.",
+    rating: 5,
+    city: "Sitapur",
+    state: "U.P.",
+  },
+  {
+    name: "K.D. Singh",
+    designation: "School Administrator",
+    review:
+      "Classrooms and the computer lab need uninterrupted power. The OCS OORJA system has run flawlessly through the summer — no disruptions during exams, and the savings on diesel generator costs are significant.",
+    rating: 5,
+    city: "Kanpur",
+    state: "U.P.",
+  },
+  {
+    name: "Anurag",
+    designation: "Shop Owner",
+    review:
+      "We kept losing business during load-shedding. After OCS OORJA's battery backup was installed, the billing counter and refrigeration keep running through every cut. Installation was quick and neat.",
+    rating: 5,
+    city: "Allahabad",
+    state: "U.P.",
   },
 ];
 

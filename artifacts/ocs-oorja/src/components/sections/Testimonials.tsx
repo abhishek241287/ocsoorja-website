@@ -201,10 +201,15 @@ function TestimonialCard({
             {testimonial.name}
           </strong>
           <span className="text-[13px] text-muted-foreground">
-            {testimonial.designation} ·{" "}
-            <span className="font-medium text-primary-strong">
-              {testimonial.company}
-            </span>
+            {testimonial.designation}
+            {testimonial.company && (
+              <>
+                {" · "}
+                <span className="font-medium text-primary-strong">
+                  {testimonial.company}
+                </span>
+              </>
+            )}
           </span>
         </div>
         {hasMeta && (
