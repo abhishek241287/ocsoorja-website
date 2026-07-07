@@ -26,6 +26,9 @@ app.use(
   }),
 );
 app.use(cors());
+// The blog publisher uploads a base64 cover image, so it needs a larger body
+// limit than the default 100kb. Must be registered BEFORE the global parser.
+app.use("/api/blog/publish", express.json({ limit: "15mb" }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

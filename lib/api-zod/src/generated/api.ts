@@ -38,3 +38,41 @@ export const SubmitContactFormResponse = zod.object({
 })
 
 
+/**
+ * Writes a new article entry into the website source (src/data/blog.ts) and saves its cover image under public/images/articles/. Only available in the development workspace; returns 404 in production.
+ * @summary Publish a blog article (development workspace only)
+ */
+export const publishBlogArticleBodyTitleMin = 8;
+export const publishBlogArticleBodyTitleMax = 160;
+
+export const publishBlogArticleBodyCategoryMin = 2;
+export const publishBlogArticleBodyCategoryMax = 40;
+
+export const publishBlogArticleBodyArticleTextMin = 100;
+export const publishBlogArticleBodyArticleTextMax = 100000;
+
+export const publishBlogArticleBodyImageDataUrlMin = 50;
+export const publishBlogArticleBodyImageDataUrlMax = 16000000;
+
+export const publishBlogArticleBodyExcerptMax = 300;
+
+export const publishBlogArticleBodyAuthorMax = 80;
+
+
+
+export const PublishBlogArticleBody = zod.object({
+  "title": zod.string().min(publishBlogArticleBodyTitleMin).max(publishBlogArticleBodyTitleMax),
+  "category": zod.string().min(publishBlogArticleBodyCategoryMin).max(publishBlogArticleBodyCategoryMax),
+  "articleText": zod.string().min(publishBlogArticleBodyArticleTextMin).max(publishBlogArticleBodyArticleTextMax),
+  "imageDataUrl": zod.string().min(publishBlogArticleBodyImageDataUrlMin).max(publishBlogArticleBodyImageDataUrlMax).describe('Cover image as a base64 data URL (png, jpeg or webp)'),
+  "excerpt": zod.string().max(publishBlogArticleBodyExcerptMax).optional(),
+  "author": zod.string().max(publishBlogArticleBodyAuthorMax).optional()
+})
+
+export const PublishBlogArticleResponse = zod.object({
+  "ok": zod.boolean(),
+  "slug": zod.string(),
+  "url": zod.string()
+})
+
+

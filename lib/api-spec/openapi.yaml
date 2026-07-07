@@ -49,6 +49,46 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+  /blog/publish:
+    post:
+      operationId: publishBlogArticle
+      tags: [blog]
+      summary: Publish a blog article (development workspace only)
+      description: >
+        Writes a new article entry into the website source (src/data/blog.ts)
+        and saves its cover image under public/images/articles/. Only available
+        in the development workspace; returns 404 in production.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BlogPublishInput"
+      responses:
+        "200":
+          description: Article written to the website source
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BlogPublishResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not available (production)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: An article with this slug already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 components:
   schemas:
     HealthStatus:
@@ -86,5 +126,42 @@ components:
       required: [error]
       properties:
         error:
+          type: string
+    BlogPublishInput:
+      type: object
+      required: [title, category, articleText, imageDataUrl]
+      properties:
+        title:
+          type: string
+          minLength: 8
+          maxLength: 160
+        category:
+          type: string
+          minLength: 2
+          maxLength: 40
+        articleText:
+          type: string
+          minLength: 100
+          maxLength: 100000
+        imageDataUrl:
+          type: string
+          description: Cover image as a base64 data URL (png, jpeg or webp)
+          minLength: 50
+          maxLength: 16000000
+        excerpt:
+          type: string
+          maxLength: 300
+        author:
+          type: string
+          maxLength: 80
+    BlogPublishResponse:
+      type: object
+      required: [ok, slug, url]
+      properties:
+        ok:
+          type: boolean
+        slug:
+          type: string
+        url:
           type: string
 

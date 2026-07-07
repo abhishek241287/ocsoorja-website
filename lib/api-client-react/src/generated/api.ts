@@ -20,6 +20,8 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  BlogPublishInput,
+  BlogPublishResponse,
   ContactInput,
   ContactResponse,
   ErrorResponse,
@@ -200,5 +202,76 @@ export const useSubmitContactForm = <TError = ErrorType<ErrorResponse>,
         TContext
       > => {
       return useMutation(getSubmitContactFormMutationOptions(options));
+    }
+
+export const getPublishBlogArticleUrl = () => {
+
+
+
+
+  return `/api/blog/publish`
+}
+
+/**
+ * Writes a new article entry into the website source (src/data/blog.ts) and saves its cover image under public/images/articles/. Only available in the development workspace; returns 404 in production.
+ * @summary Publish a blog article (development workspace only)
+ */
+export const publishBlogArticle = async (blogPublishInput: BlogPublishInput, options?: RequestInit): Promise<BlogPublishResponse> => {
+
+  return customFetch<BlogPublishResponse>(getPublishBlogArticleUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(blogPublishInput)
+  }
+);}
+
+
+
+
+export const getPublishBlogArticleMutationOptions = <TError = ErrorType<ErrorResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof publishBlogArticle>>, TError,{data: BodyType<BlogPublishInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof publishBlogArticle>>, TError,{data: BodyType<BlogPublishInput>}, TContext> => {
+
+const mutationKey = ['publishBlogArticle'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof publishBlogArticle>>, {data: BodyType<BlogPublishInput>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  publishBlogArticle(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PublishBlogArticleMutationResult = NonNullable<Awaited<ReturnType<typeof publishBlogArticle>>>
+    export type PublishBlogArticleMutationBody = BodyType<BlogPublishInput>
+    export type PublishBlogArticleMutationError = ErrorType<ErrorResponse>
+
+    /**
+ * @summary Publish a blog article (development workspace only)
+ */
+export const usePublishBlogArticle = <TError = ErrorType<ErrorResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof publishBlogArticle>>, TError,{data: BodyType<BlogPublishInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof publishBlogArticle>>,
+        TError,
+        {data: BodyType<BlogPublishInput>},
+        TContext
+      > => {
+      return useMutation(getPublishBlogArticleMutationOptions(options));
     }
 

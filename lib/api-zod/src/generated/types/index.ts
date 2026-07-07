@@ -6,6 +6,8 @@
  * OpenAPI spec version: 0.1.0
  */
 
+export * from './blogPublishInput';
+export * from './blogPublishResponse';
 export * from './contactInput';
 export * from './contactResponse';
 export * from './errorResponse';

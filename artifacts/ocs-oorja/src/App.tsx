@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { Switch, Route, Router as WouterRouter } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -17,6 +18,12 @@ import { Analytics } from "@/components/Analytics";
 
 const queryClient = new QueryClient();
 
+// Internal Blog Publisher tool — development workspace only. The conditional
+// is statically false in production builds, so the page is never bundled.
+const BlogPublisher = import.meta.env.DEV
+  ? lazy(() => import("@/pages/blog-publisher"))
+  : null;
+
 function Router() {
   return (
     <Layout>
@@ -29,6 +36,13 @@ function Router() {
         <Route path="/blog" component={Blog} />
         <Route path="/blog/:slug" component={BlogDetail} />
         <Route path="/design-system" component={DesignSystem} />
+        {BlogPublisher ? (
+          <Route path="/blog-publisher">
+            <Suspense fallback={null}>
+              <BlogPublisher />
+            </Suspense>
+          </Route>
+        ) : null}
         <Route component={NotFound} />
       </Switch>
     </Layout>

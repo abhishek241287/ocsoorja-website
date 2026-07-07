@@ -31,6 +31,7 @@ Marketing + product website for **OCS OORJA**, an integrated clean-energy & EV-i
 - **Homepage-only media (single folder):** `artifacts/ocs-oorja/public/images/home/` holds every image unique to the home page (hero background + ecosystem tiles, manufacturing steps, industries cards) with fixed filenames — replace a file with the SAME name to swap a picture, zero code. See its `README.md` for the file→section map. Featured-product photos stay in `products/` and article thumbnails in `articles/` because they are shared with other pages.
 - **Homepage content (single source for home page sections):** `artifacts/ocs-oorja/src/data/home.ts` (section headings + "Why OCS OORJA" cards, manufacturing steps, featured product slugs, final CTA), `src/data/industries.ts` (industries cards), `src/data/insights.ts` (insights). Icons are stored as lucide NAME strings and resolved to components in each section's UI layer.
 - **Shared site copy (single source for messaging & CTA wording):** `artifacts/ocs-oorja/src/data/brand.ts` — edit shared headlines, positioning statement, and button labels HERE; components import `BRAND`, `CTAS`, `HEADLINES` (plus `PRODUCT_DESCRIPTION_TEMPLATE`/`FAQ_STANDARD` writing guides). Zero runtime imports so it stays non-developer-editable. Product-specific copy still lives in `src/data/products/`.
+- **Blog content (single source):** `artifacts/ocs-oorja/src/data/blog.ts` + images in `public/images/articles/`. Non-developers publish via the **Blog Publisher** at unlinked route `/blog-publisher` (dev workspace only): form → POST `/api/blog/publish` (route `artifacts/api-server/src/routes/blog-publish.ts`) → writes the blog.ts entry + saves the image. See `public/images/articles/README.md` for the owner-facing guide.
 - **Navigation:** `artifacts/ocs-oorja/src/data/navigation.ts` · **Routes:** `artifacts/ocs-oorja/src/App.tsx`
 
 ## Architecture decisions
@@ -63,7 +64,8 @@ A premium industrial site presenting OCS OORJA's product families (inverters, Li
 - **Animations have the same trap:** `--animate-fade-in-up` is declared in `:root`, NOT `@theme`, so the bare `animate-fade-in-up` class does NOT exist. Use the Hero/Testimonials idiom instead: `animate-[fade-in-up_0.5s_ease-out_both]` + `motion-reduce:animate-none` (inline `animationDelay` style for stagger).
 - Use `text-primary-strong` (not `text-primary`) for brand-colored **text/icons/links** so dark mode stays AA-compliant; use `bg-primary` for fills.
 - **Interim state:** decorative/section components (Hero, CTA, ChatWidget, TiltedCard, and a few page icons) still use legacy emerald/cyan — this is intentional and gets migrated during the Phase D page redesigns. Not a bug. (Testimonials was migrated to tokens in the 2026-07-07 redesign.)
-- `/design-system` is intentionally absent from `navigation.ts` (internal reference only).
+- `/design-system` and `/blog-publisher` are intentionally absent from `navigation.ts` (internal tools). The Blog Publisher fails closed outside the dev workspace: the API route 404s unless `NODE_ENV === "development"` && no `REPLIT_DEPLOYMENT`, and the page is only bundled when `import.meta.env.DEV` (lazy import, tree-shaken from prod builds).
+- Publishing an article rewrites `blog.ts`, which restarts the Vite dev server (sitemap plugin) — the Publisher persists its success panel in sessionStorage across the reload. This restart is expected, not a bug.
 - Verify via workflows or `pnpm --filter @workspace/ocs-oorja run typecheck`, not root `pnpm dev`.
 
 ## Pointers

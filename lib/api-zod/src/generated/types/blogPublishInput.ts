@@ -5,27 +5,6 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
-export interface HealthStatus {
-  status: string;
-}
-
-export interface ContactInput {
-  /** @minLength 1 */
-  name: string;
-  email: string;
-  phone?: string;
-  company?: string;
-  /** @minLength 1 */
-  message: string;
-}
-
-export interface ContactResponse {
-  ok: boolean;
-}
-
-export interface ErrorResponse {
-  error: string;
-}
 
 export interface BlogPublishInput {
   /**
@@ -54,10 +33,3 @@ export interface BlogPublishInput {
   /** @maxLength 80 */
   author?: string;
 }
-
-export interface BlogPublishResponse {
-  ok: boolean;
-  slug: string;
-  url: string;
-}
-
