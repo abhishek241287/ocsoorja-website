@@ -38,7 +38,13 @@ function Router() {
         <Route path="/design-system" component={DesignSystem} />
         {BlogPublisher ? (
           <Route path="/blog-publisher">
-            <Suspense fallback={null}>
+            <Suspense
+              fallback={
+                <div className="flex min-h-[60vh] items-center justify-center text-muted-foreground">
+                  Loading the Blog Publisher…
+                </div>
+              }
+            >
               <BlogPublisher />
             </Suspense>
           </Route>
