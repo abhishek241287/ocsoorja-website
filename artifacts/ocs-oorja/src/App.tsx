@@ -15,6 +15,7 @@ import BlogDetail from "@/pages/blog-detail";
 import DesignSystem from "@/pages/design-system";
 import ScrollRestoration from "@/components/ScrollRestoration";
 import { Analytics } from "@/components/Analytics";
+import { WhatsAppWidget } from "@/components/global/WhatsAppWidget";
 
 const queryClient = new QueryClient();
 
@@ -63,6 +64,7 @@ function App() {
           <ScrollRestoration />
           <Analytics />
           <Router />
+          <WhatsAppWidget />
         </WouterRouter>
         <Toaster />
       </TooltipProvider>

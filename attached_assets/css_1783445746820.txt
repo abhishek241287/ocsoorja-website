@@ -1,0 +1,25 @@
+/* WhatsApp widget gentle pulse */
+@keyframes wa-pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 4px 20px rgba(37, 211, 102, 0.22), 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 6px 28px rgba(37, 211, 102, 0.32), 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* Apply pulse only when not hovered and not reduced-motion */
+@media (prefers-reduced-motion: no-preference) {
+  .wa-pulse {
+    animation: wa-pulse 2s ease-in-out 4s infinite;
+  }
+}
+
+/* Reduced motion: disable all widget animations */
+@media (prefers-reduced-motion: reduce) {
+  .wa-pulse {
+    animation: none !important;
+  }
+}

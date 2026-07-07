@@ -77,6 +77,9 @@ export const CTAS = {
 export const CONTACT = {
   email: "customercare@ocsoorja.com",
   emailHref: "mailto:customercare@ocsoorja.com",
+  phoneDisplay: "7521803995",
+  phoneHref: "tel:+917521803995",
+  whatsapp: "917521803995", // WhatsApp format (country code, no + or spaces)
 } as const;
 
 // --- Standard headlines & subheads (per page / section) -----------------------

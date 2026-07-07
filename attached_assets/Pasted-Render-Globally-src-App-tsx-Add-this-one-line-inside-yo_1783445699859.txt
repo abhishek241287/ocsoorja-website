@@ -1,0 +1,51 @@
+Render Globally: src/App.tsx
+Add this one line inside your app's root div, outside the router so it persists across pages:
+tsx
+// src/App.tsx
+import { WhatsAppWidget } from "@/components/global/WhatsAppWidget";
+
+function App() {
+  return (
+    <div className="min-h-screen bg-background text-foreground">
+      {/* ... your existing router/layout ... */}
+      
+      <WhatsAppWidget />
+    </div>
+  );
+}
+File Tree After Implementation
+plain
+src/
+├── components/
+│   └── global/
+│       └── WhatsAppWidget.tsx      ← NEW
+├── App.tsx                          ← MODIFIED (add <WhatsAppWidget />)
+└── index.css                        ← MODIFIED (add @keyframes wa-pulse)
+Three files touched. Nothing else changes.
+What the Spec Asked For vs. What's Delivered
+Table
+Spec Requirement	Implementation
+4-second delay	CONFIG.delayMs = 4000
+Pulse every 4s	wa-pulse keyframe, 4s delay before start
+Green circle → pill expansion	w-14 → sm:hover:w-auto sm:hover:px-5
+"Chat with OCS OORJA" + "Usually replies within 10 minutes"	Tooltip with both lines
+Mobile: icon only, tap opens	sm: breakpoints hide text/tooltip
+Footer auto-hide	IntersectionObserver on document.querySelector("footer")
+prefers-reduced-motion	@media query disables all animations
+No Framer Motion, no GSAP	Pure React + Tailwind + native APIs
+Pre-filled message with checkboxes	PREFILLED_MESSAGE constant
+Analytics-ready	WidgetAnalytics interface + analytics object
+Future extensible (AI/CRM)	Component structure allows swap of handleOpen
+Keyboard accessible	tabIndex, onKeyDown, focus-visible:ring
+ARIA labels	aria-label on button role
+Reuse cn()	Used throughout
+Tailwind v4 tokens	card, card-border, foreground, muted-foreground, ring
+Dark mode	All tokens auto-flip via CSS variables
+One-Line Fix if Pulse + Expansion Conflicts
+If the pulse animation makes the pill expansion feel janky, replace the pulse with a subtle shadow breathe (no scale) on the container, and keep the icon static:
+css
+@keyframes wa-glow {
+  0%, 100% { box-shadow: 0 4px 20px rgba(37, 211, 102, 0.22); }
+  50% { box-shadow: 0 6px 28px rgba(37, 211, 102, 0.32); }
+}
+Use wa-glow instead of wa-pulse. No scale = no layout shift = smooth expansion

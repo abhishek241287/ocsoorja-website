@@ -462,3 +462,33 @@
     inset: -1px;
   }
 }
+
+/* WhatsApp widget gentle pulse (applied to the icon wrapper, not the
+   expanding pill container, so the pulse and width transition never fight).
+   Scale-only: a box-shadow here would be clipped by the container's
+   overflow-hidden, so it is deliberately omitted. */
+@keyframes wa-pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+/* Apply pulse only when not hovered and not reduced-motion */
+@media (prefers-reduced-motion: no-preference) {
+  .wa-pulse {
+    animation: wa-pulse 2s ease-in-out 4s infinite;
+  }
+  .group:hover .wa-pulse {
+    animation: none;
+  }
+}
+
+/* Reduced motion: disable all widget animations */
+@media (prefers-reduced-motion: reduce) {
+  .wa-pulse {
+    animation: none !important;
+  }
+}
