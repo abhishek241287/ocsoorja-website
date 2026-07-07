@@ -60,8 +60,9 @@ A premium industrial site presenting OCS OORJA's product families (inverters, Li
 ## Gotchas
 
 - **Editing brand colors:** change the raw HSL var in `:root`/`.dark` in `src/index.css`. If you add a NEW color you must also add its `@theme inline --color-*` mapping, or the utility will not exist.
+- **Animations have the same trap:** `--animate-fade-in-up` is declared in `:root`, NOT `@theme`, so the bare `animate-fade-in-up` class does NOT exist. Use the Hero/Testimonials idiom instead: `animate-[fade-in-up_0.5s_ease-out_both]` + `motion-reduce:animate-none` (inline `animationDelay` style for stagger).
 - Use `text-primary-strong` (not `text-primary`) for brand-colored **text/icons/links** so dark mode stays AA-compliant; use `bg-primary` for fills.
-- **Interim state:** decorative/section components (Hero, CTA, ChatWidget, testimonials, TiltedCard, and a few page icons) still use legacy emerald/cyan — this is intentional and gets migrated during the Phase D page redesigns. Not a bug.
+- **Interim state:** decorative/section components (Hero, CTA, ChatWidget, TiltedCard, and a few page icons) still use legacy emerald/cyan — this is intentional and gets migrated during the Phase D page redesigns. Not a bug. (Testimonials was migrated to tokens in the 2026-07-07 redesign.)
 - `/design-system` is intentionally absent from `navigation.ts` (internal reference only).
 - Verify via workflows or `pnpm --filter @workspace/ocs-oorja run typecheck`, not root `pnpm dev`.
 

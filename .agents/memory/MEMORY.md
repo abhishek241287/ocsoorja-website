@@ -9,3 +9,4 @@
 - [wouter Link breaks mailto:/tel:](wouter-link-external-schemes.md) — non-http hrefs must use plain <a>; wouter <Link> pushState-intercepts them so the link silently does nothing.
 - [SEO & launch config](ocs-oorja-seo-launch.md) — site.ts is single source for url/GA4/Search-Console (empty=off); sitemap generated in vite.config from product data, so editing a product restarts the dev server.
 - [Hero & homepage imagery](hero-imagery.md) — public/images/home/ (scenes=WebP, product renders stay JPG never recompressed); hero tiles decoupled from catalogue; product photos need object-contain; Vite dev serves MISSING public/ files as 200 HTML (check Content-Type).
+- [E2E hover/theme false negatives](e2e-test-false-negatives.md) — Tailwind v4 gates hover: behind @media (hover:hover) and uses the `translate` property, so Playwright hover checks fail falsely; verify via compiled CSS (`/src/index.css?direct`).
