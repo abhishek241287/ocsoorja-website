@@ -77,9 +77,8 @@ export type TestimonialStat = { value: string; label: string };
 
 export const testimonialStats: TestimonialStat[] = [
   { value: "4.9★", label: "Average Rating" },
-  { value: "12K+", label: "Installations" },
+  { value: "1000+", label: "Installations" },
   { value: "28", label: "States Covered" },
-  { value: "0%", label: "Downtime Promise" },
 ];
 
 export type TrustBadge = { label: string; icon: string };
@@ -88,5 +87,5 @@ export const trustBadges: TrustBadge[] = [
   { label: "ISO 9001 Certified", icon: "CheckCircle" },
   { label: "BIS Approved", icon: "CheckCircle" },
   { label: "MNRE Listed", icon: "CheckCircle" },
-  { label: "10-Year Warranty", icon: "CheckCircle" },
+  { label: "5-Year Warranty", icon: "CheckCircle" },
 ];
