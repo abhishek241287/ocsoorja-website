@@ -1,0 +1,212 @@
+I want to continue the UI/UX design of this project in Kimi and later bring the final code back into Replit.
+
+Please create a comprehensive PROJECT_HANDOVER.md document that explains everything a new senior frontend designer needs to know before working on this project.
+
+Do not explain the code line by line. Explain the architecture, design philosophy, conventions, folder structure, and important decisions.
+
+Ask it to include these sections
+1. Project Overview
+What OCS OORJA is
+Website purpose
+Target audience
+Business goals
+2. Technology Stack
+
+For example:
+
+React
+TypeScript
+Tailwind
+Vite
+Framer Motion
+Data-driven architecture
+3. Folder Structure
+
+Explain things like:
+
+src/
+components/
+pages/
+data/
+public/
+images/
+downloads/
+4. Design Philosophy
+
+Ask it to explain things such as:
+
+Premium clean energy brand
+Minimal
+Modern
+Large whitespace
+Soft shadows
+Rounded corners
+Smooth animations
+5. Image System
+
+Explain
+
+public/images/home/
+
+public/images/products/
+
+public/images/articles/
+
+public/downloads/
+
+and how images should be replaced.
+
+6. Data Architecture
+
+Explain that
+
+Products
+
+Testimonials
+
+Gallery
+
+Blogs
+
+FAQs
+
+Downloads
+
+Specifications
+
+should all remain data-driven.
+
+7. Performance Rules
+
+Explain
+
+Lazy loading
+WebP
+SEO
+Responsive images
+LCP optimization
+8. Existing Components
+
+Explain each section
+
+Hero
+
+Products
+
+Industries
+
+Manufacturing
+
+Footer
+
+Navbar
+
+etc.
+
+9. Future Roadmap
+
+Include
+
+Testimonials
+
+Gallery
+
+Blogs
+
+Dealer Network
+
+Case Studies
+
+WhatsApp Button
+
+SEO
+
+Downloads
+
+10. Coding Rules
+
+Never hardcode
+
+Never duplicate data
+
+Keep components reusable
+
+Use TypeScript
+
+Keep performance high
+
+11. Things NOT to Change
+
+Very important.
+
+For example
+
+Product URLs
+Folder conventions
+SEO structure
+Routing
+Existing image replacement workflow
+Data-driven architecture
+12. Design Language
+
+Explain
+
+Spacing
+
+Typography
+
+Animation timing
+
+Corner radius
+
+Color palette
+
+Cards
+
+Buttons
+
+Icons
+
+Also ask for a Design System document
+
+In addition to the handover, ask Replit to generate:
+
+DESIGN_SYSTEM.md
+
+This should describe:
+
+Colors
+Typography
+Spacing scale
+Border radius
+Shadows
+Button styles
+Card styles
+Animations
+Icon usage
+Hover effects
+Responsive breakpoints
+Then ask for a third document
+PROJECT_MEMORY.md
+
+This is the most valuable one.
+
+It should answer questions like:
+
+Why is the hero built this way?
+Why are homepage images separated?
+Why are product images shared?
+Why is everything data-driven?
+What previous design decisions were made?
+What problems have already been solved?
+What mistakes should future developers avoid?
+This gives Kimi everything it needs
+
+Instead of starting from scratch, Kimi will receive the project's "brain":
+
+Business context
+Architecture
+Design philosophy
+Technical rules
+Future roadmap
+Existing decisions

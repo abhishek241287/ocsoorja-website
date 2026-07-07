@@ -114,3 +114,21 @@ id = "yHU3HU3SZT3Hj_vgYJhL1"
 uri = "file://artifacts/ocs-oorja/.local/screenshots/testimonials-verification.png"
 type = "image"
 title = "Customer Success section — all 3 testimonials visible (3-column desktop grid)"
+
+[[outputs]]
+id = "3EmksziHBWg2F2X6oJ-Ri"
+uri = "file://artifacts/ocs-oorja/PROJECT_HANDOVER.md"
+type = "text"
+title = "PROJECT_HANDOVER.md — architecture, conventions & rules"
+
+[[outputs]]
+id = "dnrfuhBBtANFKdIenP2Wn"
+uri = "file://artifacts/ocs-oorja/DESIGN_SYSTEM.md"
+type = "text"
+title = "DESIGN_SYSTEM.md — tokens, components & visual rules"
+
+[[outputs]]
+id = "-FYzswQHtatGWTFiru7XJ"
+uri = "file://artifacts/ocs-oorja/PROJECT_MEMORY.md"
+type = "text"
+title = "PROJECT_MEMORY.md — decisions, solved problems & traps"
