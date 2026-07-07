@@ -8,12 +8,13 @@ import Testimonials from "@/components/sections/Testimonials";
 import FeaturedProducts from "@/components/sections/FeaturedProducts";
 import LatestArticles from "@/components/sections/LatestArticles";
 import FinalCta from "@/components/sections/FinalCta";
-import { getOrganizationSchema, getLocalBusinessSchema, renderJsonLd } from "@/lib/seo";
+import { getOrganizationSchema, getLocalBusinessSchema, getBreadcrumbSchema, renderJsonLd } from "@/lib/seo";
 import { SITE } from "@/data/site";
 
 export default function Home() {
   const organizationSchema = getOrganizationSchema();
   const localBusinessSchema = getLocalBusinessSchema();
+  const breadcrumbSchema = getBreadcrumbSchema([{ name: "Home", url: `${SITE.url}/` }]);
 
   return (
     <>
@@ -30,6 +31,10 @@ export default function Home() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={renderJsonLd(localBusinessSchema)}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={renderJsonLd(breadcrumbSchema)}
       />
 
       {/* Company-first flow: who we are → who we serve → how we build →

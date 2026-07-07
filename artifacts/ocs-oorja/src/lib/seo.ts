@@ -1,158 +1,124 @@
 /**
- * SEO Utility - Structured Data and Schema.org markup for better search engine visibility
+ * SEO Utility — Structured Data (JSON-LD / Schema.org) for search engines.
+ *
+ * ALL company data comes from src/data/brand.ts (BRAND, CONTACT, COMPANY)
+ * and src/data/site.ts (SITE). Never hardcode company facts here — edit the
+ * data files instead and every schema updates automatically.
  */
 
-import { BRAND, CONTACT } from "@/data/brand";
+import { BRAND, CONTACT, COMPANY } from "@/data/brand";
 import { SITE } from "@/data/site";
 
-interface OrganizationSchema {
-  "@context": string;
-  "@type": string;
-  name: string;
-  alternateName?: string;
-  url: string;
-  logo: string;
-  description: string;
-  address: {
-    "@type": string;
-    streetAddress: string;
-    addressLocality: string;
-    addressRegion: string;
-    postalCode?: string;
-    addressCountry: string;
-  };
-  contactPoint: {
-    "@type": string;
-    telephone: string;
-    contactType: string;
-    email: string;
-    areaServed: string;
-    availableLanguage: string[];
-  };
-  sameAs: string[];
-  foundingLocation?: {
-    "@type": string;
-    address: {
-      "@type": string;
-      addressLocality: string;
-      addressRegion: string;
-      addressCountry: string;
-    };
-  };
-  areaServed?: {
-    "@type": string;
-    name: string;
+const SCHEMA_CONTEXT = "https://schema.org";
+const LOGO_URL = `${SITE.url}/images/OCS_OORJA_logo_landscape.png`;
+
+/** E.164-style phone derived from the single source in CONTACT. */
+const PHONE = CONTACT.phoneHref.replace("tel:", "");
+
+type Schema = Record<string, unknown>;
+
+function getPostalAddress(): Schema {
+  return {
+    "@type": "PostalAddress",
+    streetAddress: `${COMPANY.address.street}, ${COMPANY.address.locality}`,
+    addressLocality: COMPANY.address.city,
+    addressRegion: COMPANY.address.state,
+    postalCode: COMPANY.address.postalCode,
+    addressCountry: COMPANY.address.countryCode,
   };
 }
 
-interface LocalBusinessSchema extends OrganizationSchema {
-  "@type": "LocalBusiness";
-  priceRange?: string;
-  openingHours?: string;
-}
-
-interface ProductSchema {
-  "@context": string;
-  "@type": string;
-  name: string;
-  description: string;
-  image?: string;
-  brand: {
-    "@type": string;
-    name: string;
-  };
-  manufacturer: {
-    "@type": string;
-    name: string;
-  };
-  offers?: {
-    "@type": string;
-    availability: string;
-    priceCurrency: string;
-    url: string;
-  };
+function getContactPoints(): Schema[] {
+  return COMPANY.contactTypes.map((contactType) => ({
+    "@type": "ContactPoint",
+    contactType,
+    telephone: PHONE,
+    email: CONTACT.email,
+    areaServed: COMPANY.address.countryCode,
+    availableLanguage: ["English", "Hindi"],
+  }));
 }
 
 /**
- * Generate Organization Schema for OCS OORJA
+ * Organization schema — rendered on the homepage (site-wide identity).
  */
-export function getOrganizationSchema(): OrganizationSchema {
+export function getOrganizationSchema(): Schema {
   return {
-    "@context": "https://schema.org",
+    "@context": SCHEMA_CONTEXT,
     "@type": "Organization",
-    name: "OCS OORJA",
-    alternateName: "OCS OORJA Green Energy Solutions",
+    "@id": `${SITE.url}/#organization`,
+    name: BRAND.name,
+    legalName: COMPANY.legalName,
     url: SITE.url,
-    logo: `${SITE.url}/images/OCS_OORJA_logo_landscape.png`,
+    logo: LOGO_URL,
     description: BRAND.positioning,
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: "Commercial Unit No. 304 on 3rd Floor Royal Plaza, Block-3 in IT Park-2, at Sushant Golf City",
-      addressLocality: "Lucknow",
-      addressRegion: "Uttar Pradesh",
-      addressCountry: "IN",
-    },
-    contactPoint: {
-      "@type": "ContactPoint",
-      telephone: "+91-75218-03995",
-      contactType: "Sales",
-      email: CONTACT.email,
-      areaServed: "IN",
-      availableLanguage: ["English", "Hindi"],
-    },
-    sameAs: [
-      "https://www.instagram.com/ocs_oorja",
-      "https://www.youtube.com/@ocs_oorja",
-    ],
-    foundingLocation: {
-      "@type": "Place",
-      address: {
-        "@type": "PostalAddress",
-        addressLocality: "Lucknow",
-        addressRegion: "Uttar Pradesh",
-        addressCountry: "IN",
-      },
-    },
+    telephone: PHONE,
+    email: CONTACT.email,
+    address: getPostalAddress(),
+    contactPoint: getContactPoints(),
+    sameAs: [...COMPANY.social],
     areaServed: {
       "@type": "Country",
-      name: "India",
+      name: COMPANY.address.countryName,
     },
   };
 }
 
 /**
- * Generate LocalBusiness Schema for better local SEO
+ * LocalBusiness schema — homepage only. Adds map coordinates and opening
+ * hours so the business can appear in local search / maps results.
  */
-export function getLocalBusinessSchema(): LocalBusinessSchema {
+export function getLocalBusinessSchema(): Schema {
   return {
     ...getOrganizationSchema(),
     "@type": "LocalBusiness",
+    "@id": `${SITE.url}/#localbusiness`,
     priceRange: "₹₹₹",
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: COMPANY.geo.latitude,
+      longitude: COMPANY.geo.longitude,
+    },
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: [...COMPANY.openingHours.dayOfWeek],
+        opens: COMPANY.openingHours.opens,
+        closes: COMPANY.openingHours.closes,
+      },
+    ],
   };
 }
 
 /**
- * Generate Product Schema for a specific product
+ * Product schema for a specific product page.
  */
 export function getProductSchema(product: {
   name: string;
   description: string;
   url: string;
   image?: string;
-}): ProductSchema {
+}): Schema {
   return {
-    "@context": "https://schema.org",
+    "@context": SCHEMA_CONTEXT,
     "@type": "Product",
+    "@id": `${product.url}#product`,
     name: product.name,
     description: product.description,
     ...(product.image ? { image: product.image } : {}),
     brand: {
       "@type": "Brand",
-      name: "OCS OORJA",
+      name: BRAND.name,
     },
     manufacturer: {
       "@type": "Organization",
-      name: "OCS OORJA",
+      "@id": `${SITE.url}/#organization`,
+      name: BRAND.name,
+      url: SITE.url,
+    },
+    countryOfOrigin: {
+      "@type": "Country",
+      name: COMPANY.address.countryName,
     },
     offers: {
       "@type": "Offer",
@@ -164,11 +130,11 @@ export function getProductSchema(product: {
 }
 
 /**
- * Generate BreadcrumbList Schema for better navigation understanding
+ * BreadcrumbList schema — helps search engines display navigation trails.
  */
-export function getBreadcrumbSchema(items: Array<{ name: string; url: string }>) {
+export function getBreadcrumbSchema(items: Array<{ name: string; url: string }>): Schema {
   return {
-    "@context": "https://schema.org",
+    "@context": SCHEMA_CONTEXT,
     "@type": "BreadcrumbList",
     itemListElement: items.map((item, index) => ({
       "@type": "ListItem",
@@ -180,11 +146,11 @@ export function getBreadcrumbSchema(items: Array<{ name: string; url: string }>)
 }
 
 /**
- * Generate FAQ Schema for FAQ pages
+ * FAQ schema for pages with question/answer content.
  */
-export function getFAQSchema(faqs: Array<{ question: string; answer: string }>) {
+export function getFAQSchema(faqs: Array<{ question: string; answer: string }>): Schema {
   return {
-    "@context": "https://schema.org",
+    "@context": SCHEMA_CONTEXT,
     "@type": "FAQPage",
     mainEntity: faqs.map((faq) => ({
       "@type": "Question",
@@ -198,11 +164,11 @@ export function getFAQSchema(faqs: Array<{ question: string; answer: string }>) 
 }
 
 /**
- * Generate ItemList Schema for a catalogue / listing page
+ * ItemList schema for a catalogue / listing page.
  */
-export function getItemListSchema(items: Array<{ name: string; url: string }>) {
+export function getItemListSchema(items: Array<{ name: string; url: string }>): Schema {
   return {
-    "@context": "https://schema.org",
+    "@context": SCHEMA_CONTEXT,
     "@type": "ItemList",
     itemListElement: items.map((item, index) => ({
       "@type": "ListItem",
@@ -214,7 +180,7 @@ export function getItemListSchema(items: Array<{ name: string; url: string }>) {
 }
 
 /**
- * Generate Article Schema for a blog post
+ * Article (BlogPosting) schema for a blog post.
  */
 export function getArticleSchema(article: {
   title: string;
@@ -223,10 +189,12 @@ export function getArticleSchema(article: {
   image?: string;
   author: string;
   datePublished: string; // ISO date (YYYY-MM-DD)
-}) {
+  dateModified?: string; // ISO date; falls back to datePublished
+}): Schema {
   return {
-    "@context": "https://schema.org",
-    "@type": "Article",
+    "@context": SCHEMA_CONTEXT,
+    "@type": "BlogPosting",
+    "@id": `${article.url}#article`,
     headline: article.title,
     description: article.description,
     ...(article.image ? { image: article.image } : {}),
@@ -236,14 +204,15 @@ export function getArticleSchema(article: {
     },
     publisher: {
       "@type": "Organization",
-      name: "OCS OORJA",
+      "@id": `${SITE.url}/#organization`,
+      name: BRAND.name,
       logo: {
         "@type": "ImageObject",
-        url: `${SITE.url}/images/OCS_OORJA_logo_landscape.png`,
+        url: LOGO_URL,
       },
     },
     datePublished: article.datePublished,
-    dateModified: article.datePublished,
+    dateModified: article.dateModified ?? article.datePublished,
     mainEntityOfPage: {
       "@type": "WebPage",
       "@id": article.url,
@@ -253,7 +222,7 @@ export function getArticleSchema(article: {
 }
 
 /**
- * Utility to render JSON-LD script tag
+ * Utility to render a JSON-LD script tag.
  */
 export function renderJsonLd(data: object) {
   return {

@@ -13,20 +13,31 @@ import { blogPosts } from "./src/data/blog";
 // sitemap. Runs on every `vite` / `vite build` invocation.
 function generateSitemap() {
   try {
-    const staticPaths = ["/", "/about", "/contact", "/products", "/blog"];
-    const productPaths = products.map((p) => `/products/${p.slug}`);
-    const blogPaths = blogPosts.map((p) => `/blog/${p.slug}`);
-    const today = new Date().toISOString().slice(0, 10);
-    const urls = [...staticPaths, ...productPaths, ...blogPaths]
-      .map((p) => {
-        const priority =
-          p === "/"
-            ? "1.0"
-            : p.startsWith("/products/") || p.startsWith("/blog/")
-              ? "0.7"
-              : "0.8";
-        return `  <url>\n    <loc>${SITE.url}${p}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>${priority}</priority>\n  </url>`;
-      })
+    type Entry = { path: string; lastmod?: string; changefreq: string; priority: string };
+    const entries: Entry[] = [
+      { path: "/", changefreq: "weekly", priority: "1.0" },
+      { path: "/products", changefreq: "weekly", priority: "0.8" },
+      { path: "/blog", changefreq: "weekly", priority: "0.8" },
+      { path: "/about", changefreq: "monthly", priority: "0.8" },
+      { path: "/contact", changefreq: "monthly", priority: "0.8" },
+      ...products.map((p) => ({
+        path: `/products/${p.slug}`,
+        lastmod: p.dateAdded,
+        changefreq: "monthly",
+        priority: "0.7",
+      })),
+      ...blogPosts.map((p) => ({
+        path: `/blog/${p.slug}`,
+        lastmod: p.publishDate,
+        changefreq: "monthly",
+        priority: "0.7",
+      })),
+    ];
+    const urls = entries
+      .map(
+        (e) =>
+          `  <url>\n    <loc>${SITE.url}${e.path}</loc>\n${e.lastmod ? `    <lastmod>${e.lastmod}</lastmod>\n` : ""}    <changefreq>${e.changefreq}</changefreq>\n    <priority>${e.priority}</priority>\n  </url>`,
+      )
       .join("\n");
     const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`;
     fs.writeFileSync(

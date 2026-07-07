@@ -75,7 +75,7 @@ export default function ProductDetail() {
   if (!product) {
     return (
       <>
-        <Seo title="Product not found" />
+        <Seo title="Product not found" robots="noindex, nofollow" />
         <Container className="py-20 text-center">
           <h1 className="text-2xl font-bold">Product not found</h1>
           <p className="mt-4 text-muted-foreground">The product you are looking for does not exist.</p>
@@ -124,6 +124,8 @@ export default function ProductDetail() {
         title={product.seo?.metaTitle ?? product.name}
         description={product.seo?.metaDescription ?? product.summary}
         canonical={url}
+        ogType="product"
+        ogImage={product.image ? `${SITE}${product.image}` : undefined}
       />
       <Container>
         <script type="application/ld+json" dangerouslySetInnerHTML={renderJsonLd(productSchema)} />

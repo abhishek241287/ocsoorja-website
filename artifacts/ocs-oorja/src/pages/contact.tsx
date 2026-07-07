@@ -5,8 +5,13 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import ContactForm from "@/components/contact/ContactForm";
 import { Phone, Mail, MapPin } from "lucide-react";
 import { BRAND, HEADLINES, CONTACT } from "@/data/brand";
+import { getBreadcrumbSchema, renderJsonLd } from "@/lib/seo";
 
 export default function ContactPage() {
+  const breadcrumbSchema = getBreadcrumbSchema([
+    { name: "Home", url: `${SITE.url}/` },
+    { name: "Contact", url: `${SITE.url}/contact` },
+  ]);
   return (
     <div className="py-12 md:py-16">
       <Seo
@@ -15,6 +20,7 @@ export default function ContactPage() {
         canonical={`${SITE.url}/contact`}
       />
       <Container>
+        <script type="application/ld+json" dangerouslySetInnerHTML={renderJsonLd(breadcrumbSchema)} />
         <SectionHeading
           title={HEADLINES.contact.title}
           subtitle={HEADLINES.contact.subtitle}

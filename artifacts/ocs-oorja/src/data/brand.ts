@@ -82,6 +82,44 @@ export const CONTACT = {
   whatsapp: "917521803995", // WhatsApp format (country code, no + or spaces)
 } as const;
 
+// --- Company identity, address & hours (SINGLE SOURCE for Google/SEO data) ----
+// This block feeds the structured data (JSON-LD) that Google reads: your
+// business address, map coordinates, opening hours, and social profiles.
+// Edit values HERE and every schema on the site updates automatically.
+export const COMPANY = {
+  legalName: "OCS OORJA Green Pvt. Ltd.",
+  address: {
+    street: "Commercial Unit No. 304, 3rd Floor, Royal Plaza",
+    locality: "Block 3, IT Park 2, Sushant Golf City",
+    city: "Lucknow",
+    state: "Uttar Pradesh",
+    postalCode: "226030",
+    countryCode: "IN", // ISO code used by search engines
+    countryName: "India",
+  },
+  // Coordinates of the office (used for the map pin in Google results).
+  geo: { latitude: "26.796090", longitude: "81.003596" },
+  // Opening hours in 24h format. Days not listed (Sunday) count as closed.
+  openingHours: {
+    dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+    opens: "10:00",
+    closes: "18:00",
+  },
+  // Public social profiles. Only list profiles that really exist — wrong
+  // links here hurt SEO. Add or remove lines freely.
+  social: [
+    "https://www.instagram.com/ocs_oorja",
+    "https://www.youtube.com/@ocs_oorja",
+    "https://www.linkedin.com/company/ocs-oorja",
+    "https://www.facebook.com/ocsoorja",
+  ],
+  // Departments reachable at the phone/email above (shown to Google).
+  contactTypes: ["Sales", "Customer Support", "Technical Support", "Dealer Support"],
+} as const;
+
+// Ready-made one-line address for display anywhere on the site.
+export const COMPANY_ADDRESS_LINE = `${COMPANY.address.street}, ${COMPANY.address.locality}, ${COMPANY.address.city}, ${COMPANY.address.state} ${COMPANY.address.postalCode}, ${COMPANY.address.countryName}`;
+
 // --- Standard headlines & subheads (per page / section) -----------------------
 // Edit the customer-facing headlines and supporting lines for each area here.
 export const HEADLINES = {

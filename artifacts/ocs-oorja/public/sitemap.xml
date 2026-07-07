@@ -2,218 +2,213 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.ocsoorja.com/</loc>
-    <lastmod>2026-07-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.ocsoorja.com/about</loc>
-    <lastmod>2026-07-07</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.ocsoorja.com/contact</loc>
-    <lastmod>2026-07-07</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://www.ocsoorja.com/products</loc>
-    <lastmod>2026-07-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.ocsoorja.com/blog</loc>
-    <lastmod>2026-07-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://www.ocsoorja.com/about</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.ocsoorja.com/contact</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://www.ocsoorja.com/products/mppt-solar-inverter-12v-1600w</loc>
-    <lastmod>2026-07-07</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2025-10-14</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.ocsoorja.com/products/solar-hybrid-inverter-24v-3-5kw</loc>
-    <lastmod>2026-07-07</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2024-06-15</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.ocsoorja.com/products/solar-hybrid-inverter-48v-6kw</loc>
-    <lastmod>2026-07-07</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2024-06-22</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.ocsoorja.com/products/hybrid-solar-inverter-8kw</loc>
-    <lastmod>2026-07-07</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2026-07-05</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.ocsoorja.com/products/hybrid-solar-inverter-11kw</loc>
-    <lastmod>2026-07-07</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2026-07-05</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.ocsoorja.com/products/lithium-inverter-ocs-li-1000</loc>
-    <lastmod>2026-07-07</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2025-10-14</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.ocsoorja.com/products/inverter-12v-24v</loc>
-    <lastmod>2026-07-07</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2024-05-10</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.ocsoorja.com/products/combo-power-pack-12v</loc>
-    <lastmod>2026-07-07</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2024-09-05</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.ocsoorja.com/products/12v-100ah-home-power-storage</loc>
-    <lastmod>2026-07-07</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2024-01-15</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.ocsoorja.com/products/24v-100ah-home-power-storage</loc>
-    <lastmod>2026-07-07</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2024-02-20</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.ocsoorja.com/products/e-rickshaw-51v2-100ah</loc>
-    <lastmod>2026-07-07</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2024-03-10</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.ocsoorja.com/products/e-bike-60v-20ah</loc>
-    <lastmod>2026-07-07</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2023-01-15</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.ocsoorja.com/products/e-bike-60v-30ah</loc>
-    <lastmod>2026-07-07</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2023-01-10</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.ocsoorja.com/products/e-bike-60v-35ah</loc>
-    <lastmod>2026-07-07</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2023-01-05</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.ocsoorja.com/products/e-bike-60v-40ah</loc>
-    <lastmod>2026-07-07</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2023-01-01</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.ocsoorja.com/products/ocs-oorja-51v-7a-smart-charger-home-storage</loc>
-    <lastmod>2026-07-07</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2025-10-17</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.ocsoorja.com/products/ocs-oorja-51v-20a-smart-charger-home-storage</loc>
-    <lastmod>2026-07-07</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2025-10-17</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.ocsoorja.com/products/ocs-oorja-51v-25a-smart-charger-home-storage</loc>
-    <lastmod>2026-07-07</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2025-10-17</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.ocsoorja.com/products/ev-charger-ac</loc>
-    <lastmod>2026-07-07</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2024-08-12</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.ocsoorja.com/products/ev-charger-dc-fast</loc>
-    <lastmod>2026-07-07</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2024-08-20</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.ocsoorja.com/products/ev-charger-e-rickshaw</loc>
-    <lastmod>2026-07-07</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2024-07-08</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.ocsoorja.com/products/ocs-oorja-51v-7a-smart-charger</loc>
-    <lastmod>2026-07-07</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2025-10-17</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.ocsoorja.com/products/ocs-oorja-51v-20a-smart-charger</loc>
-    <lastmod>2026-07-07</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2025-10-17</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.ocsoorja.com/products/ocs-oorja-51v-25a-smart-charger</loc>
-    <lastmod>2026-07-07</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2025-10-17</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.ocsoorja.com/products/bess-5kwh-residential</loc>
-    <lastmod>2026-07-07</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2026-07-05</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.ocsoorja.com/products/bess-100kwh-commercial</loc>
-    <lastmod>2026-07-07</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2026-07-05</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.ocsoorja.com/blog/how-much-can-a-home-solar-battery-system-save-on-electricity-bills</loc>
     <lastmod>2026-07-07</lastmod>
-    <changefreq>weekly</changefreq>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.ocsoorja.com/blog/delhi-ev-policy-2026</loc>
     <lastmod>2026-07-07</lastmod>
-    <changefreq>weekly</changefreq>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.ocsoorja.com/blog/how-to-size-a-solar-inverter</loc>
-    <lastmod>2026-07-07</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2026-06-18</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.ocsoorja.com/blog/lifepo4-vs-lead-acid</loc>
-    <lastmod>2026-07-07</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2026-06-02</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.ocsoorja.com/blog/ac-vs-dc-ev-charging</loc>
-    <lastmod>2026-07-07</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 </urlset>

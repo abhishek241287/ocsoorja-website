@@ -1,0 +1,547 @@
+Build a production-grade SEO framework for the OCS OORJA website. This is a refinement sprint — preserve existing architecture, improve only what's listed below.
+
+CRITICAL RULES:
+- ALL company data comes from src/data/brand.ts — single source of truth, never duplicate
+- No invented values, no placeholders, no fabricated policies or certifications
+- No structural changes to routing, UI, or existing components
+- No new libraries — use react-helmet-async (already in dependencies), Tailwind v4, native APIs
+
+─── FILE 1: src/data/brand.ts (Single Source of Truth) ───
+
+export const brand = {
+  name: "OCS OORJA",
+  fullName: "OCS OORJA Green Pvt. Ltd.",
+  tagline: "Trusted Indian manufacturer of hybrid solar inverters, LiFePO₄ batteries, and EV charging solutions.",
+  description: "OCS OORJA designs and manufactures clean-energy systems in Lucknow — hybrid solar inverters, lithium battery storage, EV chargers, and smart monitoring for homes, businesses, and industries across India.",
+  website: "https://www.ocsoorja.com",
+  phone: "+91-7521803995",
+  email: "customercare@ocsoorja.com",
+  business: {
+    industry: "Clean Energy Manufacturing",
+    companyType: "Private Limited",
+    employees: "50-200",
+  },
+  address: {
+    street: "Commercial Unit No. 304, 3rd Floor, Royal Plaza",
+    locality: "Block 3, IT Park 2, Sushant Golf City",
+    city: "Lucknow",
+    state: "Uttar Pradesh",
+    postalCode: "226030",
+    country: "IN",
+    countryName: "India",
+  },
+  geo: {
+    latitude: "26.796090",
+    longitude: "81.003596",
+  },
+  openingHours: {
+    monday: { open: "10:00", close: "18:00" },
+    tuesday: { open: "10:00", close: "18:00" },
+    wednesday: { open: "10:00", close: "18:00" },
+    thursday: { open: "10:00", close: "18:00" },
+    friday: { open: "10:00", close: "18:00" },
+    saturday: { open: "10:00", close: "18:00" },
+    sunday: null,
+    publicHolidays: null,
+  },
+  logo: {
+    svg: "/images/ocs-oorja-logo.svg",
+    png: "/images/ocs-oorja-logo.png",
+    og: "/images/og-default.jpg",
+  },
+  favicon: {
+    svg: "/favicon.svg",
+    apple: "/apple-touch-icon.png",
+  },
+  social: {
+    website: "https://www.ocsoorja.com",
+    linkedin: "https://linkedin.com/company/ocs-oorja",
+    facebook: "https://facebook.com/ocsoorja",
+    instagram: "https://instagram.com/ocsoorja",
+    youtube: "https://youtube.com/@ocsoorja",
+    x: null,
+  },
+  contactPoints: [
+    { type: "Sales", telephone: "+91-7521803995", email: "customercare@ocsoorja.com", availableLanguage: ["English", "Hindi"], areaServed: "IN" },
+    { type: "Customer Support", telephone: "+91-7521803995", email: "customercare@ocsoorja.com", availableLanguage: ["English", "Hindi"], areaServed: "IN" },
+    { type: "Technical Support", telephone: "+91-7521803995", email: "customercare@ocsoorja.com", availableLanguage: ["English", "Hindi"], areaServed: "IN" },
+    { type: "Dealer Support", telephone: "+91-7521803995", email: "customercare@ocsoorja.com", availableLanguage: ["English", "Hindi"], areaServed: "IN" },
+  ],
+  certifications: { iso9001: true, bis: true, mnre: true, iec: null },
+} as const;
+
+export const BRAND_ADDRESS_STRING = `${brand.address.street}, ${brand.address.locality}, ${brand.address.city}, ${brand.address.state} ${brand.address.postalCode}, ${brand.address.countryName}`;
+export const BRAND_OPENING_HOURS_SPEC = [{ "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], opens: brand.openingHours.monday.open, closes: brand.openingHours.monday.close }] as const;
+
+─── FILE 2: src/data/seo.ts ───
+
+import { brand } from "./brand";
+
+export const SITE = {
+  name: brand.name,
+  url: brand.website,
+  tagline: brand.tagline,
+  description: brand.description,
+  phone: brand.phone,
+  email: brand.email,
+  address: brand.address,
+  geo: brand.geo,
+  logo: `${brand.website}${brand.logo.png}`,
+  ogImage: `${brand.website}${brand.logo.og}`,
+  social: brand.social,
+  contactPoints: brand.contactPoints,
+  openingHours: brand.openingHours,
+  hasTwitter: brand.social.x !== null,
+} as const;
+
+export const SEO_DEFAULTS = {
+  titleTemplate: "%s | OCS OORJA",
+  titleFallback: `${brand.name} — Hybrid Solar Inverters, LiFePO₄ Batteries & EV Charging`,
+  descriptionFallback: brand.description,
+  ogType: "website" as const,
+  twitterCard: "summary_large_image" as const,
+  robots: "index, follow" as const,
+} as const;
+
+export const PAGE_META = {
+  home: { title: "Hybrid Solar Inverters, LiFePO₄ Batteries & EV Charging", description: brand.description, ogType: "website" },
+  products: { title: "Products — Solar Inverters, Lithium Batteries & EV Chargers", description: "Explore OCS OORJA's product range: hybrid solar inverters, LiFePO₄ battery systems, EV chargers, and battery management systems. Engineered in India for Indian conditions.", ogType: "website" },
+  productDetail: { titleTemplate: "%s — OCS OORJA Product", descriptionTemplate: "%s — %s. High-efficiency clean-energy systems engineered in Lucknow, India. Request a quote.", ogType: "product" },
+  blog: { title: "Knowledge Centre — Solar, Battery & EV Charging Guides", description: "Expert articles on solar energy, hybrid inverters, LiFePO₄ batteries, EV charging and energy storage. Written by the engineers who build our systems.", ogType: "website" },
+  article: { titleTemplate: "%s — OCS OORJA Knowledge Centre", descriptionTemplate: "%s", ogType: "article" },
+  about: { title: "About OCS OORJA — Indian Clean-Energy Manufacturer", description: "Learn about OCS OORJA, a trusted Indian manufacturer of hybrid solar inverters, LiFePO₄ batteries, and EV charging solutions based in Lucknow, Uttar Pradesh.", ogType: "website" },
+  contact: { title: "Contact OCS OORJA — Request a Quote", description: "Get in touch with OCS OORJA for product enquiries, sizing support, and factory-direct pricing. Call, email, or request a custom quote.", ogType: "website" },
+  notFound: { title: "Page Not Found", description: "The page you are looking for does not exist. Browse our products or contact OCS OORJA.", robots: "noindex, nofollow" },
+} as const;
+
+export const SCHEMA_CONTEXT = "https://schema.org" as const;
+
+─── FILE 3: src/lib/seo.ts ───
+
+import { brand, BRAND_OPENING_HOURS_SPEC } from "@/data/brand";
+import { SITE, SCHEMA_CONTEXT, SEO_DEFAULTS, PAGE_META } from "@/data/seo";
+import type { Product, BlogArticle, FAQ } from "@/types";
+
+export function generateCanonical(path: string): string {
+  const cleanPath = path.startsWith("/") ? path : `/${path}`;
+  return `${SITE.url}${cleanPath}`;
+}
+
+export interface PageMeta { title: string; description: string; canonical: string; ogImage?: string; ogType?: string; twitterCard?: string; robots?: string; }
+
+export function buildPageMeta(pageKey: keyof typeof PAGE_META, overrides: Partial<PageMeta> & { param?: string; param2?: string } = {}, currentPath: string = "/"): PageMeta {
+  const preset = PAGE_META[pageKey];
+  const canonical = generateCanonical(currentPath);
+  let title = "title" in preset ? preset.title : "";
+  let description = preset.description;
+  if ("titleTemplate" in preset && overrides.param) title = preset.titleTemplate.replace("%s", overrides.param);
+  if ("descriptionTemplate" in preset && overrides.param) {
+    description = preset.descriptionTemplate.replace("%s", overrides.param);
+    if (overrides.param2) description = description.replace("%s", overrides.param2);
+  }
+  return { title: overrides.title ?? title, description: overrides.description ?? description, canonical: overrides.canonical ?? canonical, ogImage: overrides.ogImage ?? SITE.ogImage, ogType: overrides.ogType ?? ("ogType" in preset ? preset.ogType : SEO_DEFAULTS.ogType), twitterCard: overrides.twitterCard ?? SEO_DEFAULTS.twitterCard, robots: overrides.robots ?? SEO_DEFAULTS.robots };
+}
+
+export function generateOrganizationSchema() {
+  return { "@context": SCHEMA_CONTEXT, "@type": "Organization", "@id": `${SITE.url}/#organization`, name: brand.name, url: brand.website, logo: SITE.logo, description: brand.tagline, telephone: brand.phone, email: brand.email, sameAs: Object.values(brand.social).filter(Boolean), address: { "@type": "PostalAddress", streetAddress: brand.address.street, addressLocality: brand.address.locality, addressRegion: brand.address.state, postalCode: brand.address.postalCode, addressCountry: brand.address.country } };
+}
+
+export function generateLocalBusinessSchema() {
+  const schema: Record<string, unknown> = { "@context": SCHEMA_CONTEXT, "@type": ["Organization", "LocalBusiness"], "@id": `${SITE.url}/#localbusiness`, name: brand.name, url: brand.website, logo: SITE.logo, description: brand.tagline, telephone: brand.phone, email: brand.email, address: { "@type": "PostalAddress", streetAddress: brand.address.street, addressLocality: brand.address.locality, addressRegion: brand.address.state, postalCode: brand.address.postalCode, addressCountry: brand.address.country }, openingHoursSpecification: BRAND_OPENING_HOURS_SPEC, sameAs: Object.values(brand.social).filter(Boolean), contactPoint: brand.contactPoints.map((cp) => ({ "@type": "ContactPoint", contactType: cp.type, telephone: cp.telephone, email: cp.email, availableLanguage: cp.availableLanguage, areaServed: cp.areaServed })), makesOffer: { "@type": "Offer", itemOffered: { "@type": "Service", name: "Clean Energy Manufacturing", description: "Design and manufacture of hybrid solar inverters, LiFePO₄ batteries, and EV charging solutions" }, areaServed: { "@type": "Country", name: "India" } } };
+  schema.geo = { "@type": "GeoCoordinates", latitude: brand.geo.latitude, longitude: brand.geo.longitude };
+  return schema;
+}
+
+export function generateProductSchema(product: Product) {
+  const schema: Record<string, unknown> = { "@context": SCHEMA_CONTEXT, "@type": "Product", "@id": `${SITE.url}/products/${product.slug}#product`, name: product.name, image: product.image ? `${SITE.url}${product.image}` : undefined, description: product.description, brand: { "@type": "Brand", name: brand.name }, manufacturer: { "@type": "Organization", name: brand.name, url: brand.website }, offers: { "@type": "Offer", url: `${SITE.url}/products/${product.slug}`, priceCurrency: "INR", itemCondition: "https://schema.org/NewCondition" } };
+  if (product.availability) (schema.offers as Record<string, unknown>).availability = `https://schema.org/${product.availability}`;
+  if (product.certifications?.countryOfOrigin) schema.countryOfOrigin = { "@type": "Country", name: product.certifications.countryOfOrigin };
+  return schema;
+}
+
+export function generateArticleSchema(article: BlogArticle) {
+  return { "@context": SCHEMA_CONTEXT, "@type": "BlogPosting", "@id": `${SITE.url}/blog/${article.slug}#article`, headline: article.seoTitle ?? article.title, description: article.metaDescription ?? article.description, image: article.featuredImage ? `${SITE.url}${article.featuredImage}` : SITE.ogImage, datePublished: article.publishDate, dateModified: article.updatedDate ?? article.publishDate, author: article.author ? { "@type": "Person", name: article.author } : { "@type": "Organization", name: brand.name, url: brand.website }, publisher: { "@type": "Organization", name: brand.name, logo: { "@type": "ImageObject", url: SITE.logo } }, mainEntityOfPage: { "@type": "WebPage", "@id": `${SITE.url}/blog/${article.slug}` }, articleSection: article.category, keywords: article.keywords?.join(", "), ...(article.readingTime && { timeRequired: `PT${article.readingTime}M` }) };
+}
+
+export interface BreadcrumbItem { name: string; path: string; }
+
+export function generateBreadcrumbSchema(items: BreadcrumbItem[]) {
+  return { "@context": SCHEMA_CONTEXT, "@type": "BreadcrumbList", itemListElement: items.map((item, index) => ({ "@type": "ListItem", position: index + 1, name: item.name, item: generateCanonical(item.path) })) };
+}
+
+export function generateFAQSchema(faqs: FAQ[]) {
+  return { "@context": SCHEMA_CONTEXT, "@type": "FAQPage", mainEntity: faqs.map((faq) => ({ "@type": "Question", name: faq.question, acceptedAnswer: { "@type": "Answer", text: faq.answer } })) };
+}
+
+export function formatTitle(title: string): string {
+  if (title.includes("|")) return title;
+  return `${title} | ${brand.name}`;
+}
+
+export interface AISearchMeta { summary?: string; keyTakeaways?: string[]; faqs?: FAQ[]; relatedArticles?: string[]; relatedProducts?: string[]; }
+
+─── FILE 4: src/components/seo/SEOHead.tsx ───
+
+import { Helmet } from "react-helmet-async";
+import { SITE, SEO_DEFAULTS } from "@/data/seo";
+import { formatTitle } from "@/lib/seo";
+
+export interface SEOHeadProps {
+  title: string;
+  description: string;
+  canonical: string;
+  ogImage?: string;
+  ogType?: string;
+  twitterCard?: string;
+  robots?: string;
+  schema?: Record<string, unknown>[];
+}
+
+export function SEOHead({ title, description, canonical, ogImage = SITE.ogImage, ogType = SEO_DEFAULTS.ogType, twitterCard = SEO_DEFAULTS.twitterCard, robots = SEO_DEFAULTS.robots, schema = [] }: SEOHeadProps) {
+  const fullTitle = formatTitle(title);
+  return (
+    <Helmet>
+      <title>{fullTitle}</title>
+      <meta name="description" content={description} />
+      <link rel="canonical" href={canonical} />
+      <meta name="robots" content={robots} />
+      <meta property="og:site_name" content={SITE.name} />
+      <meta property="og:title" content={fullTitle} />
+      <meta property="og:description" content={description} />
+      <meta property="og:type" content={ogType} />
+      <meta property="og:url" content={canonical} />
+      <meta property="og:image" content={ogImage} />
+      <meta property="og:locale" content="en_IN" />
+      {SITE.hasTwitter && (
+        <>
+          <meta name="twitter:card" content={twitterCard} />
+          <meta name="twitter:site" content="@ocsoorja" />
+          <meta name="twitter:title" content={fullTitle} />
+          <meta name="twitter:description" content={description} />
+          <meta name="twitter:image" content={ogImage} />
+        </>
+      )}
+      {schema.map((item, index) => (
+        <script key={index} type="application/ld+json">{JSON.stringify(item)}</script>
+      ))}
+    </Helmet>
+  );
+}
+
+─── FILE 5: src/components/seo/SchemaOrg.tsx ───
+
+interface SchemaOrgProps { schema: Record<string, unknown> | Record<string, unknown>[]; }
+
+export function SchemaOrg({ schema }: SchemaOrgProps) {
+  const schemas = Array.isArray(schema) ? schema : [schema];
+  return <>{schemas.map((item, index) => (<script key={index} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(item) }} />))}</>;
+}
+
+─── FILE 6: src/components/seo/AutoSitemap.tsx ───
+
+import fs from "fs";
+import path from "path";
+import { SITE } from "../data/seo";
+import { products } from "../data/products";
+import { articles } from "../data/blog";
+
+interface SitemapUrl { loc: string; lastmod?: string; changefreq?: string; priority?: number; }
+
+const STATIC_ROUTES: SitemapUrl[] = [
+  { loc: "/", changefreq: "weekly", priority: 1.0 },
+  { loc: "/products", changefreq: "weekly", priority: 0.9 },
+  { loc: "/blog", changefreq: "daily", priority: 0.9 },
+  { loc: "/about", changefreq: "monthly", priority: 0.7 },
+  { loc: "/contact", changefreq: "monthly", priority: 0.7 },
+];
+
+const FUTURE_ROUTES: SitemapUrl[] = [
+  // { loc: "/case-studies", changefreq: "monthly", priority: 0.7 },
+  // { loc: "/downloads", changefreq: "monthly", priority: 0.6 },
+  // { loc: "/dealers", changefreq: "monthly", priority: 0.7 },
+];
+
+function generateSitemap(): string {
+  const urls: SitemapUrl[] = [
+    ...STATIC_ROUTES,
+    ...products.map((p) => ({ loc: `/products/${p.slug}`, lastmod: p.updatedAt, changefreq: "weekly" as const, priority: 0.8 })),
+    ...articles.filter((a) => a.status === "published").map((a) => ({ loc: `/blog/${a.slug}`, lastmod: a.date, changefreq: "monthly" as const, priority: 0.7 })),
+  ];
+  const urlEntries = urls.map((url) => `  <url>\n    <loc>${SITE.url}${url.loc}</loc>\n    ${url.lastmod ? `<lastmod>${url.lastmod}</lastmod>\n    ` : ""}${url.changefreq ? `<changefreq>${url.changefreq}</changefreq>\n    ` : ""}${url.priority ? `<priority>${url.priority.toFixed(1)}</priority>\n  ` : "  "}</url>`).join("\n");
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urlEntries}\n</urlset>`;
+}
+
+export function writeSitemap(outputDir: string = "public"): void {
+  const sitemap = generateSitemap();
+  const outputPath = path.resolve(outputDir, "sitemap.xml");
+  fs.writeFileSync(outputPath, sitemap, "utf-8");
+  console.log(`✓ Sitemap written to ${outputPath}`);
+}
+
+if (require.main === module) writeSitemap();
+
+─── FILE 7: src/components/ui/Image.tsx ───
+
+import { cn } from "@/lib/utils";
+
+interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  loading?: "eager" | "lazy";
+  fetchpriority?: "high" | "low" | "auto";
+  className?: string;
+  caption?: string;
+}
+
+const GENERIC_ALTS = ["image", "photo", "picture", "img", ""];
+
+export function Image({ src, alt, width, height, loading = "lazy", fetchpriority = "auto", className, caption, ...props }: ImageProps) {
+  if (import.meta.env.DEV) {
+    if (!alt || GENERIC_ALTS.includes(alt.toLowerCase().trim())) {
+      throw new Error(`[Image SEO] Missing or generic alt text for: ${src}\nAlt must be descriptive. Current: "${alt}"`);
+    }
+    if (width < 10 || height < 10) {
+      throw new Error(`[Image SEO] Invalid dimensions for: ${src} (${width}x${height})`);
+    }
+  }
+  return (
+    <figure className={cn("m-0", className)}>
+      <img src={src} alt={alt} width={width} height={height} loading={loading} fetchPriority={fetchpriority} className="h-auto max-w-full" {...props} />
+      {caption && <figcaption className="mt-2 text-center text-sm text-muted-foreground italic">{caption}</figcaption>}
+    </figure>
+  );
+}
+
+─── FILE 8: src/pages/not-found.tsx ───
+
+import { Link } from "wouter";
+import { SEOHead } from "@/components/seo/SEOHead";
+import { Home, Package, BookOpen, Phone } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { PAGE_META } from "@/data/seo";
+import { generateCanonical } from "@/lib/seo";
+
+export default function NotFoundPage() {
+  const meta = PAGE_META.notFound;
+  return (
+    <>
+      <SEOHead title={meta.title} description={meta.description} canonical={generateCanonical("/404")} robots={meta.robots} />
+      <main className="flex min-h-[70vh] flex-col items-center justify-center px-4 py-24 text-center">
+        <div className="mb-8"><span className="text-8xl font-bold text-primary/20">404</span></div>
+        <h1 className="mb-4 text-3xl font-bold tracking-tight text-foreground">Page Not Found</h1>
+        <p className="mb-10 max-w-md text-lg text-muted-foreground">The page you are looking for does not exist or has been moved. Here are some helpful links instead.</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg w-full">
+          <Link href="/"><Button className="w-full rounded-full"><Home className="mr-2 h-4 w-4" />Back to Home</Button></Link>
+          <Link href="/products"><Button variant="outline" className="w-full rounded-full"><Package className="mr-2 h-4 w-4" />Explore Products</Button></Link>
+          <Link href="/blog"><Button variant="outline" className="w-full rounded-full"><BookOpen className="mr-2 h-4 w-4" />Browse Blog</Button></Link>
+          <Link href="/contact"><Button variant="outline" className="w-full rounded-full"><Phone className="mr-2 h-4 w-4" />Contact OCS</Button></Link>
+        </div>
+      </main>
+    </>
+  );
+}
+
+─── FILE 9: public/robots.txt ───
+
+User-agent: *
+Allow: /
+
+Disallow: /admin
+Disallow: /api/
+Disallow: /thank-you
+# Disallow: /search
+
+Sitemap: https://www.ocsoorja.com/sitemap.xml
+
+─── FILE 10: public/site.webmanifest ───
+
+{
+  "name": "OCS OORJA — Hybrid Solar Inverters, LiFePO₄ Batteries & EV Charging",
+  "short_name": "OCS OORJA",
+  "description": "Trusted Indian manufacturer of clean-energy systems. Hybrid solar inverters, lithium batteries, EV chargers — engineered in Lucknow for Indian conditions.",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#ffffff",
+  "theme_color": "#0F766E",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en-IN",
+  "icons": [
+    { "src": "/icons/icon-192x192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icons/icon-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
+
+─── FILE 11: index.html (modify) ───
+
+<!DOCTYPE html>
+<html lang="en-IN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#0F766E" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
+─── FILE 12: src/App.tsx (modify) ───
+
+import { HelmetProvider } from "react-helmet-async";
+import { Route, Switch } from "wouter";
+import { SchemaOrg } from "@/components/seo/SchemaOrg";
+import { WhatsAppWidget } from "@/components/global/WhatsAppWidget";
+import { generateOrganizationSchema } from "@/lib/seo";
+
+import Home from "@/pages/home";
+import Products from "@/pages/products";
+import ProductDetail from "@/pages/product-detail";
+import Blog from "@/pages/blog";
+import BlogDetail from "@/pages/blog-detail";
+import About from "@/pages/about";
+import Contact from "@/pages/contact";
+import NotFound from "@/pages/not-found";
+
+function App() {
+  return (
+    <HelmetProvider>
+      <SchemaOrg schema={generateOrganizationSchema()} />
+      <div className="min-h-screen bg-background text-foreground">
+        <Switch>
+          <Route path="/" component={Home} />
+          <Route path="/products" component={Products} />
+          <Route path="/products/:slug" component={ProductDetail} />
+          <Route path="/blog" component={Blog} />
+          <Route path="/blog/:slug" component={BlogDetail} />
+          <Route path="/about" component={About} />
+          <Route path="/contact" component={Contact} />
+          <Route component={NotFound} />
+        </Switch>
+        <WhatsAppWidget />
+      </div>
+    </HelmetProvider>
+  );
+}
+
+export default App;
+
+─── FILE 13: src/pages/home.tsx (modify) ───
+
+import { SEOHead } from "@/components/seo/SEOHead";
+import { buildPageMeta, generateBreadcrumbSchema, generateLocalBusinessSchema } from "@/lib/seo";
+import { Hero } from "@/components/sections/Hero";
+
+export default function HomePage() {
+  const meta = buildPageMeta("home", {}, "/");
+  return (
+    <>
+      <SEOHead {...meta} schema={[generateBreadcrumbSchema([{ name: "Home", path: "/" }]), generateLocalBusinessSchema()]} />
+      <main><Hero />{/* rest of page */}</main>
+    </>
+  );
+}
+
+─── FILE 14: src/pages/product-detail.tsx (modify) ───
+
+import { SEOHead } from "@/components/seo/SEOHead";
+import { buildPageMeta, generateProductSchema, generateBreadcrumbSchema, generateFAQSchema } from "@/lib/seo";
+import { products } from "@/data/products";
+import { useRoute } from "wouter";
+
+export default function ProductDetailPage() {
+  const [_, params] = useRoute("/products/:slug");
+  const product = products.find((p) => p.slug === params?.slug);
+  if (!product) return <NotFound />;
+  const meta = buildPageMeta("productDetail", { param: product.name, param2: product.shortDescription }, `/products/${product.slug}`);
+  const schemas = [generateProductSchema(product), generateBreadcrumbSchema([{ name: "Home", path: "/" }, { name: "Products", path: "/products" }, { name: product.name, path: `/products/${product.slug}` }]), ...(product.faqs ? [generateFAQSchema(product.faqs)] : [])];
+  return (
+    <>
+      <SEOHead {...meta} schema={schemas} />
+      <main>{/* product detail content */}</main>
+    </>
+  );
+}
+
+─── FILE 15: src/types/index.ts (modify — add these interfaces) ───
+
+export interface Product {
+  slug: string;
+  name: string;
+  description: string;
+  shortDescription: string;
+  image?: string;
+  availability?: "InStock" | "OutOfStock" | "PreOrder" | "LimitedAvailability" | "InquiryOnly";
+  warranty?: string;
+  certifications?: { bis?: boolean; iec?: string; ipRating?: string; countryOfOrigin?: string; };
+  faqs?: FAQ[];
+  seoTitle?: string;
+  metaDescription?: string;
+  relatedProducts?: string[];
+  relatedBlogs?: string[];
+  downloads?: { label: string; url: string }[];
+  updatedAt?: string;
+  featured?: boolean;
+  featuredOrder?: number;
+}
+
+export interface BlogArticle {
+  slug: string;
+  title: string;
+  seoTitle?: string;
+  description: string;
+  metaDescription?: string;
+  category: string;
+  keywords?: string[];
+  publishDate: string;
+  updatedDate?: string;
+  readingTime?: number;
+  author?: string;
+  featuredImage?: string;
+  imageAlt?: string;
+  status: "published" | "draft";
+  faqs?: FAQ[];
+  relatedArticles?: string[];
+  relatedProducts?: string[];
+  summary?: string;
+  keyTakeaways?: string[];
+  featured?: boolean;
+}
+
+export interface FAQ { question: string; answer: string; }
+
+─── PACKAGE.JSON SCRIPT (add) ───
+
+"scripts": {
+  "sitemap": "tsx src/components/seo/AutoSitemap.tsx",
+  "build": "npm run sitemap && vite build"
+}
+
+─── ACCEPTANCE CRITERIA ───
+
+- Every page renders its own SEOHead with correct title, description, canonical, OG tags
+- Global Organization schema rendered once via SchemaOrg in App.tsx
+- LocalBusiness schema on homepage only
+- Product schema on product detail pages
+- Article schema on blog detail pages
+- Breadcrumb schema on every page
+- Sitemap auto-generated at build time
+- robots.txt and site.webmanifest in public/
+- Image component throws in dev for missing/generic alt text
+- No hardcoded company data anywhere except brand.ts
+- No Twitter Card meta if brand.social.x is null
+- No foundingDate in any schema
+- All contact emails: customercare@ocsoorja.com
+- Real geo coordinates: 26.796090, 81.003596
+- Lighthouse targets: SEO 100, Accessibility 95+, Performance 95+, Best Practices 100
+
+Return only the files listed above. Do not modify unrelated files. Do not rewrite existing UI components.

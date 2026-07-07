@@ -5,8 +5,13 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { CheckCircle2, Leaf, ShieldCheck, Cpu, Sparkles, ArrowRight } from "lucide-react";
 import { Link } from "wouter";
 import { BRAND, HEADLINES, CTAS } from "@/data/brand";
+import { getBreadcrumbSchema, renderJsonLd } from "@/lib/seo";
 
 export default function AboutPage() {
+  const breadcrumbSchema = getBreadcrumbSchema([
+    { name: "Home", url: `${SITE.url}/` },
+    { name: "About", url: `${SITE.url}/about` },
+  ]);
   return (
     <div className="py-12 md:py-16">
       <Seo
@@ -15,6 +20,7 @@ export default function AboutPage() {
         canonical={`${SITE.url}/about`}
       />
       <Container>
+        <script type="application/ld+json" dangerouslySetInnerHTML={renderJsonLd(breadcrumbSchema)} />
         <SectionHeading
           title={HEADLINES.about.title}
           subtitle={HEADLINES.about.subtitle}

@@ -20,6 +20,8 @@ Canonical origin must be read from `SITE.url`, NOT re-hardcoded. Consumers: per-
 ## Sitemap is generated at vite config load — with a DX side effect
 `vite.config.ts` imports `SITE` + the product catalog and writes `public/sitemap.xml` (static routes + every product detail URL) on every vite dev/build run, so the sitemap auto-syncs with the catalog.
 
-**Non-obvious consequence:** because product data files are now imported by `vite.config.ts`, editing any product family file is a **config change → full dev-server restart (not HMR)**, and it regenerates `public/sitemap.xml`. The committed sitemap's `lastmod` is today's date on every run, so it churns in git daily. This is expected, not a bug.
+**Non-obvious consequence:** because product data files are now imported by `vite.config.ts`, editing any product family file is a **config change → full dev-server restart (not HMR)**, and it regenerates `public/sitemap.xml`. Since the 2026-07 SEO sprint, `lastmod` comes from real content dates (`product.dateAdded` / `post.publishDate`, omitted for static routes), so the sitemap no longer churns in git on every run.
 
-**How to apply:** don't be surprised by a dev-server restart after a product edit; if someone reports "the sitemap keeps changing in git diffs," that's the daily `lastmod`.
+**How to apply:** don't be surprised by a dev-server restart after a product edit. The sitemap only changes in git when actual content dates change.
+
+**Head-tag reset rule (2026-07 sprint):** `Seo.tsx` rewrites ALL managed head tags (title/description/robots/canonical/og:*) on every mount, with defaults captured from `index.html` at module load, and REMOVES the canonical link on any `noindex` page (404 / product-not-found / article-not-found). If you add a new page or not-found state, it must render `<Seo>` — otherwise the previous page's tags stay stale.

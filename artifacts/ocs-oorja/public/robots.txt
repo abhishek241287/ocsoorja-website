@@ -1,4 +1,9 @@
 User-agent: *
 Allow: /
 
+# Internal tools & API — not for search engines
+Disallow: /api/
+Disallow: /design-system
+Disallow: /blog-publisher
+
 Sitemap: https://www.ocsoorja.com/sitemap.xml

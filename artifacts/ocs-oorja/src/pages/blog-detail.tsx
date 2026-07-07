@@ -38,7 +38,7 @@ export default function BlogDetail() {
   if (!post) {
     return (
       <>
-        <Seo title="Article not found" />
+        <Seo title="Article not found" robots="noindex, nofollow" />
         <Container className="py-20 text-center">
           <h1 className="text-2xl font-bold">Article not found</h1>
           <p className="mt-4 text-muted-foreground">
@@ -111,6 +111,8 @@ export default function BlogDetail() {
         title={post.seoTitle}
         description={post.seoDescription}
         canonical={url}
+        ogType="article"
+        ogImage={`${SITE}${post.image}`}
       />
       <Container>
         <script
