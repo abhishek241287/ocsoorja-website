@@ -1,5 +1,10 @@
 uploads = []
-generated = []
+
+[[generated]]
+id = "SrpxdfVcLGL2hKKvgL2d_"
+uri = "file://attached_assets/generated_images/delhi_ev_policy_article.png"
+type = "image"
+title = "EV charging hub India"
 
 [[outputs]]
 id = "JY2OLmlBfgwLE0V9x_ZWD"
@@ -132,3 +137,27 @@ id = "-FYzswQHtatGWTFiru7XJ"
 uri = "file://artifacts/ocs-oorja/PROJECT_MEMORY.md"
 type = "text"
 title = "PROJECT_MEMORY.md — decisions, solved problems & traps"
+
+[[outputs]]
+id = "lwN6CqXxRikZNe8Nmcwng"
+uri = "file://attached_assets/stock_images/ev_charging_article_1.jpg"
+type = "image"
+title = "electric vehicle charging station modern EV plugged in charging"
+
+[[outputs]]
+id = "cJbahsvRpQiYfSyhSOgwl"
+uri = "file://attached_assets/stock_images/ev_charging_article_2.jpg"
+type = "image"
+title = "electric vehicle charging station modern EV plugged in charging"
+
+[[outputs]]
+id = "y9KMORJRTJv7jaGyquRLy"
+uri = "file://attached_assets/stock_images/ev_charging_article_3.jpg"
+type = "image"
+title = "electric vehicle charging station modern EV plugged in charging"
+
+[[outputs]]
+id = "Agk9yM0S4qo7BBbrkSYAh"
+uri = "file://attached_assets/stock_images/ev_charging_article_4.jpg"
+type = "image"
+title = "electric vehicle charging station modern EV plugged in charging"

@@ -1,12 +1,12 @@
-- [Homepage screenshot gotcha](homepage-screenshot-gotcha.md) — full-height Hero (min-h-100svh) defeats top-anchored app_preview; use the testing/Playwright subagent to capture below-fold homepage sections.
-- [Icon-name indirection fails silently](ocs-oorja-icon-name-indirection.md) — homepage sections map lucide icon NAME→component with a fallback; a missing map entry silently renders the wrong icon and tsc won't catch it.
-- [Design tokens (Tailwind v4)](ocs-oorja-design-tokens.md) — a color utility needs BOTH a :root HSL var and an @theme mapping or it silently won't exist; bg-primary = fills, text-primary-strong = brand text (dark-mode AA).
-- [Product catalog model](product-catalog-model.md) — adding a product family = 4 edits in lockstep; icons stored as name strings; never rename slugs; placeholder/awaiting drives "coming soon".
-- [Testimonials source](ocs-oorja-testimonials-source.md) — homepage renders ALL of src/data/testimonials.ts (3 real); "missing reviews" = old JSX-hardcoded fakes removed in rebuild; fix by adding real data entries, never fabricated ones.
-- [SPA "dead link" symptom](spa-broken-route-symptom.md) — a click that "does nothing" in the wouter SPA is usually the DESTINATION route failing to compile; trust the Vite dev log over tsc.
-- [TS data eval in sandbox](ts-data-extraction-in-sandbox.md) — code_execution can't import workspace deps; read the data file as text, bracket-aware scan the literal, then eval to get values.
-- [wouter scroll restoration](wouter-scroll-restoration.md) — key each history entry (not a pop flag), restore in useLayoutEffect, re-apply on rAF since the Back commit isn't full-height yet.
-- [wouter Link breaks mailto:/tel:](wouter-link-external-schemes.md) — non-http hrefs must use plain <a>; wouter <Link> pushState-intercepts them so the link silently does nothing.
-- [SEO & launch config](ocs-oorja-seo-launch.md) — site.ts is single source for url/GA4/Search-Console (empty=off); sitemap generated in vite.config from product data, so editing a product restarts the dev server.
-- [Hero & homepage imagery](hero-imagery.md) — public/images/home/ (scenes=WebP, product renders stay JPG never recompressed); hero tiles decoupled from catalogue; product photos need object-contain; Vite dev serves MISSING public/ files as 200 HTML (check Content-Type).
-- [E2E hover/theme false negatives](e2e-test-false-negatives.md) — Tailwind v4 gates hover: behind @media (hover:hover) and uses the `translate` property, so Playwright hover checks fail falsely; verify via compiled CSS (`/src/index.css?direct`).
+- [Homepage screenshot gotcha](homepage-screenshot-gotcha.md) — full-height hero defeats top-anchored app_preview; use the Playwright testing subagent for below-fold sections.
+- [Icon-name indirection fails silently](ocs-oorja-icon-name-indirection.md) — lucide icon NAME→component maps fall back silently on missing entries; tsc won't catch it.
+- [Design tokens (Tailwind v4)](ocs-oorja-design-tokens.md) — a color utility needs BOTH a :root HSL var and an @theme mapping; bg-primary = fills, text-primary-strong = brand text.
+- [Product catalog model](product-catalog-model.md) — adding a product family = 4 edits in lockstep; icons are name strings; never rename slugs.
+- [Testimonials source](ocs-oorja-testimonials-source.md) — homepage renders ALL of src/data/testimonials.ts; add real entries only, never fabricated ones.
+- [SPA "dead link" symptom](spa-broken-route-symptom.md) — a click that "does nothing" in the wouter SPA usually means the DESTINATION route fails to compile; trust the Vite log.
+- [TS data eval in sandbox](ts-data-extraction-in-sandbox.md) — code_execution can't import workspace deps; read the data file as text and eval the literal.
+- [wouter scroll restoration](wouter-scroll-restoration.md) — key each history entry, restore in useLayoutEffect, re-apply on rAF.
+- [wouter Link breaks mailto:/tel:](wouter-link-external-schemes.md) — non-http hrefs must use plain <a>; wouter <Link> silently intercepts them.
+- [SEO & launch config](ocs-oorja-seo-launch.md) — site.ts is single source for url/GA4/Search-Console; sitemap generated in vite.config, so data edits restart the dev server.
+- [Hero & homepage imagery](hero-imagery.md) — scenes=WebP, product renders never recompressed + object-contain; Vite serves MISSING public/ files as 200 HTML.
+- [E2E hover/theme false negatives](e2e-test-false-negatives.md) — Tailwind v4 gates hover: behind @media (hover:hover); verify via compiled CSS, never assert hover in tests.
