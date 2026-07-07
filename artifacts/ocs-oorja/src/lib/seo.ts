@@ -73,6 +73,7 @@ export function getLocalBusinessSchema(): Schema {
     ...getOrganizationSchema(),
     "@type": "LocalBusiness",
     "@id": `${SITE.url}/#localbusiness`,
+    image: `${SITE.url}/opengraph.jpg`, // required by Google for LocalBusiness results
     priceRange: "₹₹₹",
     geo: {
       "@type": "GeoCoordinates",
@@ -120,12 +121,9 @@ export function getProductSchema(product: {
       "@type": "Country",
       name: COMPANY.address.countryName,
     },
-    offers: {
-      "@type": "Offer",
-      availability: "https://schema.org/InStock",
-      priceCurrency: "INR",
-      url: product.url,
-    },
+    // NOTE: deliberately NO "offers" block. Pricing is quote-based and no
+    // product has a published price. Google requires offers.price — an Offer
+    // without a price is a validation error, and inventing prices is worse.
   };
 }
 

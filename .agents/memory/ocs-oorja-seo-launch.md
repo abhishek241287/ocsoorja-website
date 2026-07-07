@@ -24,4 +24,6 @@ Canonical origin must be read from `SITE.url`, NOT re-hardcoded. Consumers: per-
 
 **How to apply:** don't be surprised by a dev-server restart after a product edit. The sitemap only changes in git when actual content dates change.
 
+**Product schema has NO offers block — deliberate, do not "fix":** the catalog is quote-based B2B with no published prices. Google requires `offers.price`; an Offer without price is a validation ERROR, and inventing prices is prohibited. Omitting `offers` keeps the markup valid and truthful. Only add offers if real prices are ever added to the product data model.
+
 **Head-tag reset rule (2026-07 sprint):** `Seo.tsx` rewrites ALL managed head tags (title/description/robots/canonical/og:*) on every mount, with defaults captured from `index.html` at module load, and REMOVES the canonical link on any `noindex` page (404 / product-not-found / article-not-found). If you add a new page or not-found state, it must render `<Seo>` — otherwise the previous page's tags stay stale.
