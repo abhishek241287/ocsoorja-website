@@ -1,0 +1,231 @@
+Remove custom Markdown parser completely
+
+This is my only major concern.
+
+Even though you've separated it into
+
+MarkdownAdapter
+
+it's still implementing Markdown parsing itself.
+
+I don't want OCS maintaining Markdown syntax forever.
+
+Instead make the adapter interface:
+
+MarkdownAdapter
+
+↓
+
+CurrentSimpleAdapter
+
+↓
+
+FutureRemarkAdapter
+
+↓
+
+FutureMDXAdapter
+
+The parser itself should become replaceable.
+
+Do not let business logic depend on your own Markdown parser.
+
+2. Don't store AST in cache
+
+Right now
+
+Markdown
+
+↓
+
+AST
+
+↓
+
+.cache/article.json
+
+I wouldn't cache the AST.
+
+I'd cache
+
+Markdown Hash
+
+↓
+
+Processed Metadata
+
+↓
+
+TOC
+
+↓
+
+SEO
+
+↓
+
+Search
+
+↓
+
+AI
+
+↓
+
+Validation
+
+The AST is temporary.
+
+Metadata is valuable.
+
+3. Plugin priority
+
+Right now plugins are simply listed.
+
+Instead define execution order.
+
+Example
+
+ValidatorPlugin.priority = 10
+
+SEOPlugin.priority = 20
+
+SearchPlugin.priority = 30
+
+RSSPlugin.priority = 40
+
+Then the pipeline becomes
+
+plugins
+
+↓
+
+sort(priority)
+
+↓
+
+execute
+
+Future-proof.
+
+4. Build Manifest
+
+Instead of only
+
+build-report.json
+
+generate
+
+build-manifest.json
+
+Example
+
+{
+  "version": "1.0.4",
+  "generatedAt": "...",
+  "articles": 82,
+  "products": 24,
+  "images": 196,
+  "searchIndexVersion": 4,
+  "rssVersion": 2
+}
+
+Later
+
+CMS
+
+AI
+
+Search
+
+Mobile App
+
+can all verify compatibility.
+
+Tiny improvements (not blockers)
+Add
+ArticleFingerprint
+
+SHA-256 of content.
+
+Useful for duplicate detection.
+
+Add
+estimatedUpdateCycle
+
+Example
+
+Monthly
+
+Quarterly
+
+Yearly
+
+Helps remind you when articles should be reviewed.
+
+Add
+reviewDueDate
+
+Solar subsidies, EV policies, and government schemes change frequently.
+
+This lets the system flag stale content automatically.
+
+Add
+evergreen: true
+
+Some articles like:
+
+What is LiFePO₄?
+What is MPPT?
+
+don't need frequent reviews.
+
+One thing I would NOT implement now
+
+Kimi is moving toward a CMS.
+
+I would stop here.
+
+Don't build:
+
+Admin Panel
+Rich Text Editor
+Login
+Dashboard
+
+Yet.
+
+Markdown is perfectly fine for the next 100–200 articles.
+
+CTO Decision
+✅ APPROVED
+
+I would officially freeze Sprint 006A after the four refinements above.
+
+At this point, the content foundation would be stable enough that Sprint 006B (Knowledge Graph, Content Intelligence, AI recommendations, multilingual support, etc.) can be built without touching the foundation again.
+
+My recommendation for the next roadmap
+
+Once Sprint 006A is frozen, I'd shift focus away from infrastructure for a while:
+
+Sprint 007 — Product SEO
+Rich product pages
+Product schema
+Comparison tables
+Technical specifications
+Download center
+Product FAQs
+Sprint 008 — Content Production
+50 blog articles
+20 product pages
+15 comparison pages
+10 case studies
+10 government policy guides
+Sprint 009 — Lead Generation
+Solar savings calculator
+Battery sizing calculator
+EV charger selector
+Quote request wizard
+WhatsApp lead integration
+
+This sequence gives OCS OORJA the strongest return on investment: a rock-solid technical foundation followed by high-value content and conversion tools, rather than continuing to expand the platform before there's enough content to benefit from it.

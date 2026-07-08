@@ -1,0 +1,17 @@
+| #  | CTO Requirement                 | Implementation                                                                                         |
+| -- | ------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| 1  | Stop parsing YAML manually      | `FrontMatterAdapter` — single responsibility, knows YAML only                                          |
+| 2  | Markdown → AST → React          | `MarkdownAdapter` → AST → `Renderer` → React components. No innerHTML.                                 |
+| 3  | File-based incremental cache    | `.content-cache/articles/{id}.json` + `hashes.json` + `manifest.json`                                  |
+| 4  | Search index with weights       | `title: 10`, `keywords: 8`, `summary: 7`, `headings: 6`, `body: 4`                                     |
+| 5  | Search index includes AI fields | `entities`, `topics`, `faqs`, `headings`                                                               |
+| 6  | Build report with 8 scores      | SEO, Accessibility, Performance, Structured Data, Internal Links, Images, Content, AI Readiness        |
+| 7  | Event-driven pipeline           | `ArticleLoaded` → `Validate` → `SEO` → `Search` → `RSS` → `LLM` → `Sitemap` → `Done`                   |
+| 8  | Plugin system                   | 10 built-in plugins, future plugins trivial to add                                                     |
+| 9  | Internal link scoring           | Auto-calculates related articles using keywords, categories, topics, entities                          |
+| 10 | Image manifest                  | `images.json` with src, alt, width, height, caption, usedIn                                            |
+| 11 | AI JSON                         | `ai.json` with entities, questions, answers, topics, intent, contentDepth                              |
+| 12 | Extended validation             | Duplicate canonicals, titles, meta, broken product IDs, heading hierarchy, large images, reading level |
+| 13 | Analytics manifest              | `analytics.json` with views, clicks, ctr, avgReadTime, bounceRate, conversionRate (interface only)     |
+| 14 | Knowledge graph interfaces      | `KnowledgeNode` + `KnowledgeEdge` prepared for Sprint 006B                                             |
+| 15 | OCS-specific fields             | `productIds`, `serviceIds`, `governmentSchemeIds`, `industrySegments`, `technologies`                  |

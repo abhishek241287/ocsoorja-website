@@ -1,0 +1,1899 @@
+Sprint 006A.2: Smart Blog Foundation (Final Cleanup) for OCS OORJA.
+
+CRITICAL RULES:
+- Preserve ALL existing SEO framework files
+- No new libraries — use existing dependencies
+- All company data from src/data/brand.ts only
+- No invented values, no placeholders
+- Build for humans first. AI benefits from good structure automatically.
+- After this sprint, the foundation is FROZEN. Sprint 006B builds on top, never modifies below.
+
+─── ARCHITECTURE ───
+
+Markdown File
+    ↓
+FrontMatter Adapter (parses YAML, knows nothing about Markdown)
+    ↓
+Content Engine (orchestrates: parse → validate → render → cache)
+    ↓
+Content Cache (.content-cache/ with incremental builds)
+    ↓
+Event-Driven Build Pipeline
+    ↓
+    ├── Validator Plugin
+    ├── SEO Plugin
+    ├── Search Plugin (with weighted fields)
+    ├── Sitemap Plugin
+    ├── RSS Plugin
+    ├── LLM Plugin
+    ├── AI Plugin (generates ai.json)
+    ├── Internal Link Plugin (auto-calculates related articles)
+    ├── Image Manifest Plugin
+    └── Analytics Manifest Plugin
+    ↓
+Generated Website
+
+─── FILE 1: src/types/blog.ts (FINAL — all types with OCS-specific fields) ───
+
+export type ArticleStatus = "draft" | "review" | "approved" | "published" | "scheduled" | "archived";
+export type ArticleLanguage = "en" | "hi";
+export type ContentDepth = "overview" | "guide" | "deep-dive" | "reference";
+export type SearchIntent = "informational" | "commercial" | "transactional" | "navigational";
+export type IndustrySegment = "Residential" | "Commercial" | "Industrial" | "Agriculture" | "EV";
+export type OcsTechnology = "LiFePO4" | "Hybrid Inverter" | "BMS" | "MPPT" | "Solar" | "EV Charger" | "Smart Monitoring";
+
+export interface EditorialState {
+  status: ArticleStatus;
+  reviewedBy?: string;
+  approvedBy?: string;
+  scheduledDate?: string;
+  publishedAt?: string;
+  archivedAt?: string;
+}
+
+export interface FeaturedImageMeta {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  attribution?: string;
+  caption?: string;
+}
+
+export interface ArticleCTA {
+  primaryCTA?: { label: string; href: string; variant: "default" | "outline" | "ghost" };
+  secondaryCTA?: { label: string; href: string; variant: "default" | "outline" | "ghost" };
+}
+
+export interface TopicCluster {
+  clusterId: string;
+  clusterName: string;
+  pillarPageId?: string;
+  position: "pillar" | "supporting";
+}
+
+export interface EntityMetadata {
+  entities: string[];
+  topics: string[];
+  intent: SearchIntent;
+  contentDepth: ContentDepth;
+}
+
+export interface ContentVersion {
+  versionId: string;
+  createdAt: string;
+  createdBy?: string;
+  changeSummary: string;
+  contentHash: string;
+}
+
+// ─── OCS-Specific Fields ─────────────────────────────────────
+
+export interface OcsReferences {
+  productIds?: string[];
+  serviceIds?: string[];
+  governmentSchemeIds?: string[]; // "MNRE", "PM-Surya-Ghar", etc.
+  industrySegments?: IndustrySegment[];
+  technologies?: OcsTechnology[];
+}
+
+export interface BlogArticle {
+  id: string;
+  slug: string;
+  title: string;
+  content: string;
+  category: string;
+  editorial: EditorialState;
+  author?: string;
+  authorId?: string;
+  featuredImage?: FeaturedImageMeta;
+  summary: string;
+  directAnswer: string;
+  excerpt?: string;
+  seoTitle?: string;
+  metaDescription?: string;
+  keywords?: string[];
+  canonicalOverride?: string;
+  keyTakeaways?: string[];
+  faqs?: FAQ[];
+  questionsCovered?: string[];
+  relatedArticleIds?: string[];
+  relatedProductIds?: string[];
+  relatedGalleryProjectIds?: string[];
+  cta?: ArticleCTA;
+  topicCluster?: TopicCluster;
+  entityMetadata?: EntityMetadata;
+  contentVersions?: ContentVersion[];
+  tags?: string[];
+  aiSummary?: string;
+  aiKeyTakeaways?: string[];
+  translations?: Record<ArticleLanguage, string>;
+  ocsReferences?: OcsReferences; // OCS-specific
+  createdAt: string;
+  updatedAt: string;
+  publishDate: string;
+  readingTime?: number;
+  wordCount?: number;
+  lastModified?: string;
+  featured?: boolean;
+  featuredOrder?: number;
+}
+
+export interface BlogCategory {
+  id: string;
+  slug: string;
+  name: string;
+  description?: string;
+  articleIds: string[];
+  pillarArticleId?: string;
+}
+
+export interface FAQ {
+  question: string;
+  answer: string;
+}
+
+export interface TableOfContentsItem {
+  id: string;
+  text: string;
+  level: 2 | 3;
+}
+
+export interface ArticleValidationResult {
+  valid: boolean;
+  errors: string[];
+  warnings: string[];
+}
+
+export interface RSSItem {
+  title: string;
+  link: string;
+  description: string;
+  pubDate: string;
+  guid: string;
+  category?: string;
+  enclosure?: { url: string; type: string; length?: number };
+}
+
+export interface SearchIndexEntry {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  category: string;
+  keywords: string[];
+  summary: string;
+  directAnswer: string;
+  publishDate: string;
+  readingTime?: number;
+  wordCount?: number;
+  // NEW: AI search fields
+  entities: string[];
+  topics: string[];
+  faqs: string[];
+  headings: string[];
+  // NEW: Weighted search fields
+  searchWeight: {
+    title: number;
+    keywords: number;
+    summary: number;
+    headings: number;
+    body: number;
+  };
+}
+
+export interface BuildReport {
+  generatedAt: string;
+  totalArticles: number;
+  publishedArticles: number;
+  errors: { id: string; message: string }[];
+  warnings: { id: string; message: string }[];
+  outputs: {
+    sitemap: boolean;
+    rss: boolean;
+    llmContext: boolean;
+    searchIndex: boolean;
+    aiJson: boolean;
+    imageManifest: boolean;
+    analyticsManifest: boolean;
+  };
+  scores: {
+    seo: { average: number; articles: { id: string; score: number; issues: string[] }[] };
+    accessibility: { average: number; articles: { id: string; score: number; issues: string[] }[] };
+    performance: { average: number; articles: { id: string; score: number; issues: string[] }[] };
+    structuredData: { average: number; articles: { id: string; score: number; issues: string[] }[] };
+    internalLinks: { average: number; articles: { id: string; score: number; issues: string[] }[] };
+    images: { average: number; articles: { id: string; score: number; issues: string[] }[] };
+    content: { average: number; articles: { id: string; score: number; issues: string[] }[] };
+    aiReadiness: { average: number; articles: { id: string; score: number; issues: string[] }[] };
+  };
+}
+
+export interface ParsedArticle {
+  article: BlogArticle;
+  ast: MarkdownNode[]; // AST, not HTML string
+  toc: TableOfContentsItem[];
+}
+
+export interface MarkdownNode {
+  type: "heading" | "paragraph" | "list" | "listItem" | "blockquote" | "code" | "image" | "link" | "strong" | "em" | "inlineCode" | "text";
+  tag?: string;
+  props?: Record<string, string | number | boolean>;
+  children?: (MarkdownNode | string)[];
+  content?: string;
+}
+
+export interface ImageManifestEntry {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  webp?: string;
+  avif?: string;
+  caption?: string;
+  license?: string;
+  usedIn: string[]; // Article IDs
+}
+
+export interface AnalyticsManifestEntry {
+  id: string;
+  views: number;
+  clicks: number;
+  ctr: number;
+  avgReadTime: number;
+  bounceRate: number;
+  conversionRate: number;
+}
+
+export interface AIJsonEntry {
+  id: string;
+  entities: string[];
+  questions: string[];
+  answers: string[];
+  topics: string[];
+  intent: SearchIntent;
+  contentDepth: ContentDepth;
+  summary: string;
+  keyTakeaways: string[];
+}
+
+// ─── Knowledge Graph (Future Sprint 006B) ────────────────────
+
+export interface KnowledgeNode {
+  id: string;
+  label: string;
+  type: "article" | "product" | "technology" | "concept" | "scheme" | "segment";
+  properties: Record<string, unknown>;
+}
+
+export interface KnowledgeEdge {
+  source: string;
+  target: string;
+  relation: "mentions" | "recommends" | "requires" | "similar-to" | "part-of";
+  weight: number;
+}
+
+─── FILE 2: src/lib/adapters/frontmatter.ts (NEW — FrontMatter Adapter, knows YAML only) ───
+
+// src/lib/adapters/frontmatter.ts
+// FrontMatter Adapter: parses YAML, knows NOTHING about Markdown.
+// Single responsibility: extract key-value pairs from YAML frontmatter.
+
+export interface FrontMatterResult {
+  [key: string]: unknown;
+}
+
+export function parseFrontMatter(raw: string): { frontmatter: FrontMatterResult; content: string } {
+  const match = raw.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
+  if (!match) return { frontmatter: {}, content: raw };
+
+  const frontmatter: FrontMatterResult = {};
+  const lines = match[1].split("\n");
+  let currentKey = "";
+  let currentValue: unknown = "";
+  let inArray = false;
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    const keyMatch = line.match(/^(\w+):\s*(.*)$/);
+
+    if (keyMatch && !line.startsWith(" ")) {
+      if (currentKey) frontmatter[currentKey] = currentValue;
+      currentKey = keyMatch[1];
+      const value = keyMatch[2].trim();
+
+      if (value === "") {
+        currentValue = "";
+        inArray = false;
+      } else if (value.startsWith("[") && value.endsWith("]")) {
+        currentValue = value.slice(1, -1).split(",").map((v) => v.trim().replace(/^["']|["']$/g, ""));
+        inArray = false;
+      } else if (value === "true") {
+        currentValue = true;
+        inArray = false;
+      } else if (value === "false") {
+        currentValue = false;
+        inArray = false;
+      } else if (!isNaN(Number(value)) && value !== "") {
+        currentValue = Number(value);
+        inArray = false;
+      } else {
+        currentValue = value.replace(/^["']|["']$/g, "");
+        inArray = false;
+      }
+      continue;
+    }
+
+    const nestedMatch = line.match(/^  (\w+):\s*(.*)$/);
+    if (nestedMatch && currentKey && (typeof currentValue === "string" && currentValue === "" || (typeof currentValue === "object" && currentValue !== null && !Array.isArray(currentValue)))) {
+      const nestedKey = nestedMatch[1];
+      const nestedValue = nestedMatch[2].trim().replace(/^["']|["']$/g, "");
+      if (typeof currentValue === "string") {
+        currentValue = { [nestedKey]: nestedValue };
+      } else {
+        (currentValue as Record<string, unknown>)[nestedKey] = nestedValue;
+      }
+      continue;
+    }
+
+    if (trimmed.startsWith("- ") && currentKey) {
+      const item = trimmed.replace(/^- /, "").replace(/^["']|["']$/g, "");
+      if (!inArray) {
+        currentValue = [item];
+        inArray = true;
+      } else if (Array.isArray(currentValue)) {
+        currentValue.push(item);
+      }
+    }
+  }
+
+  if (currentKey) frontmatter[currentKey] = currentValue;
+
+  return { frontmatter, content: match[2].trim() };
+}
+
+─── FILE 3: src/lib/adapters/markdown.ts (NEW — Markdown Adapter, knows Markdown only) ───
+
+// src/lib/adapters/markdown.ts
+// Markdown Adapter: parses Markdown into AST.
+// Single responsibility: convert Markdown text to structured AST nodes.
+// Knows NOTHING about YAML frontmatter.
+
+import type { MarkdownNode, TableOfContentsItem } from "@/types/blog";
+
+export interface MarkdownParseResult {
+  ast: MarkdownNode[];
+  toc: TableOfContentsItem[];
+  wordCount: number;
+  readingTime: number;
+}
+
+export function parseMarkdown(content: string): MarkdownParseResult {
+  const ast: MarkdownNode[] = [];
+  const toc: TableOfContentsItem[] = [];
+  let wordCount = 0;
+
+  const blocks = content.split(/\n\n+/);
+
+  for (const block of blocks) {
+    const trimmed = block.trim();
+    if (!trimmed) continue;
+
+    // Heading
+    const headingMatch = trimmed.match(/^(#{2,3})\s+(.+)$/);
+    if (headingMatch) {
+      const level = headingMatch[1].length as 2 | 3;
+      const text = headingMatch[2].trim();
+      const id = text.toLowerCase().replace(/[^\w]+/g, "-").replace(/^-|-$/g, "");
+      toc.push({ id, text, level });
+      ast.push({
+        type: "heading",
+        tag: `h${level}`,
+        props: { id },
+        children: parseInline(text),
+      });
+      wordCount += text.split(/\s+/).length;
+      continue;
+    }
+
+    // Blockquote
+    if (trimmed.startsWith(">")) {
+      const text = trimmed.replace(/^>\s*/, "").trim();
+      ast.push({
+        type: "blockquote",
+        children: parseInline(text),
+      });
+      wordCount += text.split(/\s+/).length;
+      continue;
+    }
+
+    // Code block
+    const codeMatch = trimmed.match(/^```(\w+)?\n([\s\S]*?)```$/);
+    if (codeMatch) {
+      ast.push({
+        type: "code",
+        props: { lang: codeMatch[1] || "" },
+        content: codeMatch[2].trim(),
+      });
+      continue;
+    }
+
+    // Unordered list
+    if (trimmed.split("\n").every((line) => line.trim().startsWith("- "))) {
+      const items = trimmed.split("\n").map((line) => {
+        const text = line.trim().replace(/^- /, "");
+        return {
+          type: "listItem" as const,
+          children: parseInline(text),
+        };
+      });
+      ast.push({
+        type: "list",
+        props: { ordered: false },
+        children: items,
+      });
+      wordCount += items.reduce((sum, item) => sum + (typeof item.children[0] === "string" ? item.children[0].split(/\s+/).length : 0), 0);
+      continue;
+    }
+
+    // Ordered list
+    if (trimmed.split("\n").every((line) => /^\d+\.\s+/.test(line.trim()))) {
+      const items = trimmed.split("\n").map((line) => {
+        const text = line.trim().replace(/^\d+\.\s+/, "");
+        return {
+          type: "listItem" as const,
+          children: parseInline(text),
+        };
+      });
+      ast.push({
+        type: "list",
+        props: { ordered: true },
+        children: items,
+      });
+      wordCount += items.reduce((sum, item) => sum + (typeof item.children[0] === "string" ? item.children[0].split(/\s+/).length : 0), 0);
+      continue;
+    }
+
+    // Paragraph
+    ast.push({
+      type: "paragraph",
+      children: parseInline(trimmed),
+    });
+    wordCount += trimmed.split(/\s+/).length;
+  }
+
+  const readingTime = Math.max(1, Math.ceil(wordCount / 200));
+
+  return { ast, toc, wordCount, readingTime };
+}
+
+function parseInline(text: string): (MarkdownNode | string)[] {
+  const result: (MarkdownNode | string)[] = [];
+  let remaining = text;
+
+  // Image
+  const imageRegex = /!\[([^\]]*)\]\(([^)]+)\)/g;
+  let match;
+  while ((match = imageRegex.exec(text)) !== null) {
+    const before = text.slice(remaining.indexOf(text) === 0 ? 0 : text.indexOf(remaining), match.index);
+    if (before) result.push(...parseTextWithFormatting(before));
+    result.push({
+      type: "image",
+      props: { src: match[2], alt: match[1] },
+    });
+    remaining = text.slice(match.index + match[0].length);
+  }
+  if (remaining) result.push(...parseTextWithFormatting(remaining));
+
+  return result.length > 0 ? result : parseTextWithFormatting(text);
+}
+
+function parseTextWithFormatting(text: string): (MarkdownNode | string)[] {
+  const result: (MarkdownNode | string)[] = [];
+  let remaining = text;
+
+  // Link
+  const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+  let match;
+  while ((match = linkRegex.exec(text)) !== null) {
+    const before = text.slice(0, match.index);
+    if (before) result.push(before);
+    result.push({
+      type: "link",
+      props: { href: match[2] },
+      children: [match[1]],
+    });
+    remaining = text.slice(match.index + match[0].length);
+  }
+  if (remaining && remaining !== text) {
+    result.push(remaining);
+    return result;
+  }
+
+  // Bold + Italic
+  const boldItalicRegex = /\*\*\*(.+?)\*\*\*/g;
+  while ((match = boldItalicRegex.exec(text)) !== null) {
+    const before = text.slice(0, match.index);
+    if (before) result.push(before);
+    result.push({
+      type: "strong",
+      children: [{ type: "em", children: [match[1]] }],
+    });
+    remaining = text.slice(match.index + match[0].length);
+  }
+  if (remaining && remaining !== text) return result;
+
+  // Bold
+  const boldRegex = /\*\*(.+?)\*\*/g;
+  while ((match = boldRegex.exec(text)) !== null) {
+    const before = text.slice(0, match.index);
+    if (before) result.push(before);
+    result.push({
+      type: "strong",
+      children: [match[1]],
+    });
+    remaining = text.slice(match.index + match[0].length);
+  }
+  if (remaining && remaining !== text) return result;
+
+  // Italic
+  const italicRegex = /\*(.+?)\*/g;
+  while ((match = italicRegex.exec(text)) !== null) {
+    const before = text.slice(0, match.index);
+    if (before) result.push(before);
+    result.push({
+      type: "em",
+      children: [match[1]],
+    });
+    remaining = text.slice(match.index + match[0].length);
+  }
+  if (remaining && remaining !== text) return result;
+
+  // Inline code
+  const codeRegex = /`([^`]+)`/g;
+  while ((match = codeRegex.exec(text)) !== null) {
+    const before = text.slice(0, match.index);
+    if (before) result.push(before);
+    result.push({
+      type: "inlineCode",
+      content: match[1],
+    });
+    remaining = text.slice(match.index + match[0].length);
+  }
+  if (remaining && remaining !== text) return result;
+
+  return [text];
+}
+
+─── FILE 4: src/lib/adapters/renderer.ts (NEW — AST to React Renderer) ───
+
+// src/lib/adapters/renderer.ts
+// Renderer: converts AST to React elements.
+// Single responsibility: AST → React. No Markdown knowledge. No YAML knowledge.
+
+import React from "react";
+import type { MarkdownNode } from "@/types/blog";
+
+export function renderAST(ast: MarkdownNode[]): React.ReactNode[] {
+  return ast.map((node, index) => renderNode(node, index));
+}
+
+function renderNode(node: MarkdownNode, key: number): React.ReactNode {
+  if (typeof node === "string") return node;
+
+  const children = node.children ? renderAST(node.children as MarkdownNode[]) : node.content;
+
+  switch (node.type) {
+    case "heading":
+      return React.createElement(node.tag || "h2", { key, ...node.props }, children);
+    case "paragraph":
+      return React.createElement("p", { key, className: "my-4 leading-relaxed" }, children);
+    case "blockquote":
+      return React.createElement("blockquote", { key, className: "border-l-4 border-primary pl-4 italic text-muted-foreground my-4" }, children);
+    case "code":
+      return React.createElement("pre", { key, className: "bg-muted p-4 rounded-lg overflow-x-auto my-4" },
+        React.createElement("code", { className: "text-sm" }, node.content)
+      );
+    case "list":
+      const listTag = node.props?.ordered ? "ol" : "ul";
+      const listClass = node.props?.ordered ? "list-decimal" : "list-disc";
+      return React.createElement(listTag, { key, className: `my-4 ${listClass} pl-6 space-y-1` }, children);
+    case "listItem":
+      return React.createElement("li", { key }, children);
+    case "image":
+      return React.createElement("figure", { key, className: "my-6" },
+        React.createElement("img", {
+          src: node.props?.src as string,
+          alt: node.props?.alt as string,
+          className: "rounded-lg w-full",
+          loading: "lazy",
+        }),
+        node.props?.alt && React.createElement("figcaption", { className: "mt-2 text-center text-sm text-muted-foreground" }, node.props?.alt)
+      );
+    case "link":
+      return React.createElement("a", { key, href: node.props?.href as string, className: "text-primary hover:underline" }, children);
+    case "strong":
+      return React.createElement("strong", { key }, children);
+    case "em":
+      return React.createElement("em", { key }, children);
+    case "inlineCode":
+      return React.createElement("code", { key, className: "bg-muted px-1 py-0.5 rounded text-sm" }, node.content);
+    case "text":
+      return node.content || "";
+    default:
+      return React.createElement("span", { key }, children);
+  }
+}
+
+// Server-side / build-time HTML renderer (no React dependency)
+export function renderASTToHTML(ast: MarkdownNode[]): string {
+  return ast.map((node) => nodeToHTML(node)).join("");
+}
+
+function nodeToHTML(node: MarkdownNode): string {
+  if (typeof node === "string") return escapeHtml(node);
+
+  const children = node.children 
+    ? (node.children as MarkdownNode[]).map(nodeToHTML).join("")
+    : node.content || "";
+
+  switch (node.type) {
+    case "heading":
+      return `<${node.tag} ${propsToAttrs(node.props)}>${children}</${node.tag}>`;
+    case "paragraph":
+      return `<p class="my-4 leading-relaxed">${children}</p>`;
+    case "blockquote":
+      return `<blockquote class="border-l-4 border-primary pl-4 italic text-muted-foreground my-4">${children}</blockquote>`;
+    case "code":
+      return `<pre class="bg-muted p-4 rounded-lg overflow-x-auto my-4"><code class="text-sm">${escapeHtml(node.content || "")}</code></pre>`;
+    case "list":
+      const tag = node.props?.ordered ? "ol" : "ul";
+      const cls = node.props?.ordered ? "list-decimal" : "list-disc";
+      return `<${tag} class="my-4 ${cls} pl-6 space-y-1">${children}</${tag}>`;
+    case "listItem":
+      return `<li>${children}</li>`;
+    case "image":
+      return `<figure class="my-6"><img src="${node.props?.src}" alt="${escapeHtml(node.props?.alt as string)}" class="rounded-lg w-full" loading="lazy" /><figcaption class="mt-2 text-center text-sm text-muted-foreground">${escapeHtml(node.props?.alt as string)}</figcaption></figure>`;
+    case "link":
+      return `<a href="${node.props?.href}" class="text-primary hover:underline">${children}</a>`;
+    case "strong":
+      return `<strong>${children}</strong>`;
+    case "em":
+      return `<em>${children}</em>`;
+    case "inlineCode":
+      return `<code class="bg-muted px-1 py-0.5 rounded text-sm">${escapeHtml(node.content || "")}</code>`;
+    case "text":
+      return escapeHtml(node.content || "");
+    default:
+      return `<span>${children}</span>`;
+  }
+}
+
+function propsToAttrs(props?: Record<string, unknown>): string {
+  if (!props) return "";
+  return Object.entries(props)
+    .map(([k, v]) => `${k}="${escapeHtml(String(v))}"`)
+    .join(" ");
+}
+
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+─── FILE 5: src/lib/content-engine.ts (NEW — Content Engine, orchestrates adapters) ───
+
+// src/lib/content-engine.ts
+// Content Engine: orchestrates FrontMatter + Markdown + Renderer.
+// Exposes parse(), render(), validate(). Does NOT know YAML or Markdown details.
+
+import { parseFrontMatter } from "./adapters/frontmatter";
+import { parseMarkdown } from "./adapters/markdown";
+import { renderASTToHTML } from "./adapters/renderer";
+import type { BlogArticle, ParsedArticle, MarkdownNode, TableOfContentsItem, ArticleValidationResult } from "@/types/blog";
+import { brand } from "@/data/brand";
+
+export interface ContentEngine {
+  parse(raw: string, fileId: string): ParsedArticle;
+  render(ast: MarkdownNode[]): { html: string; toc: TableOfContentsItem[] };
+  validate(article: Partial<BlogArticle>): ArticleValidationResult;
+}
+
+class DefaultContentEngine implements ContentEngine {
+  parse(raw: string, fileId: string): ParsedArticle {
+    // Step 1: FrontMatter Adapter extracts YAML
+    const { frontmatter, content } = parseFrontMatter(raw);
+
+    // Step 2: Markdown Adapter parses content to AST
+    const { ast, toc, wordCount, readingTime } = parseMarkdown(content);
+
+    // Step 3: Build BlogArticle from frontmatter + AST stats
+    const article = this.buildArticle(frontmatter, fileId, content, wordCount, readingTime);
+
+    return { article, ast, toc };
+  }
+
+  render(ast: MarkdownNode[]): { html: string; toc: TableOfContentsItem[] } {
+    const html = renderASTToHTML(ast);
+    // TOC is extracted during parse, not render
+    return { html, toc: [] };
+  }
+
+  validate(article: Partial<BlogArticle>): ArticleValidationResult {
+    const errors: string[] = [];
+    const warnings: string[] = [];
+
+    if (!article.id || article.id.trim().length < 3) {
+      errors.push("ID is required and must be at least 3 characters (use meaningful IDs like 'solar-home-savings').");
+    }
+    if (!article.title || article.title.trim().length < 5) {
+      errors.push("Title is required and must be at least 5 characters.");
+    }
+    if (!article.content || article.content.trim().length < 100) {
+      errors.push("Content is required and must be at least 100 characters.");
+    }
+    if (!article.slug || article.slug.trim().length === 0) {
+      errors.push("Slug is required.");
+    }
+    if (article.slug && /[^a-z0-9-]/.test(article.slug)) {
+      errors.push("Slug must contain only lowercase letters, numbers, and hyphens.");
+    }
+    if (!article.category || article.category.trim().length === 0) {
+      errors.push("Category is required.");
+    }
+    if (!article.summary || article.summary.trim().length < 10) {
+      errors.push("Summary is required and must be at least 10 characters.");
+    }
+    if (!article.directAnswer || article.directAnswer.trim().length < 10) {
+      errors.push("DirectAnswer is required and must be at least 10 characters.");
+    }
+
+    // Warnings
+    if (!article.featuredImage) {
+      warnings.push("Featured image not provided. A fallback will be used.");
+    }
+    if (!article.excerpt) {
+      warnings.push("Excerpt not provided. Will be auto-generated.");
+    }
+    if (!article.seoTitle) {
+      warnings.push("SEO title not provided. Will be auto-generated from title.");
+    }
+    if (!article.metaDescription) {
+      warnings.push("Meta description not provided. Will be auto-generated from excerpt.");
+    }
+    if (article.metaDescription && article.metaDescription.length > 160) {
+      warnings.push("Meta description exceeds 160 characters.");
+    }
+    if (!article.keywords || article.keywords.length === 0) {
+      warnings.push("No keywords provided. SEO impact.");
+    }
+
+    return { valid: errors.length === 0, errors, warnings };
+  }
+
+  private buildArticle(
+    frontmatter: Record<string, unknown>,
+    fileId: string,
+    content: string,
+    wordCount: number,
+    readingTime: number
+  ): BlogArticle {
+    const id = String(frontmatter.id || fileId);
+    const slug = String(frontmatter.slug || fileId);
+    const title = String(frontmatter.title || "");
+    
+    // Auto-generate excerpt from first sentence
+    const cleanText = content.replace(/[#*_`[\]!]/g, "").replace(/\s+/g, " ").trim();
+    const sentenceMatch = cleanText.match(/^[^.!?]+[.!?]/);
+    const excerpt = frontmatter.excerpt 
+      ? String(frontmatter.excerpt)
+      : (sentenceMatch ? sentenceMatch[0].trim() : cleanText.slice(0, 157) + "...");
+
+    // Auto-generate SEO fields
+    const seoTitle = frontmatter.seoTitle ? String(frontmatter.seoTitle) : `${title} | ${brand.name}`;
+    const metaDescription = frontmatter.metaDescription ? String(frontmatter.metaDescription) : excerpt.slice(0, 160);
+
+    return {
+      id,
+      slug,
+      title,
+      content,
+      category: String(frontmatter.category || "uncategorized"),
+      editorial: {
+        status: (frontmatter.status as BlogArticle["editorial"]["status"]) || "draft",
+        publishedAt: frontmatter.publishDate ? String(frontmatter.publishDate) : undefined,
+        scheduledDate: frontmatter.scheduledDate ? String(frontmatter.scheduledDate) : undefined,
+      },
+      author: frontmatter.author ? String(frontmatter.author) : undefined,
+      authorId: frontmatter.authorId ? String(frontmatter.authorId) : undefined,
+      featuredImage: frontmatter.featuredImage ? {
+        src: String((frontmatter.featuredImage as Record<string, unknown>).src || ""),
+        alt: String((frontmatter.featuredImage as Record<string, unknown>).alt || ""),
+        width: Number((frontmatter.featuredImage as Record<string, unknown>).width || 1200),
+        height: Number((frontmatter.featuredImage as Record<string, unknown>).height || 630),
+        attribution: (frontmatter.featuredImage as Record<string, unknown>).attribution ? String((frontmatter.featuredImage as Record<string, unknown>).attribution) : undefined,
+        caption: (frontmatter.featuredImage as Record<string, unknown>).caption ? String((frontmatter.featuredImage as Record<string, unknown>).caption) : undefined,
+      } : undefined,
+      summary: String(frontmatter.summary || ""),
+      directAnswer: String(frontmatter.directAnswer || ""),
+      excerpt,
+      seoTitle,
+      metaDescription,
+      keywords: Array.isArray(frontmatter.keywords) ? frontmatter.keywords as string[] : undefined,
+      keyTakeaways: Array.isArray(frontmatter.keyTakeaways) ? frontmatter.keyTakeaways as string[] : undefined,
+      questionsCovered: Array.isArray(frontmatter.questionsCovered) ? frontmatter.questionsCovered as string[] : undefined,
+      relatedArticleIds: Array.isArray(frontmatter.relatedArticleIds) ? frontmatter.relatedArticleIds as string[] : undefined,
+      relatedProductIds: Array.isArray(frontmatter.relatedProductIds) ? frontmatter.relatedProductIds as string[] : undefined,
+      relatedGalleryProjectIds: Array.isArray(frontmatter.relatedGalleryProjectIds) ? frontmatter.relatedGalleryProjectIds as string[] : undefined,
+      ocsReferences: frontmatter.ocsReferences ? {
+        productIds: Array.isArray((frontmatter.ocsReferences as Record<string, unknown>).productIds) ? (frontmatter.ocsReferences as Record<string, unknown>).productIds as string[] : undefined,
+        serviceIds: Array.isArray((frontmatter.ocsReferences as Record<string, unknown>).serviceIds) ? (frontmatter.ocsReferences as Record<string, unknown>).serviceIds as string[] : undefined,
+        governmentSchemeIds: Array.isArray((frontmatter.ocsReferences as Record<string, unknown>).governmentSchemeIds) ? (frontmatter.ocsReferences as Record<string, unknown>).governmentSchemeIds as string[] : undefined,
+        industrySegments: Array.isArray((frontmatter.ocsReferences as Record<string, unknown>).industrySegments) ? (frontmatter.ocsReferences as Record<string, unknown>).industrySegments as string[] : undefined,
+        technologies: Array.isArray((frontmatter.ocsReferences as Record<string, unknown>).technologies) ? (frontmatter.ocsReferences as Record<string, unknown>).technologies as string[] : undefined,
+      } : undefined,
+      featured: frontmatter.featured === true,
+      featuredOrder: frontmatter.featuredOrder ? Number(frontmatter.featuredOrder) : undefined,
+      createdAt: String(frontmatter.createdAt || new Date().toISOString()),
+      updatedAt: String(frontmatter.updatedAt || new Date().toISOString()),
+      publishDate: String(frontmatter.publishDate || new Date().toISOString()),
+      wordCount,
+      readingTime,
+      lastModified: String(frontmatter.updatedAt || frontmatter.publishDate || new Date().toISOString()),
+    } as BlogArticle;
+  }
+}
+
+let currentEngine: ContentEngine = new DefaultContentEngine();
+
+export function setContentEngine(engine: ContentEngine): void {
+  currentEngine = engine;
+}
+
+export function getContentEngine(): ContentEngine {
+  return currentEngine;
+}
+
+export { DefaultContentEngine };
+
+─── FILE 6: src/lib/content-cache.ts (NEW — file-based incremental cache) ───
+
+// src/lib/content-cache.ts
+// File-based incremental cache with content hashing.
+// Only rebuilds articles that changed.
+
+import fs from "fs";
+import path from "path";
+import type { ParsedArticle } from "@/types/blog";
+
+const CACHE_DIR = ".content-cache";
+
+interface CacheManifest {
+  version: string;
+  generatedAt: string;
+  articles: Record<string, { hash: string; filePath: string }>;
+}
+
+function ensureCacheDir(): void {
+  if (!fs.existsSync(CACHE_DIR)) {
+    fs.mkdirSync(CACHE_DIR, { recursive: true });
+  }
+}
+
+function getManifestPath(): string {
+  return path.join(CACHE_DIR, "manifest.json");
+}
+
+function getArticleCachePath(id: string): string {
+  return path.join(CACHE_DIR, "articles", `${id}.json`);
+}
+
+function getHashesPath(): string {
+  return path.join(CACHE_DIR, "hashes.json");
+}
+
+function loadManifest(): CacheManifest | null {
+  const manifestPath = getManifestPath();
+  if (!fs.existsSync(manifestPath)) return null;
+  return JSON.parse(fs.readFileSync(manifestPath, "utf-8"));
+}
+
+function saveManifest(manifest: CacheManifest): void {
+  fs.writeFileSync(getManifestPath(), JSON.stringify(manifest, null, 2), "utf-8");
+}
+
+function computeHash(content: string): string {
+  let hash = 0;
+  for (let i = 0; i < content.length; i++) {
+    const char = content.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash;
+  }
+  return hash.toString(16);
+}
+
+export function loadCachedArticle(id: string): ParsedArticle | null {
+  const cachePath = getArticleCachePath(id);
+  if (!fs.existsSync(cachePath)) return null;
+  return JSON.parse(fs.readFileSync(cachePath, "utf-8"));
+}
+
+export function saveCachedArticle(id: string, article: ParsedArticle): void {
+  ensureCacheDir();
+  const articlesDir = path.join(CACHE_DIR, "articles");
+  if (!fs.existsSync(articlesDir)) {
+    fs.mkdirSync(articlesDir, { recursive: true });
+  }
+  fs.writeFileSync(getArticleCachePath(id), JSON.stringify(article, null, 2), "utf-8");
+}
+
+export function getCachedArticles(): ParsedArticle[] {
+  const articlesDir = path.join(CACHE_DIR, "articles");
+  if (!fs.existsSync(articlesDir)) return [];
+  
+  return fs.readdirSync(articlesDir)
+    .filter((f) => f.endsWith(".json"))
+    .map((f) => {
+      const content = fs.readFileSync(path.join(articlesDir, f), "utf-8");
+      return JSON.parse(content) as ParsedArticle;
+    });
+}
+
+export function getChangedArticles(rawArticles: Record<string, string>): string[] {
+  const manifest = loadManifest();
+  const hashesPath = getHashesPath();
+  const currentHashes: Record<string, string> = {};
+  
+  for (const [id, content] of Object.entries(rawArticles)) {
+    currentHashes[id] = computeHash(content);
+  }
+
+  // Save current hashes
+  fs.writeFileSync(hashesPath, JSON.stringify(currentHashes, null, 2), "utf-8");
+
+  if (!manifest) return Object.keys(rawArticles);
+
+  const changed: string[] = [];
+  for (const [id, hash] of Object.entries(currentHashes)) {
+    const cached = manifest.articles[id];
+    if (!cached || cached.hash !== hash) {
+      changed.push(id);
+    }
+  }
+
+  return changed;
+}
+
+export function updateManifest(articles: Record<string, ParsedArticle>): void {
+  const manifest: CacheManifest = {
+    version: "1.0",
+    generatedAt: new Date().toISOString(),
+    articles: {},
+  };
+
+  for (const [id, parsed] of Object.entries(articles)) {
+    manifest.articles[id] = {
+      hash: computeHash(parsed.article.content),
+      filePath: getArticleCachePath(id),
+    };
+  }
+
+  saveManifest(manifest);
+}
+
+export function clearCache(): void {
+  if (fs.existsSync(CACHE_DIR)) {
+    fs.rmSync(CACHE_DIR, { recursive: true });
+  }
+}
+
+─── FILE 7: src/lib/blog-loader.ts (MODIFY — use content engine + cache) ───
+
+// src/lib/blog-loader.ts
+// Load articles using content engine + incremental cache.
+
+import type { BlogArticle, ParsedArticle, BuildReport } from "@/types/blog";
+import { getContentEngine } from "./content-engine";
+import {
+  loadCachedArticle,
+  saveCachedArticle,
+  getChangedArticles,
+  getCachedArticles,
+  updateManifest,
+} from "./content-cache";
+
+// ─── Load Raw Markdown Files ───────────────────────────────────
+
+export function loadRawArticles(): Record<string, string> {
+  const modules = import.meta.glob("/src/content/blog/**/*.md", {
+    eager: true,
+    as: "raw",
+  });
+
+  const articles: Record<string, string> = {};
+  for (const [path, content] of Object.entries(modules)) {
+    const id = path.replace("/src/content/blog/", "").replace(".md", "");
+    articles[id] = content as string;
+  }
+
+  return articles;
+}
+
+// ─── Load All Articles (with incremental cache) ────────────────
+
+export function loadAllArticles(): ParsedArticle[] {
+  const rawArticles = loadRawArticles();
+  const changedIds = getChangedArticles(rawArticles);
+  const engine = getContentEngine();
+
+  const parsedArticles: Record<string, ParsedArticle> = {};
+
+  // Load unchanged from cache
+  for (const [id, raw] of Object.entries(rawArticles)) {
+    if (!changedIds.includes(id)) {
+      const cached = loadCachedArticle(id);
+      if (cached) {
+        parsedArticles[id] = cached;
+        continue;
+      }
+    }
+
+    // Parse changed/new articles
+    try {
+      const parsed = engine.parse(raw, id);
+      saveCachedArticle(id, parsed);
+      parsedArticles[id] = parsed;
+    } catch (error) {
+      console.error(`Failed to parse article ${id}:`, error);
+    }
+  }
+
+  // Update manifest
+  updateManifest(parsedArticles);
+
+  // Sort by publish date descending
+  const result = Object.values(parsedArticles);
+  result.sort((a, b) => new Date(b.article.publishDate).getTime() - new Date(a.article.publishDate).getTime());
+
+  return result;
+}
+
+export function getPublishedArticles(): ParsedArticle[] {
+  return loadAllArticles().filter((p) => p.article.editorial.status === "published");
+}
+
+// ─── Build Report / Validation ─────────────────────────────────
+
+export function generateBuildReport(): BuildReport {
+  const allArticles = loadAllArticles();
+  const published = allArticles.filter((p) => p.article.editorial.status === "published");
+  const engine = getContentEngine();
+
+  const errors: BuildReport["errors"] = [];
+  const warnings: BuildReport["warnings"] = [];
+  
+  const scores: BuildReport["scores"] = {
+    seo: { average: 0, articles: [] },
+    accessibility: { average: 0, articles: [] },
+    performance: { average: 0, articles: [] },
+    structuredData: { average: 0, articles: [] },
+    internalLinks: { average: 0, articles: [] },
+    images: { average: 0, articles: [] },
+    content: { average: 0, articles: [] },
+    aiReadiness: { average: 0, articles: [] },
+  };
+
+  // Check duplicates
+  const ids = allArticles.map((p) => p.article.id);
+  const slugs = allArticles.map((p) => p.article.slug);
+  const duplicates = ids.filter((id, index) => ids.indexOf(id) !== index);
+  const dupSlugs = slugs.filter((slug, index) => slugs.indexOf(slug) !== index);
+
+  duplicates.forEach((id) => errors.push({ id, message: `Duplicate article ID: ${id}` }));
+  dupSlugs.forEach((slug) => errors.push({ id: slug, message: `Duplicate slug: ${slug}` }));
+
+  // Check duplicate canonicals, titles, meta
+  const canonicals = new Map<string, string[]>();
+  const titles = new Map<string, string[]>();
+  const metas = new Map<string, string[]>();
+
+  for (const { article } of allArticles) {
+    const canonical = article.canonicalOverride || `/blog/${article.slug}`;
+    canonicals.set(canonical, [...(canonicals.get(canonical) || []), article.id]);
+    titles.set(article.seoTitle || article.title, [...(titles.get(article.seoTitle || article.title) || []), article.id]);
+    metas.set(article.metaDescription || "", [...(metas.get(article.metaDescription || "") || []), article.id]);
+  }
+
+  for (const [canonical, ids] of canonicals) {
+    if (ids.length > 1) errors.push({ id: ids[0], message: `Duplicate canonical URL: ${canonical} (shared with ${ids.slice(1).join(", ")})` });
+  }
+  for (const [title, ids] of titles) {
+    if (ids.length > 1) warnings.push({ id: ids[0], message: `Duplicate SEO title: "${title}" (shared with ${ids.slice(1).join(", ")})` });
+  }
+  for (const [meta, ids] of metas) {
+    if (meta && ids.length > 1) warnings.push({ id: ids[0], message: `Duplicate meta description (shared with ${ids.slice(1).join(", ")})` });
+  }
+
+  // Validate each article
+  for (const { article, ast } of allArticles) {
+    const validation = engine.validate(article);
+    validation.errors.forEach((err) => errors.push({ id: article.id, message: err }));
+    validation.warnings.forEach((warn) => warnings.push({ id: article.id, message: warn }));
+
+    // SEO Score
+    let seoScore = 100;
+    const seoIssues: string[] = [];
+    if (!article.seoTitle || (article.seoTitle || "").length > 60) { seoScore -= 10; seoIssues.push("SEO title missing or > 60 chars"); }
+    if (!article.metaDescription || (article.metaDescription || "").length > 160) { seoScore -= 10; seoIssues.push("Meta description missing or > 160 chars"); }
+    if (!article.keywords || article.keywords.length === 0) { seoScore -= 10; seoIssues.push("No keywords"); }
+    if (!article.featuredImage) { seoScore -= 5; seoIssues.push("No featured image"); }
+    if (!article.excerpt) { seoScore -= 5; seoIssues.push("No excerpt"); }
+    scores.seo.articles.push({ id: article.id, score: Math.max(0, seoScore), issues: seoIssues });
+
+    // Accessibility Score
+    let a11yScore = 100;
+    const a11yIssues: string[] = [];
+    if (!article.featuredImage?.alt) { a11yScore -= 15; a11yIssues.push("Featured image missing alt text"); }
+    // Check for images without alt in AST
+    const imagesWithoutAlt = ast.filter((node) => node.type === "image" && !node.props?.alt);
+    if (imagesWithoutAlt.length > 0) { a11yScore -= 10 * imagesWithoutAlt.length; a11yIssues.push(`${imagesWithoutAlt.length} images missing alt text`); }
+    scores.accessibility.articles.push({ id: article.id, score: Math.max(0, a11yScore), issues: a11yIssues });
+
+    // Performance Score
+    let perfScore = 100;
+    const perfIssues: string[] = [];
+    if (article.featuredImage && article.featuredImage.width > 2000) { perfScore -= 10; perfIssues.push("Featured image too large (> 2000px)"); }
+    if (article.wordCount && article.wordCount > 5000) { perfScore -= 5; perfIssues.push("Article very long, consider splitting"); }
+    scores.performance.articles.push({ id: article.id, score: Math.max(0, perfScore), issues: perfIssues });
+
+    // Structured Data Score
+    let structScore = 100;
+    const structIssues: string[] = [];
+    if (!article.faqs || article.faqs.length === 0) { structScore -= 10; structIssues.push("No FAQ schema"); }
+    if (!article.keyTakeaways || article.keyTakeaways.length === 0) { structScore -= 5; structIssues.push("No key takeaways"); }
+    scores.structuredData.articles.push({ id: article.id, score: Math.max(0, structScore), issues: structIssues });
+
+    // Internal Links Score
+    let linkScore = 100;
+    const linkIssues: string[] = [];
+    const allIds = new Set(ids);
+    (article.relatedArticleIds || []).forEach((refId) => {
+      if (!allIds.has(refId)) { linkScore -= 10; linkIssues.push(`Broken related article link: ${refId}`); }
+    });
+    (article.relatedProductIds || []).forEach((refId) => {
+      // Check against product IDs
+      // linkScore -= 5; linkIssues.push(`Broken product link: ${refId}`);
+    });
+    scores.internalLinks.articles.push({ id: article.id, score: Math.max(0, linkScore), issues: linkIssues });
+
+    // Images Score
+    let imgScore = 100;
+    const imgIssues: string[] = [];
+    if (!article.featuredImage) { imgScore -= 20; imgIssues.push("No featured image"); }
+    if (article.featuredImage && !article.featuredImage.width) { imgScore -= 10; imgIssues.push("Featured image missing dimensions"); }
+    scores.images.articles.push({ id: article.id, score: Math.max(0, imgScore), issues: imgIssues });
+
+    // Content Score
+    let contentScore = 100;
+    const contentIssues: string[] = [];
+    if (article.wordCount && article.wordCount < 500) { contentScore -= 20; contentIssues.push("Content too short (< 500 words)"); }
+    if (!article.summary) { contentScore -= 10; contentIssues.push("No summary"); }
+    if (!article.directAnswer) { contentScore -= 10; contentIssues.push("No direct answer"); }
+    // Check heading hierarchy
+    const h1Count = ast.filter((n) => n.type === "heading" && n.tag === "h1").length;
+    if (h1Count === 0) { contentScore -= 5; contentIssues.push("Missing H1"); }
+    if (h1Count > 1) { contentScore -= 5; contentIssues.push("Multiple H1s"); }
+    scores.content.articles.push({ id: article.id, score: Math.max(0, contentScore), issues: contentIssues });
+
+    // AI Readiness Score
+    let aiScore = 100;
+    const aiIssues: string[] = [];
+    if (!article.summary) { aiScore -= 15; aiIssues.push("No summary for AI extraction"); }
+    if (!article.directAnswer) { aiScore -= 15; aiIssues.push("No direct answer for AI extraction"); }
+    if (!article.keyTakeaways || article.keyTakeaways.length === 0) { aiScore -= 10; aiIssues.push("No key takeaways"); }
+    if (!article.questionsCovered || article.questionsCovered.length === 0) { aiScore -= 10; aiIssues.push("No questions covered"); }
+    if (!article.entityMetadata) { aiScore -= 5; aiIssues.push("No entity metadata"); }
+    scores.aiReadiness.articles.push({ id: article.id, score: Math.max(0, aiScore), issues: aiIssues });
+  }
+
+  // Calculate averages
+  for (const key of Object.keys(scores) as (keyof typeof scores)[]) {
+    const articles = scores[key].articles;
+    scores[key].average = articles.length > 0 ? Math.round(articles.reduce((sum, a) => sum + a.score, 0) / articles.length) : 0;
+  }
+
+  return {
+    generatedAt: new Date().toISOString(),
+    totalArticles: allArticles.length,
+    publishedArticles: published.length,
+    errors,
+    warnings,
+    outputs: {
+      sitemap: true,
+      rss: true,
+      llmContext: true,
+      searchIndex: true,
+      aiJson: true,
+      imageManifest: true,
+      analyticsManifest: true,
+    },
+    scores,
+  };
+}
+
+─── FILE 8: src/lib/plugins/types.ts (NEW — plugin system interfaces) ───
+
+// src/lib/plugins/types.ts
+// Plugin system interfaces for event-driven build pipeline.
+
+import type { BlogArticle, ParsedArticle, SearchIndexEntry, RSSItem, ImageManifestEntry, AnalyticsManifestEntry, AIJsonEntry } from "@/types/blog";
+
+export interface BuildContext {
+  articles: ParsedArticle[];
+  publishedArticles: ParsedArticle[];
+  brand: typeof import("@/data/brand").brand;
+  outputDir: string;
+}
+
+export interface BuildPlugin {
+  name: string;
+  run(context: BuildContext): void | Promise<void>;
+}
+
+export interface SEOPlugin extends BuildPlugin {
+  name: "seo";
+  generateMeta(article: BlogArticle): Record<string, unknown>;
+}
+
+export interface SearchPlugin extends BuildPlugin {
+  name: "search";
+  generateIndex(articles: ParsedArticle[]): SearchIndexEntry[];
+}
+
+export interface SitemapPlugin extends BuildPlugin {
+  name: "sitemap";
+  generateUrls(articles: ParsedArticle[]): { loc: string; lastmod?: string; priority?: number }[];
+}
+
+export interface RSSPlugin extends BuildPlugin {
+  name: "rss";
+  generateItems(articles: ParsedArticle[]): RSSItem[];
+}
+
+export interface LLMPlugin extends BuildPlugin {
+  name: "llm";
+  generateContext(articles: ParsedArticle[]): string;
+}
+
+export interface AIPlugin extends BuildPlugin {
+  name: "ai";
+  generateAIJson(articles: ParsedArticle[]): AIJsonEntry[];
+}
+
+export interface ImageManifestPlugin extends BuildPlugin {
+  name: "image-manifest";
+  generateManifest(articles: ParsedArticle[]): ImageManifestEntry[];
+}
+
+export interface AnalyticsManifestPlugin extends BuildPlugin {
+  name: "analytics";
+  generateManifest(articles: ParsedArticle[]): AnalyticsManifestEntry[];
+}
+
+export interface ValidationPlugin extends BuildPlugin {
+  name: "validation";
+  validate(articles: ParsedArticle[]): { errors: { id: string; message: string }[]; warnings: { id: string; message: string }[] };
+}
+
+─── FILE 9: src/lib/plugins/index.ts (NEW — plugin registry and pipeline) ───
+
+// src/lib/plugins/index.ts
+// Plugin registry and event-driven build pipeline.
+
+import fs from "fs";
+import path from "path";
+import type { BuildContext, BuildPlugin } from "./types";
+import { brand } from "@/data/brand";
+
+class PluginRegistry {
+  private plugins: BuildPlugin[] = [];
+
+  register(plugin: BuildPlugin): void {
+    this.plugins.push(plugin);
+  }
+
+  async runAll(context: BuildContext): Promise<void> {
+    for (const plugin of this.plugins) {
+      console.log(`  🔌 Running plugin: ${plugin.name}`);
+      await plugin.run(context);
+    }
+  }
+}
+
+export const registry = new PluginRegistry();
+
+// ─── Built-in Plugins ──────────────────────────────────────────
+
+import type { ParsedArticle } from "@/types/blog";
+
+// SEO Plugin
+registry.register({
+  name: "seo",
+  run(context: BuildContext) {
+    // SEO is handled per-page by React components, but we can validate here
+    console.log("   ✓ SEO validation complete");
+  },
+});
+
+// Search Plugin
+registry.register({
+  name: "search",
+  run(context: BuildContext) {
+    const index = context.publishedArticles.map(({ article, ast, toc }) => ({
+      id: article.id,
+      slug: article.slug,
+      title: article.title,
+      excerpt: article.excerpt || article.summary,
+      category: article.category,
+      keywords: article.keywords || [],
+      summary: article.summary,
+      directAnswer: article.directAnswer,
+      publishDate: article.publishDate,
+      readingTime: article.readingTime,
+      wordCount: article.wordCount,
+      entities: article.entityMetadata?.entities || [],
+      topics: article.entityMetadata?.topics || [],
+      faqs: (article.faqs || []).map((f) => f.question),
+      headings: toc.map((h) => h.text),
+      searchWeight: {
+        title: 10,
+        keywords: 8,
+        summary: 7,
+        headings: 6,
+        body: 4,
+      },
+    }));
+
+    const outputPath = path.resolve(context.outputDir, "search-index.json");
+    fs.writeFileSync(outputPath, JSON.stringify(index, null, 2), "utf-8");
+    console.log(`   ✓ Search index: ${index.length} entries`);
+  },
+});
+
+// Sitemap Plugin
+registry.register({
+  name: "sitemap",
+  run(context: BuildContext) {
+    const { SITE } = require("@/data/seo");
+    const { products } = require("@/data/products");
+
+    const urls = [
+      { loc: `${SITE.url}/`, priority: 1.0 },
+      { loc: `${SITE.url}/products`, priority: 0.9 },
+      { loc: `${SITE.url}/blog`, priority: 0.9 },
+      { loc: `${SITE.url}/about`, priority: 0.7 },
+      { loc: `${SITE.url}/contact`, priority: 0.7 },
+      ...products.map((p: { slug: string; updatedAt?: string }) => ({
+        loc: `${SITE.url}/products/${p.slug}`,
+        lastmod: p.updatedAt,
+        priority: 0.8,
+      })),
+      ...context.publishedArticles.map(({ article }) => ({
+        loc: `${SITE.url}/blog/${article.slug}`,
+        lastmod: article.lastModified || article.publishDate,
+        priority: 0.7,
+      })),
+    ];
+
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls.map((u) => `  <url>
+    <loc>${u.loc}</loc>
+    ${u.lastmod ? `<lastmod>${u.lastmod}</lastmod>` : ""}
+    <priority>${u.priority.toFixed(1)}</priority>
+  </url>`).join("\n")}
+</urlset>`;
+
+    fs.writeFileSync(path.resolve(context.outputDir, "sitemap.xml"), xml, "utf-8");
+    console.log(`   ✓ Sitemap: ${urls.length} URLs`);
+  },
+});
+
+// RSS Plugin
+registry.register({
+  name: "rss",
+  run(context: BuildContext) {
+    const items = context.publishedArticles.map(({ article }) => ({
+      title: article.seoTitle || article.title,
+      link: `${brand.website}/blog/${article.slug}`,
+      description: article.excerpt || article.summary,
+      pubDate: new Date(article.publishDate).toUTCString(),
+      guid: `${brand.website}/blog/${article.slug}`,
+      category: article.category,
+      ...(article.featuredImage && {
+        enclosure: {
+          url: `${brand.website}${article.featuredImage.src}`,
+          type: "image/jpeg",
+        },
+      }),
+    }));
+
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>${escapeXml(brand.name)} — Knowledge Centre</title>
+    <link>${brand.website}/blog</link>
+    <description>Expert articles on solar energy, hybrid inverters, LiFePO₄ batteries, EV charging and energy storage.</description>
+    <language>en-in</language>
+    <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
+    <atom:link href="${brand.website}/rss.xml" rel="self" type="application/rss+xml" />
+${items.map((item) => `    <item>
+      <title>${escapeXml(item.title)}</title>
+      <link>${item.link}</link>
+      <description>${escapeXml(item.description)}</description>
+      <pubDate>${item.pubDate}</pubDate>
+      <guid isPermaLink="true">${item.guid}</guid>
+      ${item.category ? `<category>${escapeXml(item.category)}</category>` : ""}
+      ${item.enclosure ? `<enclosure url="${item.enclosure.url}" type="${item.enclosure.type}" />` : ""}
+    </item>`).join("\n")}
+  </channel>
+</rss>`;
+
+    fs.writeFileSync(path.resolve(context.outputDir, "rss.xml"), xml, "utf-8");
+    console.log(`   ✓ RSS feed: ${items.length} items`);
+  },
+});
+
+// LLM Plugin
+registry.register({
+  name: "llm",
+  run(context: BuildContext) {
+    const socialLines = Object.entries(brand.social)
+      .filter(([_, url]) => url !== null)
+      .map(([platform, url]) => `- ${platform}: ${url}`)
+      .join("\n");
+
+    const articleSummaries = context.publishedArticles
+      .map(({ article }) => `## ${article.title}\n\n${article.summary}\n\nDirect Answer: ${article.directAnswer}\nURL: ${brand.website}/blog/${article.slug}`)
+      .join("\n\n");
+
+    const content = `# ${brand.name} — LLM Context File
+# Auto-generated — DO NOT EDIT MANUALLY
+# Last updated: ${new Date().toISOString().split("T")[0]}
+
+## What is ${brand.name}?
+
+${brand.fullName} is an Indian clean-energy manufacturer based in ${brand.address.city}, ${brand.address.state}. ${brand.description}
+
+## Knowledge Centre Articles
+
+${articleSummaries}
+
+## Contact
+
+Phone: ${brand.phone}
+Email: ${brand.email}
+
+## Social Profiles
+
+${socialLines}
+`;
+
+    fs.writeFileSync(path.resolve(context.outputDir, "llms.txt"), content, "utf-8");
+    console.log(`   ✓ LLM context: ${context.publishedArticles.length} articles`);
+  },
+});
+
+// AI Plugin
+registry.register({
+  name: "ai",
+  run(context: BuildContext) {
+    const aiJson = context.publishedArticles.map(({ article, ast, toc }) => ({
+      id: article.id,
+      entities: article.entityMetadata?.entities || extractEntitiesFromAST(ast),
+      questions: article.questionsCovered || [],
+      answers: [article.directAnswer],
+      topics: article.entityMetadata?.topics || [],
+      intent: article.entityMetadata?.intent || "informational",
+      contentDepth: article.entityMetadata?.contentDepth || "guide",
+      summary: article.summary,
+      keyTakeaways: article.keyTakeaways || [],
+    }));
+
+    fs.writeFileSync(path.resolve(context.outputDir, "ai.json"), JSON.stringify(aiJson, null, 2), "utf-8");
+    console.log(`   ✓ AI JSON: ${aiJson.length} entries`);
+  },
+});
+
+// Image Manifest Plugin
+registry.register({
+  name: "image-manifest",
+  run(context: BuildContext) {
+    const manifest: { src: string; alt: string; width: number; height: number; caption?: string; usedIn: string[] }[] = [];
+
+    for (const { article, ast } of context.publishedArticles) {
+      // Featured image
+      if (article.featuredImage) {
+        manifest.push({
+          src: article.featuredImage.src,
+          alt: article.featuredImage.alt,
+          width: article.featuredImage.width,
+          height: article.featuredImage.height,
+          caption: article.featuredImage.caption,
+          usedIn: [article.id],
+        });
+      }
+
+      // Images from AST
+      const images = ast.filter((n) => n.type === "image");
+      for (const img of images) {
+        const existing = manifest.find((m) => m.src === img.props?.src);
+        if (existing) {
+          if (!existing.usedIn.includes(article.id)) {
+            existing.usedIn.push(article.id);
+          }
+        } else {
+          manifest.push({
+            src: img.props?.src as string,
+            alt: img.props?.alt as string,
+            width: 800, // Default, should be detected
+            height: 450,
+            usedIn: [article.id],
+          });
+        }
+      }
+    }
+
+    fs.writeFileSync(path.resolve(context.outputDir, "images.json"), JSON.stringify(manifest, null, 2), "utf-8");
+    console.log(`   ✓ Image manifest: ${manifest.length} images`);
+  },
+});
+
+// Analytics Manifest Plugin
+registry.register({
+  name: "analytics",
+  run(context: BuildContext) {
+    const manifest = context.publishedArticles.map(({ article }) => ({
+      id: article.id,
+      views: 0,
+      clicks: 0,
+      ctr: 0,
+      avgReadTime: 0,
+      bounceRate: 0,
+      conversionRate: 0,
+    }));
+
+    fs.writeFileSync(path.resolve(context.outputDir, "analytics.json"), JSON.stringify(manifest, null, 2), "utf-8");
+    console.log(`   ✓ Analytics manifest: ${manifest.length} entries`);
+  },
+});
+
+// Internal Link Plugin
+registry.register({
+  name: "internal-links",
+  run(context: BuildContext) {
+    // Auto-calculate best related articles based on keywords, categories, topics
+    for (const { article } of context.publishedArticles) {
+      if (article.relatedArticleIds && article.relatedArticleIds.length > 0) continue; // Skip if manually set
+
+      const candidates = context.publishedArticles.filter((p) => p.article.id !== article.id);
+      const scored = candidates.map((candidate) => {
+        let score = 0;
+        if (candidate.article.category === article.category) score += 3;
+        const sharedKeywords = (candidate.article.keywords || []).filter((k) => (article.keywords || []).includes(k)).length;
+        score += sharedKeywords * 2;
+        const sharedTopics = (candidate.article.entityMetadata?.topics || []).filter((t) => (article.entityMetadata?.topics || []).includes(t)).length;
+        score += sharedTopics * 3;
+        const sharedEntities = (candidate.article.entityMetadata?.entities || []).filter((e) => (article.entityMetadata?.entities || []).includes(e)).length;
+        score += sharedEntities * 2;
+        return { id: candidate.article.id, score };
+      });
+
+      scored.sort((a, b) => b.score - a.score);
+      const top3 = scored.slice(0, 3).map((s) => s.id);
+      
+      // Note: This would update the article in a real implementation
+      console.log(`   ✓ Internal links for ${article.id}: ${top3.join(", ")}`);
+    }
+  },
+});
+
+// Validation Plugin
+registry.register({
+  name: "validation",
+  run(context: BuildContext) {
+    const { generateBuildReport } = require("@/lib/blog-loader");
+    const report = generateBuildReport();
+    
+    fs.writeFileSync(path.resolve(context.outputDir, "build-report.json"), JSON.stringify(report, null, 2), "utf-8");
+    console.log(`   ✓ Validation report: ${report.errors.length} errors, ${report.warnings.length} warnings`);
+  },
+});
+
+function escapeXml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
+function extractEntitiesFromAST(ast: any[]): string[] {
+  const entities: string[] = [];
+  for (const node of ast) {
+    if (typeof node === "string") {
+      // Simple entity extraction: look for capitalized terms
+      const matches = node.match(/\b[A-Z][a-zA-Z]*(?:\s+[A-Z][a-zA-Z]*)+\b/g);
+      if (matches) entities.push(...matches);
+    }
+    if (node.children) {
+      entities.push(...extractEntitiesFromAST(node.children));
+    }
+  }
+  return [...new Set(entities)];
+}
+
+─── FILE 10: src/lib/build-pipeline.ts (NEW — event-driven pipeline) ───
+
+// src/lib/build-pipeline.ts
+// Event-driven build pipeline using plugin system.
+
+import { registry } from "./plugins";
+import { loadAllArticles, getPublishedArticles } from "./blog-loader";
+import { brand } from "@/data/brand";
+
+async function runBuildPipeline(): Promise<void> {
+  console.log("🚀 Starting OCS OORJA Build Pipeline...\n");
+
+  // Step 1: Load and parse all articles (incremental cache handles this)
+  console.log("📄 Loading articles...");
+  const allArticles = loadAllArticles();
+  const publishedArticles = getPublishedArticles();
+
+  console.log(`   Found ${allArticles.length} articles (${publishedArticles.length} published)\n`);
+
+  // Step 2: Build context
+  const context = {
+    articles: allArticles,
+    publishedArticles,
+    brand,
+    outputDir: "public",
+  };
+
+  // Step 3: Run all plugins
+  console.log("🔌 Running plugins...\n");
+  await registry.runAll(context);
+
+  // Step 4: Summary
+  console.log("\n✅ Build Pipeline Complete!");
+  console.log(`   Articles: ${allArticles.length} total, ${publishedArticles.length} published`);
+}
+
+runBuildPipeline().catch((error) => {
+  console.error("❌ Build pipeline failed:", error);
+  process.exit(1);
+});
+
+─── FILE 11: src/components/blog/ArticleContent.tsx (MODIFY — AST to React, no innerHTML) ───
+
+// src/components/blog/ArticleContent.tsx
+// Renders AST to React components. NO innerHTML. NO dangerouslySetInnerHTML.
+
+import { renderAST } from "@/lib/adapters/renderer";
+import type { BlogArticle, MarkdownNode, TableOfContentsItem } from "@/types/blog";
+
+interface ArticleContentProps {
+  article: BlogArticle;
+  ast: MarkdownNode[];
+  toc: TableOfContentsItem[];
+  relatedArticles?: BlogArticle[];
+}
+
+export function ArticleContent({ article, ast, toc, relatedArticles }: ArticleContentProps) {
+  const renderedContent = renderAST(ast);
+
+  return (
+    <div className="container mx-auto px-4 py-12">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
+        <aside className="lg:col-span-3">
+          <div className="sticky top-24">
+            <TableOfContents items={toc} />
+          </div>
+        </aside>
+
+        <article className="lg:col-span-9">
+          <ArticleHeader article={article} />
+
+          <AtAGlance>
+            <p>{article.summary}</p>
+          </AtAGlance>
+
+          <DirectAnswer question={`What is the main takeaway from "${article.title}"?`}>
+            <p>{article.directAnswer}</p>
+          </DirectAnswer>
+
+          {/* Rendered AST to React — NO innerHTML */}
+          <div className="prose prose-lg max-w-none">
+            {renderedContent}
+          </div>
+
+          {article.keyTakeaways && <KeyTakeaways items={article.keyTakeaways} />}
+          {article.faqs && <FAQSection faqs={article.faqs} />}
+
+          {/* Related content sections... */}
+        </article>
+      </div>
+    </div>
+  );
+}
+
+─── FILE 12: src/content/blog/solar-home-savings.md (MODIFY — add OCS references) ───
+
+---
+id: "solar-home-savings"
+slug: "home-solar-battery-system-electricity-bill-savings"
+title: "How Much Can a Home Solar + Battery System Save?"
+category: "solar-energy"
+status: "published"
+author: "OCS OORJA Engineering Team"
+featuredImage:
+  src: "/images/blog/solar-savings.jpg"
+  alt: "Home solar panel installation on rooftop in India"
+  width: 1200
+  height: 630
+  attribution: "Photo by OCS OORJA"
+summary: "A typical 5kW solar + 10kWh battery system can save ₹45,000–₹60,000 annually for Indian homes, with payback in 4–5 years."
+directAnswer: "For a typical 3BHK home in India, a 5kW solar system with 10kWh battery storage can reduce electricity bills by ₹45,000–₹60,000 per year, paying for itself in 4–5 years."
+keywords: ["solar savings", "battery storage", "electricity bill", "hybrid inverter", "home solar"]
+keyTakeaways:
+  - "Review 12 months of electricity bills before sizing a system"
+  - "Hybrid inverters charge batteries during the day and power homes at night"
+  - "5kW solar + 10kWh battery saves ₹45,000–₹60,000/year for typical homes"
+  - "Payback period is 4–5 years depending on local tariffs"
+  - "Roof orientation and shading significantly impact savings"
+questionsCovered:
+  - "How much can solar save on electricity bills?"
+  - "What size solar system do I need?"
+  - "How long is the payback period?"
+relatedArticleIds: ["lifepo4-vs-lead-acid"]
+relatedProductIds: ["prod-001", "prod-002", "prod-003"]
+featured: true
+featuredOrder: 1
+createdAt: "2026-06-10T00:00:00Z"
+updatedAt: "2026-06-15T00:00:00Z"
+publishDate: "2026-06-15T00:00:00Z"
+ocsReferences:
+  productIds: ["prod-001", "prod-002", "prod-003"]
+  governmentSchemeIds: ["MNRE", "PM-Surya-Ghar"]
+  industrySegments: ["Residential"]
+  technologies: ["Solar", "LiFePO4", "Hybrid Inverter", "MPPT"]
+---
+
+Installing a solar power system with battery storage is one of the most effective ways to reduce electricity bills in India. With rising grid tariffs and frequent power outages, homeowners are increasingly turning to hybrid solar solutions.
+
+## Understanding Your Current Electricity Costs
+
+Before calculating savings, review your electricity bills for the past 12 months. Look for patterns in consumption, peak usage hours, and tariff slabs.
+
+## How Solar + Battery Systems Work
+
+A hybrid solar inverter charges batteries during the day using solar power. At night or during outages, the battery powers your home, reducing grid dependence.
+
+### Key Components
+
+The system consists of solar panels, a hybrid inverter, LiFePO₄ batteries, and a monitoring system.
+
+## Calculating Potential Savings
+
+For a typical 3BHK home in Lucknow consuming 400 units/month:
+
+- 5kW solar system + 10kWh battery
+- Annual savings: ₹45,000–₹60,000
+- Payback period: 4–5 years
+
+## Factors Affecting Savings
+
+Roof orientation, shading, local electricity tariffs, and system sizing all impact actual savings.
+
+## Frequently Asked Questions
+
+### How long do solar batteries last?
+
+LiFePO₄ batteries typically last 10–15 years with 6,000+ cycles at 80% depth of discharge.
+
+### Can I install solar without battery?
+
+Yes, but you won't have backup power during outages. Battery storage maximizes savings and reliability.
+
+### What is the government subsidy?
+
+MNRE offers subsidies up to 40% for residential rooftop solar systems up to 3kW.
+
+─── FILE 13: package.json (MODIFY — unified build) ───
+
+"scripts": {
+  "build": "tsx src/lib/build-pipeline.ts && vite build"
+}
+
+─── FILE 14: src/types/index.ts (MODIFY — update exports) ───
+
+export type {
+  BlogArticle,
+  BlogCategory,
+  TableOfContentsItem,
+  ArticleValidationResult,
+  RSSItem,
+  ArticleStatus,
+  ArticleLanguage,
+  EditorialState,
+  FeaturedImageMeta,
+  ArticleCTA,
+  TopicCluster,
+  EntityMetadata,
+  ContentVersion,
+  FAQ,
+  SearchIndexEntry,
+  BuildReport,
+  ParsedArticle,
+  MarkdownNode,
+  ContentDepth,
+  SearchIntent,
+  IndustrySegment,
+  OcsTechnology,
+  OcsReferences,
+  ImageManifestEntry,
+  AnalyticsManifestEntry,
+  AIJsonEntry,
+  KnowledgeNode,
+  KnowledgeEdge,
+} from "./blog";
+
+─── ACCEPTANCE CRITERIA ───
+
+1. FrontMatter Adapter: parses YAML, knows nothing about Markdown
+2. Markdown Adapter: parses Markdown to AST, knows nothing about YAML
+3. Renderer: converts AST to React/HTML, knows nothing about parsing
+4. Content Engine: orchestrates adapters, exposes parse/render/validate
+5. File-based incremental cache: .content-cache/articles/, .content-cache/hashes.json
+6. Only changed articles rebuild
+7. Event-driven build pipeline with plugin system
+8. Built-in plugins: SEO, Search, Sitemap, RSS, LLM, AI, Image Manifest, Analytics, Internal Links, Validation
+9. Search index with weighted fields: title=10, keywords=8, summary=7, headings=6, body=4
+10. Search index includes: entities, topics, faqs, headings
+11. AI JSON generated: entities, questions, answers, topics, intent, contentDepth
+12. Image manifest: src, alt, width, height, caption, usedIn
+13. Analytics manifest: views, clicks, ctr, avgReadTime, bounceRate, conversionRate
+14. Build report scores: SEO, Accessibility, Performance, Structured Data, Internal Links, Images, Content, AI Readiness
+15. Internal link plugin auto-calculates related articles using keywords, categories, topics, entities
+16. OCS-specific fields: productIds, serviceIds, governmentSchemeIds, industrySegments, technologies
+17. KnowledgeNode and KnowledgeEdge interfaces prepared for Sprint 006B
+18. No innerHTML or dangerouslySetInnerHTML — AST to React components
+19. TypeScript clean, no console errors
+20. Foundation frozen after this sprint — Sprint 006B builds on top
+
+Return only the new files and specific modifications listed above.
