@@ -68,6 +68,7 @@ export const CTAS = {
   exploreProducts: { label: "Explore Products", href: "/products" } as Cta,
   contactUs: { label: "Contact Us", href: "/contact" } as Cta,
   viewAllArticles: { label: "View all articles", href: "/blog" } as Cta,
+  freeConsultation: { label: "Get a Free Consultation", href: "/contact" } as Cta,
 };
 
 // --- Company contact details (SINGLE SOURCE for the customer-facing email) -----

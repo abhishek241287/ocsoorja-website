@@ -10,10 +10,16 @@
 //   relatedProducts  → <RelatedContent> (product links)
 // `DirectAnswer` is provided for future editorial use (question + boxed
 // answer) and is not wired to a data field yet.
+//
+// `HelpCTA` is the one exception: it is the standard educational footer
+// shown at the END of every article (not conditional on a data field). Its
+// heading topic comes from the OPTIONAL `ctaTopic` frontmatter field.
 // =============================================================================
 import type { ReactNode } from "react";
 import { Link } from "wouter";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Check } from "lucide-react";
+import { Button } from "@/components/ui/Button";
+import { CTAS, CONTACT } from "@/data/brand";
 
 /** Highlighted 2–3 sentence overview box shown near the top of an article. */
 export function AtAGlance({ children }: { children: ReactNode }) {
@@ -103,6 +109,62 @@ export function FAQSection({
             </div>
           </details>
         ))}
+      </div>
+    </section>
+  );
+}
+
+const DEFAULT_CTA_TOPIC = "the right system for your needs";
+
+/**
+ * Standard educational footer shown at the end of every article — NOT
+ * conditional on a data field like the other extras above. `topic`
+ * (optional `ctaTopic` frontmatter) completes the heading; everything else
+ * (wording, links, phone number) is sourced from data/brand.ts.
+ */
+export function HelpCTA({ topic }: { topic?: string }) {
+  const whatsappHref = `https://wa.me/${CONTACT.whatsapp}?text=${encodeURIComponent(
+    "Hello OCS OORJA, I read one of your blog articles and would like help choosing the right product for my needs.",
+  )}`;
+  const checklist = [
+    { label: CTAS.freeConsultation.label, href: CTAS.freeConsultation.href },
+    { label: "WhatsApp OCS OORJA", href: whatsappHref },
+    { label: CTAS.requestQuote.label, href: CTAS.requestQuote.href },
+  ];
+
+  return (
+    <section className="mt-16 rounded-3xl border border-border bg-secondary/60 px-6 py-10 sm:px-10 sm:py-12">
+      <h2 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
+        Need help choosing {topic ?? DEFAULT_CTA_TOPIC}?
+      </h2>
+      <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+        Every home and business has different energy requirements. The right
+        choice depends on your electricity consumption, backup needs, and
+        future expansion plans — our engineers are happy to help you think it
+        through, no pressure.
+      </p>
+      <ul className="mt-6 flex flex-col flex-wrap gap-x-8 gap-y-3 sm:flex-row">
+        {checklist.map((item) => (
+          <li key={item.label}>
+            <a
+              href={item.href}
+              target={item.href.startsWith("http") ? "_blank" : undefined}
+              rel={item.href.startsWith("http") ? "noopener noreferrer" : undefined}
+              className="group inline-flex items-center gap-2 font-medium text-foreground transition-colors hover:text-primary-strong"
+            >
+              <Check
+                className="h-4 w-4 flex-shrink-0 text-primary-strong"
+                aria-hidden="true"
+              />
+              <span className="group-hover:underline">{item.label}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <div className="mt-7">
+        <Button asChild size="lg">
+          <Link href={CTAS.requestQuote.href}>{CTAS.requestQuote.label}</Link>
+        </Button>
       </div>
     </section>
   );

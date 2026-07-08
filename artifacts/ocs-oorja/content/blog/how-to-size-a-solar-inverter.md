@@ -7,6 +7,7 @@ publishDate: "2026-06-18"
 seoTitle: "Sizing a Hybrid Solar Inverter for Indian Homes | OCS OORJA"
 seoDescription: "Size a hybrid solar inverter the right way: match inverter capacity, solar array and battery bank for reliable day-and-night backup in Indian homes."
 excerpt: "A practical guide to matching inverter capacity, solar array size and battery bank for reliable day-and-night backup."
+ctaTopic: "the right hybrid solar inverter"
 ---
 
 A hybrid solar inverter sits at the centre of a modern home power system — it converts DC from your panels and battery into usable AC, charges the battery from solar or the grid, and switches to backup instantly when the mains fail. Get the sizing right and the system runs quietly for years; get it wrong and you either overpay or trip the inverter every time the air-conditioner starts.

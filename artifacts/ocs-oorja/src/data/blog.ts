@@ -39,6 +39,12 @@
 //   • relatedArticles — OPTIONAL `[slug-one, slug-two]` to HAND-PICK the
 //                       "Related articles" grid (otherwise chosen automatically
 //                       by category + shared tags).
+//   • ctaTopic        — OPTIONAL phrase completing the footer prompt "Need
+//                       help choosing {ctaTopic}?" (e.g. "the right hybrid
+//                       solar inverter"). Falls back to a generic phrase if
+//                       omitted. This footer (consultation / WhatsApp / quote)
+//                       is shown at the end of every article automatically —
+//                       nothing else needs editing to change it.
 //
 // Reading time, table of contents, word count and search text are ALL
 // computed automatically from the body — never set by hand.
@@ -95,6 +101,7 @@ export type BlogPost = {
   relatedProducts?: string[];
   relatedArticles?: string[];
   tags?: string[];
+  ctaTopic?: string;
 };
 
 const DEFAULT_AUTHOR = "OCS OORJA Green Pvt. Ltd.";
@@ -156,6 +163,7 @@ function loadPost(filePath: string, raw: string): BlogPost {
     relatedProducts: getStringArray(data, "relatedProducts"),
     relatedArticles: getStringArray(data, "relatedArticles"),
     tags: getStringArray(data, "tags"),
+    ctaTopic: getString(data, "ctaTopic"),
   };
 }
 

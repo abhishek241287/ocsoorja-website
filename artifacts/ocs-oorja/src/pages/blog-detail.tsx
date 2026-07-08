@@ -17,7 +17,6 @@ import { Seo } from "@/components/Seo";
 import { SITE as siteConfig } from "@/data/site";
 import { Container } from "@/components/layout/Container";
 import { Button } from "@/components/ui/Button";
-import { HEADLINES, CTAS } from "@/data/brand";
 import { formatDate } from "@/lib/format";
 import { getPostBySlug, getRelatedPosts, getAdjacentPosts } from "@/data/blog";
 import { getProductBySlug } from "@/data/products";
@@ -35,6 +34,7 @@ import {
   KeyTakeaways,
   FAQSection,
   RelatedContent,
+  HelpCTA,
 } from "@/components/blog/ArticleExtras";
 
 const SITE = siteConfig.url;
@@ -343,29 +343,9 @@ export default function BlogDetail() {
           </section>
         )}
 
-        {/* Lead generation */}
-        <section className="mt-16 rounded-3xl border border-border bg-secondary/60 px-6 py-10 sm:px-10 sm:py-12">
-          <div className="flex flex-col items-start gap-6 md:flex-row md:items-center md:justify-between">
-            <div className="max-w-2xl">
-              <h2 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
-                {HEADLINES.cta.title}
-              </h2>
-              <p className="mt-2 text-sm text-muted-foreground sm:text-base">
-                {HEADLINES.cta.body}
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-3">
-              <Button asChild size="lg">
-                <Link href={CTAS.requestQuote.href}>
-                  {CTAS.requestQuote.label}
-                </Link>
-              </Button>
-              <Button asChild size="lg" variant="outline">
-                <Link href={CTAS.contactUs.href}>{CTAS.contactUs.label}</Link>
-              </Button>
-            </div>
-          </div>
-        </section>
+        {/* Lead generation — educational "need help choosing" footer, shown
+            on every article; heading topic comes from optional `ctaTopic`. */}
+        <HelpCTA topic={post.ctaTopic} />
       </Container>
     </div>
   );
