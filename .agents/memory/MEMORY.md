@@ -10,3 +10,4 @@
 - [SEO & launch config](ocs-oorja-seo-launch.md) — site.ts is single source for url/GA4/Search-Console; sitemap + llms.txt generated in vite.config; robots.txt named groups must repeat Disallows.
 - [Hero & homepage imagery](hero-imagery.md) — scenes=WebP, product renders never recompressed + object-contain; Vite serves MISSING public/ files as 200 HTML.
 - [E2E hover/theme false negatives](e2e-test-false-negatives.md) — Tailwind v4 gates hover: behind @media (hover:hover); verify via compiled CSS, never assert hover in tests.
+- [Stock photo sourcing pitfalls](ocs-oorja-stock-photo-sourcing.md) — imageSearch can return YouTube-thumbnail text overlays or competitor branding; always open and inspect before using as case-study photography.

@@ -128,6 +128,49 @@ export function getProductSchema(product: {
 }
 
 /**
+ * Project / CaseStudy schema for a case study detail page.
+ */
+export function getProjectSchema(project: {
+  name: string;
+  description: string;
+  url: string;
+  image?: string;
+  schemaType: "Project" | "CaseStudy";
+  location?: { city: string; state: string; countryCode: string };
+  dateCompleted?: string;
+}): Schema {
+  return {
+    "@context": SCHEMA_CONTEXT,
+    "@type": project.schemaType,
+    "@id": `${project.url}#${project.schemaType.toLowerCase()}`,
+    name: project.name,
+    description: project.description,
+    ...(project.image ? { image: project.image } : {}),
+    url: project.url,
+    ...(project.dateCompleted ? { dateCompleted: project.dateCompleted } : {}),
+    ...(project.location
+      ? {
+          locationCreated: {
+            "@type": "Place",
+            address: {
+              "@type": "PostalAddress",
+              addressLocality: project.location.city,
+              addressRegion: project.location.state,
+              addressCountry: project.location.countryCode,
+            },
+          },
+        }
+      : {}),
+    provider: {
+      "@type": "Organization",
+      "@id": `${SITE.url}/#organization`,
+      name: BRAND.name,
+      url: SITE.url,
+    },
+  };
+}
+
+/**
  * BreadcrumbList schema — helps search engines display navigation trails.
  */
 export function getBreadcrumbSchema(items: Array<{ name: string; url: string }>): Schema {

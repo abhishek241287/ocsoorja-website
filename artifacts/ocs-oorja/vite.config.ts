@@ -6,6 +6,7 @@ import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 import fs from "fs";
 import { SITE } from "./src/data/site";
 import { products, FAMILIES } from "./src/data/products";
+import { projects } from "./src/data/projects";
 import { BRAND, COMPANY, CONTACT, COMPANY_ADDRESS_LINE } from "./src/data/brand";
 import { parseFrontmatter, getString } from "./src/lib/frontmatter";
 import { parseMarkdownBody, deriveExcerpt, truncateAtWord } from "./src/lib/markdown";
@@ -64,12 +65,19 @@ function generateSitemap() {
     const entries: Entry[] = [
       { path: "/", changefreq: "weekly", priority: "1.0" },
       { path: "/products", changefreq: "weekly", priority: "0.8" },
+      { path: "/projects", changefreq: "weekly", priority: "0.8" },
       { path: "/blog", changefreq: "weekly", priority: "0.8" },
       { path: "/about", changefreq: "monthly", priority: "0.8" },
       { path: "/contact", changefreq: "monthly", priority: "0.8" },
       ...products.map((p) => ({
         path: `/products/${p.slug}`,
         lastmod: p.dateAdded,
+        changefreq: "monthly",
+        priority: "0.7",
+      })),
+      ...projects.map((p) => ({
+        path: `/projects/${p.slug}`,
+        lastmod: p.updatedAt,
         changefreq: "monthly",
         priority: "0.7",
       })),

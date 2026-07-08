@@ -11,6 +11,11 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://www.ocsoorja.com/projects</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://www.ocsoorja.com/blog</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -178,6 +183,24 @@
   <url>
     <loc>https://www.ocsoorja.com/products/bess-100kwh-commercial</loc>
     <lastmod>2026-07-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.ocsoorja.com/projects/lucknow-residential-hybrid-solar-6kw</loc>
+    <lastmod>2026-07-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.ocsoorja.com/projects/lucknow-commercial-rooftop-solar-bess</loc>
+    <lastmod>2026-07-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.ocsoorja.com/projects/lucknow-erickshaw-charging-hub</loc>
+    <lastmod>2026-07-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>

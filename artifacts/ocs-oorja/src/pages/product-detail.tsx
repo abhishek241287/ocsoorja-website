@@ -26,6 +26,8 @@ import {
 import { cn } from "@/lib/utils";
 import ProductImageGallery from "@/components/ui/ProductImageGallery";
 import ProductCard from "@/components/ui/ProductCard";
+import ProjectCard from "@/components/projects/ProjectCard";
+import { getProjectsUsingProduct } from "@/data/projects";
 import {
   Accordion,
   AccordionItem,
@@ -117,6 +119,7 @@ export default function ProductDetail() {
     { name: product.name, url },
   ]);
   const faqSchema = product.faqs?.length ? getFAQSchema(product.faqs) : null;
+  const projectsUsingProduct = getProjectsUsingProduct(product.slug);
 
   return (
     <div className="py-12 md:py-16">
@@ -325,6 +328,25 @@ export default function ProductDetail() {
             <div className="grid grid-cols-1 items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {related.map((p) => (
                 <ProductCard key={p.id} product={p} specsLimit={3} tagsLimit={3} showTags className="h-full" />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Used in projects (bidirectional discovery) */}
+        {projectsUsingProduct.length > 0 && (
+          <section className="mt-14">
+            <div className="mb-6">
+              <div className="text-xs font-semibold uppercase tracking-wider text-primary-strong">
+                Proven in the field
+              </div>
+              <h2 className="mt-1 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
+                Used in real projects
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {projectsUsingProduct.map((p) => (
+                <ProjectCard key={p.id} project={p} className="h-full" />
               ))}
             </div>
           </section>

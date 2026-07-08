@@ -149,6 +149,17 @@ export const HEADLINES = {
     metaDescription:
       "Browse OCS OORJA's catalogue of hybrid solar inverters, LiFePO₄ batteries and BESS, and AC/DC EV chargers — factory-direct power systems engineered in Lucknow for Indian conditions.",
   },
+  projects: {
+    // Projects listing page (/projects)
+    pageEyebrow: "Projects & Case Studies",
+    pageTitle: "Real Installations, Real Results",
+    pageSubtitle:
+      "Residential, commercial, and EV charging installations delivered by OCS OORJA — real systems, real system sizing, and real results.",
+    // Search-engine copy for the projects listing page
+    metaTitle: "Projects & Case Studies — Solar, Battery & EV Installations | OCS OORJA",
+    metaDescription:
+      "Browse real OCS OORJA installations — hybrid solar, LiFePO₄ battery storage and EV charging projects across residential, commercial and EV segments in India.",
+  },
   blog: {
     // Blog listing page (/blog)
     pageEyebrow: "Insights & Guides",
