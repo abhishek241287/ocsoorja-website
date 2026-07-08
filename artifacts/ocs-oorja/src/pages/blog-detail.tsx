@@ -28,6 +28,8 @@ import {
   renderJsonLd,
 } from "@/lib/seo";
 import ArticleCard from "@/components/blog/ArticleCard";
+import ArticleBody from "@/components/blog/ArticleBody";
+import TableOfContents from "@/components/blog/TableOfContents";
 import {
   AtAGlance,
   KeyTakeaways,
@@ -267,26 +269,11 @@ export default function BlogDetail() {
             </AtAGlance>
           )}
 
+          {/* Table of contents (auto-derived from "##" headings; hidden for short articles) */}
+          <TableOfContents items={post.toc} />
+
           {/* Body */}
-          <div className="mt-8">
-            {post.content.map((section, i) => (
-              <div key={i} className={i === 0 ? "" : "mt-8"}>
-                {section.heading && (
-                  <h2 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
-                    {section.heading}
-                  </h2>
-                )}
-                {section.paragraphs.map((paragraph, j) => (
-                  <p
-                    key={j}
-                    className="mt-3 text-base leading-8 text-muted-foreground"
-                  >
-                    {paragraph}
-                  </p>
-                ))}
-              </div>
-            ))}
-          </div>
+          <ArticleBody sections={post.content} />
 
           {/* Optional extras — each renders only when set in src/data/blog.ts */}
           {post.keyTakeaways && post.keyTakeaways.length > 0 && (

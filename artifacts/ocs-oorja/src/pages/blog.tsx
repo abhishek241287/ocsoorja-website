@@ -37,18 +37,7 @@ export default function Blog() {
     if (category !== "all") list = list.filter((p) => p.category === category);
     const q = query.trim().toLowerCase();
     if (q) {
-      list = list.filter(
-        (p) =>
-          p.title.toLowerCase().includes(q) ||
-          p.excerpt.toLowerCase().includes(q) ||
-          p.category.toLowerCase().includes(q) ||
-          p.author.toLowerCase().includes(q) ||
-          p.content.some(
-            (s) =>
-              (s.heading?.toLowerCase().includes(q) ?? false) ||
-              s.paragraphs.some((par) => par.toLowerCase().includes(q)),
-          ),
-      );
+      list = list.filter((p) => p.searchText.includes(q));
     }
     return list;
   }, [allPosts, category, query]);

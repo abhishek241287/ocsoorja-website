@@ -6,8 +6,54 @@ import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 import fs from "fs";
 import { SITE } from "./src/data/site";
 import { products, FAMILIES } from "./src/data/products";
-import { blogPosts } from "./src/data/blog";
 import { BRAND, COMPANY, CONTACT, COMPANY_ADDRESS_LINE } from "./src/data/brand";
+import { parseFrontmatter, getString } from "./src/lib/frontmatter";
+import { parseMarkdownBody, deriveExcerpt, truncateAtWord } from "./src/lib/markdown";
+
+// Reads content/blog/*.md the same way src/data/blog.ts does at runtime, but
+// via plain `fs` — vite.config.ts runs in Node, outside Vite's own transform
+// pipeline, so `import.meta.glob` (used by src/data/blog.ts in the app) isn't
+// available here. Keep the two loaders in sync if the frontmatter contract
+// changes; both ultimately call the same pure lib/frontmatter + lib/markdown
+// parsers, so the only duplicated logic is "read the directory" + "derive
+// title/excerpt/seoTitle/seoDescription fallbacks".
+type BlogMeta = {
+  slug: string;
+  title: string;
+  publishDate: string;
+  excerpt: string;
+  seoTitle: string;
+  seoDescription: string;
+  image: string;
+};
+
+const CONTENT_BLOG_DIR = path.resolve(import.meta.dirname, "content/blog");
+
+function loadBlogMeta(): BlogMeta[] {
+  if (!fs.existsSync(CONTENT_BLOG_DIR)) return [];
+  return fs
+    .readdirSync(CONTENT_BLOG_DIR)
+    .filter((f) => f.endsWith(".md"))
+    .map((file) => {
+      const slug = file.replace(/\.md$/, "");
+      const raw = fs.readFileSync(path.join(CONTENT_BLOG_DIR, file), "utf-8");
+      const { data, body } = parseFrontmatter(raw);
+      const title = getString(data, "title") ?? slug;
+      const parsed = parseMarkdownBody(body);
+      const excerpt = getString(data, "excerpt") ?? deriveExcerpt(parsed.sections) ?? title;
+      return {
+        slug,
+        title,
+        publishDate: getString(data, "publishDate") ?? "",
+        excerpt,
+        seoTitle: getString(data, "seoTitle") ?? `${truncateAtWord(title, 55)} | OCS OORJA`,
+        seoDescription: getString(data, "seoDescription") ?? truncateAtWord(excerpt, 155),
+        image: getString(data, "image") ?? "",
+      };
+    });
+}
+
+const blogPosts = loadBlogMeta();
 
 // Generate public/sitemap.xml from the current routes + product catalog so it
 // stays in sync automatically — adding a product never requires editing the
@@ -144,6 +190,86 @@ ${socialLines}
 }
 
 generateLlmsTxt();
+
+// Generate public/rss.xml from content/blog/*.md so the feed can never drift
+// from the site content — same pattern as the sitemap/llms.txt above.
+function generateRss() {
+  try {
+    const sorted = [...blogPosts]
+      .filter((p) => p.publishDate)
+      .sort((a, b) => new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime());
+    const escapeXml = (s: string) =>
+      s
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&apos;");
+    const items = sorted
+      .map((p) => {
+        const url = `${SITE.url}/blog/${p.slug}`;
+        const pubDate = new Date(`${p.publishDate}T00:00:00Z`).toUTCString();
+        return `  <item>\n    <title>${escapeXml(p.title)}</title>\n    <link>${url}</link>\n    <guid>${url}</guid>\n    <pubDate>${pubDate}</pubDate>\n    <description>${escapeXml(p.excerpt)}</description>\n  </item>`;
+      })
+      .join("\n");
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0"><channel>\n  <title>${escapeXml(BRAND.name)} Blog</title>\n  <link>${SITE.url}/blog</link>\n  <description>${escapeXml(BRAND.positioning)}</description>\n${items}\n</channel></rss>\n`;
+    fs.writeFileSync(path.resolve(import.meta.dirname, "public/rss.xml"), xml);
+  } catch (err) {
+    console.warn("[rss] generation skipped:", err);
+  }
+}
+
+generateRss();
+
+// Fail-fast validation of content/blog/*.md — catches broken articles at dev
+// server start / build time instead of a blank page in the browser. Missing
+// required frontmatter throws (build must not ship a broken article); missing
+// referenced images and long SEO fields only warn, since they're recoverable.
+function validateBlogContent() {
+  if (!fs.existsSync(CONTENT_BLOG_DIR)) return;
+  const publicDir = path.resolve(import.meta.dirname, "public");
+  const files = fs.readdirSync(CONTENT_BLOG_DIR).filter((f) => f.endsWith(".md"));
+  const REQUIRED = ["title", "category", "image", "author", "publishDate"];
+
+  for (const file of files) {
+    const slug = file.replace(/\.md$/, "");
+    const raw = fs.readFileSync(path.join(CONTENT_BLOG_DIR, file), "utf-8");
+    const { data } = parseFrontmatter(raw);
+
+    for (const field of REQUIRED) {
+      if (!getString(data, field)) {
+        throw new Error(
+          `[blog validation] content/blog/${file} is missing required frontmatter field "${field}".`,
+        );
+      }
+    }
+
+    const image = getString(data, "image");
+    if (image && !fs.existsSync(path.join(publicDir, image.replace(/^\//, "")))) {
+      console.warn(`[blog validation] ${slug}: image "${image}" not found in public/.`);
+    }
+
+    const seoTitle = getString(data, "seoTitle");
+    if (seoTitle && seoTitle.length > 60) {
+      console.warn(
+        `[blog validation] ${slug}: seoTitle is ${seoTitle.length} chars (recommended <= 60).`,
+      );
+    }
+    const seoDescription = getString(data, "seoDescription");
+    if (seoDescription && seoDescription.length > 160) {
+      console.warn(
+        `[blog validation] ${slug}: seoDescription is ${seoDescription.length} chars (recommended <= 160).`,
+      );
+    }
+
+    const publishDate = getString(data, "publishDate");
+    if (publishDate && Number.isNaN(new Date(publishDate).getTime())) {
+      console.warn(`[blog validation] ${slug}: publishDate "${publishDate}" is not a valid date.`);
+    }
+  }
+}
+
+validateBlogContent();
 
 const rawPort = process.env.PORT;
 
