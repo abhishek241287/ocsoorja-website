@@ -1,0 +1,75 @@
+Implement the Gallery Publisher using the SAME user experience, validation flow, API pattern, refresh mechanism, and publishing workflow as the existing Blog Publisher.
+
+Reuse as much of the Blog Publisher infrastructure as possible.
+
+Do NOT create a second publishing architecture.
+
+If the existing Blog Publisher infrastructure can be extended to support Gallery, extend it instead of duplicating it.
+
+Keep the Gallery data architecture consistent with the rest of the website.
+
+Do not introduce Markdown, frontmatter, or a second content pipeline.
+
+─── USER EXPERIENCE ───
+
+Hidden page: /gallery-publisher (no navigation link)
+
+Workflow:
+
+1. Select Category (dropdown)
+   - Residential
+   - Commercial
+   - Industrial
+   - Solar
+   - Battery
+   - EV
+   - Hybrid Inverter
+   - LiFePO4
+
+2. Upload Photos
+   - Drag & drop or click to browse
+   - Multiple files (up to 20)
+   - Preview thumbnails with remove button
+
+3. Click "Publish Photos"
+   - Success toast
+   - Photos appear in Gallery immediately
+
+That's it. No other fields. No manual IDs. No dates. No captions.
+
+─── INTEGRATION ───
+
+Add "Installation Gallery" tab to the existing Projects page (/projects)
+
+Gallery tab shows:
+- Category filter pills
+- Photo grid (4 columns desktop, 2 tablet, 2 mobile)
+- Click photo → fullscreen lightbox with prev/next/close
+
+─── ACCEPTANCE CRITERIA ───
+
+1. Gallery Publisher uses the same publishing workflow as Blog Publisher
+2. Gallery Publisher extends existing infrastructure, does not duplicate it
+3. Gallery data uses the same architecture as the rest of the website
+4. No Markdown, no frontmatter, no second content pipeline
+5. Projects page has "Case Studies" and "Installation Gallery" tabs
+6. Gallery tab shows filterable photo grid with lightbox
+7. Gallery Publisher at /gallery-publisher with no nav link
+8. Only required field: Category
+9. Publishing 10–20 photos takes less than one minute
+10. TypeScript clean, no errors
+
+─── IMPORTANT ───
+
+The Gallery Publisher is intended only for OCS OORJA staff.
+
+Prioritize simplicity over flexibility.
+
+Publishing 10–20 installation photos should take less than one minute.
+
+If there is a simpler implementation than the one described above, prefer the simpler solution while preserving the same user experience.,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,| Before                                         | After                                                                            |
+| ---------------------------------------------- | -------------------------------------------------------------------------------- |
+| "Reuse exactly" + forced `src/data/gallery.ts` | "Reuse UX, workflow, API pattern" + "keep consistent with existing architecture" |
+| "Gallery data lives in src/data/gallery.ts"    | "Store Gallery data using the same architecture already established"             |
+| Detailed component specs                       | "Extend existing infrastructure instead of duplicating"                          |
+| No simplicity priority                         | "Prioritize simplicity over flexibility" + "prefer simpler solution"             |
