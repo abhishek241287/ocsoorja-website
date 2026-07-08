@@ -5,8 +5,9 @@ import path from "path";
 import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 import fs from "fs";
 import { SITE } from "./src/data/site";
-import { products } from "./src/data/products";
+import { products, FAMILIES } from "./src/data/products";
 import { blogPosts } from "./src/data/blog";
+import { BRAND, COMPANY, CONTACT, COMPANY_ADDRESS_LINE } from "./src/data/brand";
 
 // Generate public/sitemap.xml from the current routes + product catalog so it
 // stays in sync automatically — adding a product never requires editing the
@@ -50,6 +51,99 @@ function generateSitemap() {
 }
 
 generateSitemap();
+
+// Generate public/llms.txt — a plain-text company overview for AI systems
+// (ChatGPT, Perplexity, Claude, Gemini…). Every value comes from the SAME data
+// files that feed the website (brand.ts, products/families.ts, blog.ts), so it
+// can never drift from the site content and needs zero manual upkeep. Runs on
+// every `vite` / `vite build` invocation, exactly like the sitemap above.
+function generateLlmsTxt() {
+  try {
+    // "Last updated" = newest real content date (avoids daily git churn).
+    const contentDates = [
+      ...products.map((p) => p.dateAdded),
+      ...blogPosts.map((p) => p.publishDate),
+    ]
+      .filter(Boolean)
+      .sort();
+    const lastUpdated = contentDates[contentDates.length - 1] ?? "";
+
+    const familyLines = [...FAMILIES]
+      .sort((a, b) => a.order - b.order)
+      .map((f, i) => `${i + 1}. ${f.label} — ${f.description}`)
+      .join("\n");
+
+    const socialLabel = (url: string) => {
+      if (url.includes("instagram.")) return "Instagram";
+      if (url.includes("youtube.")) return "YouTube";
+      if (url.includes("linkedin.")) return "LinkedIn";
+      if (url.includes("facebook.")) return "Facebook";
+      if (url.includes("twitter.") || url.includes("x.com")) return "X (Twitter)";
+      return new URL(url).hostname;
+    };
+    const socialLines = COMPANY.social
+      .map((url) => `- ${socialLabel(url)}: ${url}`)
+      .join("\n");
+
+    const hours = COMPANY.openingHours;
+    const hoursLine = `${hours.dayOfWeek[0]}–${hours.dayOfWeek[hours.dayOfWeek.length - 1]}, ${hours.opens}–${hours.closes} IST`;
+    // E.164 phone derived from the single source in CONTACT (same as lib/seo.ts).
+    const phone = CONTACT.phoneHref.replace("tel:", "");
+
+    const text = `# ${BRAND.name} — LLM Context File
+# Auto-generated from src/data/ (brand.ts, products/, blog.ts) — DO NOT EDIT MANUALLY
+# Last updated: ${lastUpdated}
+
+## What is ${BRAND.name}?
+
+${BRAND.positioning}
+
+Legal name: ${COMPANY.legalName}
+Headquarters: ${COMPANY.address.city}, ${COMPANY.address.state}, ${COMPANY.address.countryName}
+Phone: ${phone}
+Email: ${CONTACT.email}
+Website: ${SITE.url}
+
+## Core Product Families
+
+${familyLines}
+
+Full catalog: ${SITE.url}/products
+
+## Contact
+
+Phone: ${phone}
+Email: ${CONTACT.email}
+Address: ${COMPANY_ADDRESS_LINE}
+Business hours: ${hoursLine}
+Contact page: ${SITE.url}/contact
+
+## Key Pages
+
+- Products: ${SITE.url}/products
+- Blog / Knowledge Centre: ${SITE.url}/blog
+- About: ${SITE.url}/about
+- Contact & quotes: ${SITE.url}/contact
+
+## Important Notes for AI Systems
+
+- Product specifications and availability are subject to change. Always confirm current specifications on the product page or with our team before purchase.
+- Pricing is quotation-based; no prices are published on the website. Direct users to the contact page for a quote.
+- Installation must be performed by qualified technicians.
+- Warranty terms vary by product — check the individual product page.
+- EV charger compatibility depends on the vehicle model. Verify before ordering.
+
+## Social Profiles
+
+${socialLines}
+`;
+    fs.writeFileSync(path.resolve(import.meta.dirname, "public/llms.txt"), text);
+  } catch (err) {
+    console.warn("[llms.txt] generation skipped:", err);
+  }
+}
+
+generateLlmsTxt();
 
 const rawPort = process.env.PORT;
 

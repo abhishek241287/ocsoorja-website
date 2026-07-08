@@ -37,6 +37,16 @@ function setMetaByName(name: string, content: string) {
   el.setAttribute("content", content);
 }
 
+// Set a meta tag when content is provided, REMOVE it when null — used for
+// optional tags (Dublin Core) so a value never leaks onto the next page.
+function setOrRemoveMetaByName(name: string, content: string | null) {
+  if (content === null) {
+    document.querySelector(`meta[name="${name}"]`)?.remove();
+    return;
+  }
+  setMetaByName(name, content);
+}
+
 function setMetaByProperty(property: string, content: string) {
   let el = document.querySelector(`meta[property="${property}"]`);
   if (!el) {
@@ -74,9 +84,25 @@ export interface SeoProps {
   ogType?: string;
   /** Absolute URL of the share image. Defaults to the site-wide OG image. */
   ogImage?: string;
+  /** Dublin Core content type (e.g. "article", "product"). Omit on plain pages. */
+  contentType?: "article" | "product" | "organization" | "faq";
+  /** Dublin Core last-modified date (ISO YYYY-MM-DD). */
+  lastModified?: string;
+  /** Dublin Core creator/author name. */
+  author?: string;
 }
 
-export function Seo({ title, description, canonical, robots, ogType, ogImage }: SeoProps) {
+export function Seo({
+  title,
+  description,
+  canonical,
+  robots,
+  ogType,
+  ogImage,
+  contentType,
+  lastModified,
+  author,
+}: SeoProps) {
   useEffect(() => {
     const resolvedTitle = title ?? DEFAULTS.title;
     const resolvedDescription = description ?? DEFAULTS.description;
@@ -99,7 +125,14 @@ export function Seo({ title, description, canonical, robots, ogType, ogImage }: 
     setMetaByProperty("og:url", ogUrl);
     setMetaByProperty("og:image", ogImage ?? DEFAULTS.ogImage);
     setMetaByProperty("og:locale", "en_IN");
-  }, [title, description, canonical, robots, ogType, ogImage]);
+
+    // Dublin Core content metadata — set on pages that declare it, removed on
+    // every other page (same reset contract as the tags above). The static
+    // DC.publisher tag lives in index.html and is never touched here.
+    setOrRemoveMetaByName("DC.type", contentType ?? null);
+    setOrRemoveMetaByName("DC.modified", lastModified ?? null);
+    setOrRemoveMetaByName("DC.creator", author ?? null);
+  }, [title, description, canonical, robots, ogType, ogImage, contentType, lastModified, author]);
 
   return null;
 }

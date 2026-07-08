@@ -1,0 +1,632 @@
+Sprint 006 Refined: AI Discoverability (CTO Edition) for OCS OORJA.
+
+CRITICAL RULES:
+- Preserve ALL existing SEO framework files (brand.ts, seo.ts, lib/seo.ts, SEOHead.tsx, SchemaOrg.tsx, AutoSitemap.tsx, Image.tsx, not-found.tsx, App.tsx, index.html, robots.txt, site.webmanifest)
+- No new libraries — use existing dependencies
+- All company data from src/data/brand.ts only
+- No invented values, no placeholders, no fabricated certifications
+- No speculative meta tags (no ai-purpose, ai-summary, ai-entity, data-ai-*, rel="llm-context")
+- No invented metrics (no citationScore, no entitySignal generator, no promptOptimizer)
+- Extend existing SEOHead — do NOT create AIDiscoverability.tsx or parallel system
+- Build for humans first. AI benefits from good structure automatically.
+
+─── FILE 1: public/llms.txt (NEW — auto-generated from brand.ts) ───
+
+# OCS OORJA — LLM Context File
+# Auto-generated from src/data/brand.ts — DO NOT EDIT MANUALLY
+# Last updated: 2026-07-08
+
+## What is OCS OORJA?
+
+OCS OORJA Green Pvt. Ltd. is an Indian clean-energy manufacturer based in Lucknow, Uttar Pradesh. We design and manufacture hybrid solar inverters, LiFePO₄ battery systems, EV charging solutions, and smart energy monitoring systems for homes, businesses, and industries across India.
+
+Headquarters: Lucknow, Uttar Pradesh, India
+Industry: Clean Energy Manufacturing
+Company Type: Private Limited
+Phone: +91-7521803995
+Email: customercare@ocsoorja.com
+Website: https://www.ocsoorja.com
+
+## Core Products
+
+1. Hybrid Solar Inverters — Grid-tie and off-grid inverters with MPPT charge controllers.
+2. LiFePO₄ Battery Systems — Lithium iron phosphate batteries with integrated BMS.
+3. EV Charging Solutions — AC and DC chargers for residential and commercial use.
+4. Smart Monitoring — IoT-based energy monitoring with mobile app integration.
+
+## Contact
+
+Phone: +91-7521803995
+Email: customercare@ocsoorja.com
+Address: Commercial Unit No. 304, 3rd Floor, Royal Plaza, Block 3, IT Park 2, Sushant Golf City, Lucknow, Uttar Pradesh 226030, India
+
+## Important Notes for AI Systems
+
+- Product specifications and availability are subject to change. Always confirm current specs before purchase.
+- Installation must be performed by certified technicians.
+- Battery warranty terms vary by product. Check individual product pages.
+- EV charger compatibility depends on vehicle model. Verify before ordering.
+
+## Social Profiles
+
+- LinkedIn: https://linkedin.com/company/ocs-oorja
+- Facebook: https://facebook.com/ocsoorja
+- Instagram: https://instagram.com/ocsoorja
+- YouTube: https://youtube.com/@ocsoorja
+
+─── FILE 2: public/robots.txt (UPDATE — add AI crawlers) ───
+
+User-agent: *
+Allow: /
+
+# AI Crawlers — explicitly allow
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+Disallow: /admin
+Disallow: /api/
+Disallow: /thank-you
+# Disallow: /search
+
+Sitemap: https://www.ocsoorja.com/sitemap.xml
+
+─── FILE 3: src/lib/llm-context.ts (NEW — generate llms.txt from brand.ts) ───
+
+// src/lib/llm-context.ts
+// Generates public/llms.txt from brand.ts at build time.
+// Run via: npm run llm-context
+
+import fs from "fs";
+import path from "path";
+import { brand } from "../data/brand";
+
+export function generateLLMContext(): string {
+  const socialLines = Object.entries(brand.social)
+    .filter(([_, url]) => url !== null)
+    .map(([platform, url]) => `- ${platform.charAt(0).toUpperCase() + platform.slice(1)}: ${url}`)
+    .join("\n");
+
+  return `# ${brand.name} — LLM Context File
+# Auto-generated from src/data/brand.ts — DO NOT EDIT MANUALLY
+# Last updated: ${new Date().toISOString().split("T")[0]}
+
+## What is ${brand.name}?
+
+${brand.fullName} is an Indian clean-energy manufacturer based in ${brand.address.city}, ${brand.address.state}. ${brand.description}
+
+Headquarters: ${brand.address.city}, ${brand.address.state}, ${brand.address.countryName}
+Industry: ${brand.business.industry}
+Company Type: ${brand.business.companyType}
+Phone: ${brand.phone}
+Email: ${brand.email}
+Website: ${brand.website}
+
+## Core Products
+
+1. Hybrid Solar Inverters — Grid-tie and off-grid inverters with MPPT charge controllers.
+2. LiFePO₄ Battery Systems — Lithium iron phosphate batteries with integrated BMS.
+3. EV Charging Solutions — AC and DC chargers for residential and commercial use.
+4. Smart Monitoring — IoT-based energy monitoring with mobile app integration.
+
+## Contact
+
+Phone: ${brand.phone}
+Email: ${brand.email}
+Address: ${brand.address.street}, ${brand.address.locality}, ${brand.address.city}, ${brand.address.state} ${brand.address.postalCode}, ${brand.address.countryName}
+
+## Important Notes for AI Systems
+
+- Product specifications and availability are subject to change. Always confirm current specs before purchase.
+- Installation must be performed by certified technicians.
+- Battery warranty terms vary by product. Check individual product pages.
+- EV charger compatibility depends on vehicle model. Verify before ordering.
+
+## Social Profiles
+
+${socialLines}
+`;
+}
+
+export function writeLLMContext(outputDir: string = "public"): void {
+  const content = generateLLMContext();
+  const outputPath = path.resolve(outputDir, "llms.txt");
+  fs.writeFileSync(outputPath, content, "utf-8");
+  console.log(`✓ LLM context written to ${outputPath}`);
+}
+
+if (require.main === module) {
+  writeLLMContext();
+}
+
+─── FILE 4: src/components/seo/SEOHead.tsx (MODIFY — extend with LLM support) ───
+
+// src/components/seo/SEOHead.tsx
+// EXTENDED: Added llm-context link and content-origin meta.
+// All existing functionality preserved.
+
+import { Helmet } from "react-helmet-async";
+import { SITE, SEO_DEFAULTS } from "@/data/seo";
+import { formatTitle } from "@/lib/seo";
+
+export interface SEOHeadProps {
+  title: string;
+  description: string;
+  canonical: string;
+  ogImage?: string;
+  ogType?: string;
+  twitterCard?: string;
+  robots?: string;
+  schema?: Record<string, unknown>[];
+  // NEW: Optional content metadata for AI discoverability
+  contentType?: "article" | "product" | "organization" | "faq";
+  lastModified?: string;
+  author?: string;
+}
+
+export function SEOHead({
+  title,
+  description,
+  canonical,
+  ogImage = SITE.ogImage,
+  ogType = SEO_DEFAULTS.ogType,
+  twitterCard = SEO_DEFAULTS.twitterCard,
+  robots = SEO_DEFAULTS.robots,
+  schema = [],
+  contentType,
+  lastModified,
+  author,
+}: SEOHeadProps) {
+  const fullTitle = formatTitle(title);
+
+  return (
+    <Helmet>
+      {/* Basic SEO — existing */}
+      <title>{fullTitle}</title>
+      <meta name="description" content={description} />
+      <link rel="canonical" href={canonical} />
+      <meta name="robots" content={robots} />
+
+      {/* Open Graph — existing */}
+      <meta property="og:site_name" content={SITE.name} />
+      <meta property="og:title" content={fullTitle} />
+      <meta property="og:description" content={description} />
+      <meta property="og:type" content={ogType} />
+      <meta property="og:url" content={canonical} />
+      <meta property="og:image" content={ogImage} />
+      <meta property="og:locale" content="en_IN" />
+
+      {/* Twitter Card — existing, conditional */}
+      {SITE.hasTwitter && (
+        <>
+          <meta name="twitter:card" content={twitterCard} />
+          <meta name="twitter:site" content="@ocsoorja" />
+          <meta name="twitter:title" content={fullTitle} />
+          <meta name="twitter:description" content={description} />
+          <meta name="twitter:image" content={ogImage} />
+        </>
+      )}
+
+      {/* NEW: LLM Context Reference */}
+      <link rel="help" href="https://www.ocsoorja.com/llms.txt" title="LLM Context" />
+
+      {/* NEW: Content Authenticity (standard Dublin Core) */}
+      {contentType && <meta name="DC.type" content={contentType} />}
+      {lastModified && <meta name="DC.modified" content={lastModified} />}
+      {author && <meta name="DC.creator" content={author} />}
+      <meta name="DC.publisher" content={SITE.name} />
+
+      {/* JSON-LD Schemas — existing */}
+      {schema.map((item, index) => (
+        <script key={index} type="application/ld+json">
+          {JSON.stringify(item)}
+        </script>
+      ))}
+    </Helmet>
+  );
+}
+
+─── FILE 5: src/components/seo/SchemaOrg.tsx (NO CHANGE — keep existing) ───
+
+─── FILE 6: src/lib/seo.ts (MODIFY — add richer schemas) ───
+
+// src/lib/seo.ts
+// EXTENDED: Added FAQPage schema support, HowTo schema, and Speakable schema.
+// Speakable schema is available but NOT automatically emitted.
+// All existing functions preserved.
+
+import { brand, BRAND_OPENING_HOURS_SPEC } from "@/data/brand";
+import { SITE, SCHEMA_CONTEXT, SEO_DEFAULTS, PAGE_META } from "@/data/seo";
+import type { Product, BlogArticle, FAQ } from "@/types";
+
+// ─── Existing functions preserved (generateCanonical, buildPageMeta, generateOrganizationSchema, generateLocalBusinessSchema, generateProductSchema, generateArticleSchema, generateBreadcrumbSchema, generateFAQSchema, formatTitle) ───
+
+// [PRESERVE ALL EXISTING FUNCTIONS HERE — DO NOT MODIFY]
+
+// ─── NEW: Richer FAQ Schema with HowTo support ─────────────────
+
+export interface HowToStep {
+  name: string;
+  text: string;
+  url?: string;
+}
+
+export function generateHowToSchema(name: string, description: string, steps: HowToStep[]) {
+  return {
+    "@context": SCHEMA_CONTEXT,
+    "@type": "HowTo",
+    name,
+    description,
+    step: steps.map((step, index) => ({
+      "@type": "HowToStep",
+      position: index + 1,
+      name: step.name,
+      text: step.text,
+      ...(step.url && { url: step.url }),
+    })),
+  };
+}
+
+// ─── NEW: Speakable schema — AVAILABLE but NOT auto-emitted ─────
+// Use only when there is a clear voice/AI assistant use case.
+// Call manually and pass to SEOHead schema prop when needed.
+
+export function generateSpeakableSchema(cssSelectors: string[]) {
+  return {
+    "@context": SCHEMA_CONTEXT,
+    "@type": "WebPage",
+    speakable: {
+      "@type": "SpeakableSpecification",
+      cssSelector: cssSelectors,
+    },
+  };
+}
+
+─── FILE 7: src/components/sections/ContentGuidelines.tsx (NEW — reusable content pattern) ───
+
+// src/components/sections/ContentGuidelines.tsx
+// Reusable content structure that helps humans, Google, and AI systems.
+// NOT a component for meta tags — this is VISUAL content structure.
+
+import { cn } from "@/lib/utils";
+
+interface ArticleContentProps {
+  title: string;
+  category: string;
+  children: React.ReactNode;
+  className?: string;
+}
+
+export function ArticleContent({ title, category, children, className }: ArticleContentProps) {
+  return (
+    <article className={cn("prose prose-lg max-w-none", className)}>
+      <header className="mb-8">
+        <span className="text-sm font-medium text-primary uppercase tracking-wider">{category}</span>
+        <h1 className="mt-2 text-3xl font-bold tracking-tight text-foreground md:text-4xl">{title}</h1>
+      </header>
+      {children}
+    </article>
+  );
+}
+
+// REFINEMENT 1: Renamed from "Executive Summary" to "At a Glance"
+interface AtAGlanceProps {
+  children: React.ReactNode;
+}
+
+export function AtAGlance({ children }: AtAGlanceProps) {
+  return (
+    <div className="mb-8 rounded-xl border-l-4 border-primary bg-muted/50 p-6">
+      <p className="text-sm font-semibold uppercase tracking-wider text-primary mb-2">At a Glance</p>
+      <div className="text-lg leading-relaxed text-foreground">{children}</div>
+    </div>
+  );
+}
+
+interface DirectAnswerProps {
+  question: string;
+  children: React.ReactNode;
+}
+
+export function DirectAnswer({ question, children }: DirectAnswerProps) {
+  return (
+    <section className="mb-8" aria-labelledby={`answer-${question.slice(0, 20).replace(/\s/g, "-")}`}>
+      <h2 id={`answer-${question.slice(0, 20).replace(/\s/g, "-")}`} className="mb-3 text-xl font-semibold text-foreground">
+        {question}
+      </h2>
+      <div className="rounded-lg bg-background p-4 shadow-sm ring-1 ring-border">
+        {children}
+      </div>
+    </section>
+  );
+}
+
+interface KeyTakeawaysProps {
+  items: string[];
+}
+
+export function KeyTakeaways({ items }: KeyTakeawaysProps) {
+  return (
+    <aside className="my-8 rounded-xl bg-primary/5 p-6">
+      <p className="mb-3 text-sm font-semibold uppercase tracking-wider text-primary">Key Takeaways</p>
+      <ul className="space-y-2">
+        {items.map((item, i) => (
+          <li key={i} className="flex items-start gap-2">
+            <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-primary" />
+            <span className="text-foreground">{item}</span>
+          </li>
+        ))}
+      </ul>
+    </aside>
+  );
+}
+
+interface FAQSectionProps {
+  faqs: { question: string; answer: string }[];
+}
+
+export function FAQSection({ faqs }: FAQSectionProps) {
+  return (
+    <section className="my-8" aria-labelledby="faq-heading">
+      <h2 id="faq-heading" className="mb-4 text-2xl font-bold text-foreground">Frequently Asked Questions</h2>
+      <div className="space-y-4">
+        {faqs.map((faq, i) => (
+          <details key={i} className="group rounded-lg border border-border bg-background">
+            <summary className="flex cursor-pointer items-center justify-between p-4 font-medium text-foreground hover:bg-muted/50">
+              {faq.question}
+            </summary>
+            <div className="border-t border-border p-4 text-muted-foreground">
+              {faq.answer}
+            </div>
+          </details>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+interface RelatedContentProps {
+  title: string;
+  links: { label: string; href: string; description?: string }[];
+}
+
+export function RelatedContent({ title, links }: RelatedContentProps) {
+  return (
+    <nav className="my-8 rounded-xl border border-border bg-muted/30 p-6" aria-label="Related content">
+      <p className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted-foreground">{title}</p>
+      <ul className="space-y-3">
+        {links.map((link, i) => (
+          <li key={i}>
+            <a href={link.href} className="group block">
+              <span className="font-medium text-primary group-hover:underline">{link.label}</span>
+              {link.description && <p className="mt-1 text-sm text-muted-foreground">{link.description}</p>}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+}
+
+─── FILE 8: src/pages/blog-detail.tsx (EXAMPLE — apply content guidelines with optional fields) ───
+
+// src/pages/blog-detail.tsx
+// EXAMPLE of how to use ContentGuidelines components.
+// All content sections are OPTIONAL — only render if data exists.
+// Adapt this pattern for all article pages.
+
+import { SEOHead } from "@/components/seo/SEOHead";
+import { buildPageMeta, generateArticleSchema, generateBreadcrumbSchema, generateFAQSchema } from "@/lib/seo";
+import { ArticleContent, AtAGlance, DirectAnswer, KeyTakeaways, FAQSection, RelatedContent } from "@/components/sections/ContentGuidelines";
+import { articles } from "@/data/blog";
+
+export default function BlogDetailPage() {
+  const article = articles[0]; // Replace with actual routing logic
+  const meta = buildPageMeta("article", { param: article.seoTitle ?? article.title }, `/blog/${article.slug}`);
+  
+  const schemas = [
+    generateArticleSchema(article),
+    generateBreadcrumbSchema([
+      { name: "Home", path: "/" },
+      { name: "Knowledge Centre", path: "/blog" },
+      { name: article.title, path: `/blog/${article.slug}` },
+    ]),
+    ...(article.faqs ? [generateFAQSchema(article.faqs)] : []),
+  ];
+
+  return (
+    <>
+      <SEOHead
+        {...meta}
+        schema={schemas}
+        contentType="article"
+        lastModified={article.updatedDate ?? article.publishDate}
+        author={article.author}
+      />
+      
+      <main className="container mx-auto px-4 py-12 max-w-3xl">
+        <ArticleContent title={article.title} category={article.category}>
+          {/* At a Glance — OPTIONAL, only if summary exists */}
+          {article.summary && (
+            <AtAGlance>
+              <p>{article.summary}</p>
+            </AtAGlance>
+          )}
+          
+          {/* Direct Answer — OPTIONAL, only if description exists */}
+          {article.description && (
+            <DirectAnswer question="What is this article about?">
+              <p>{article.description}</p>
+            </DirectAnswer>
+          )}
+          
+          {/* Main article content */}
+          <div className="prose prose-lg">{/* ... article body ... */}</div>
+          
+          {/* Key Takeaways — OPTIONAL */}
+          {article.keyTakeaways && article.keyTakeaways.length > 0 && (
+            <KeyTakeaways items={article.keyTakeaways} />
+          )}
+          
+          {/* FAQ Section — OPTIONAL */}
+          {article.faqs && article.faqs.length > 0 && (
+            <FAQSection faqs={article.faqs} />
+          )}
+          
+          {/* Related Products — OPTIONAL */}
+          {article.relatedProducts && article.relatedProducts.length > 0 && (
+            <RelatedContent
+              title="Related Products"
+              links={article.relatedProducts.map((slug) => ({
+                label: slug, // Replace with actual product name lookup
+                href: `/products/${slug}`,
+              }))}
+            />
+          )}
+          
+          {/* Related Articles — OPTIONAL */}
+          {article.relatedArticles && article.relatedArticles.length > 0 && (
+            <RelatedContent
+              title="Related Articles"
+              links={article.relatedArticles.map((slug) => ({
+                label: slug, // Replace with actual article title lookup
+                href: `/blog/${slug}`,
+              }))}
+            />
+          )}
+          
+          {/* Related Gallery Projects — OPTIONAL (future-proof) */}
+          {article.relatedGalleryProjects && article.relatedGalleryProjects.length > 0 && (
+            <RelatedContent
+              title="Project Gallery"
+              links={article.relatedGalleryProjects.map((slug) => ({
+                label: slug, // Replace with actual project name lookup
+                href: `/gallery/${slug}`,
+              }))}
+            />
+          )}
+        </ArticleContent>
+      </main>
+    </>
+  );
+}
+
+─── FILE 9: package.json (MODIFY — add scripts) ───
+
+"scripts": {
+  "sitemap": "tsx src/components/seo/AutoSitemap.tsx",
+  "llm-context": "tsx src/lib/llm-context.ts",
+  "build": "npm run sitemap && npm run llm-context && vite build"
+}
+
+─── FILE 10: src/App.tsx (NO CHANGE — keep existing) ───
+
+─── FILE 11: src/pages/home.tsx (NO CHANGE — keep existing) ───
+
+─── FILE 12: src/pages/product-detail.tsx (NO CHANGE — keep existing) ───
+
+─── FILE 13: src/types/index.ts (MODIFY — add optional fields and future-proof types) ───
+
+// Add these interfaces to existing types file:
+
+export interface HowToStep {
+  name: string;
+  text: string;
+  url?: string;
+}
+
+export interface SpeakableSection {
+  selector: string;
+  label: string;
+}
+
+// REFINEMENT 2 & 3: BlogArticle with all optional fields
+export interface BlogArticle {
+  slug: string;
+  title: string;
+  seoTitle?: string;
+  description: string;
+  metaDescription?: string;
+  category: string;
+  keywords?: string[];
+  publishDate: string;
+  updatedDate?: string;
+  readingTime?: number;
+  author?: string;
+  featuredImage?: string;
+  imageAlt?: string;
+  status: "published" | "draft";
+  
+  // All AI discoverability fields are OPTIONAL:
+  summary?: string;              // Renders "At a Glance" section
+  keyTakeaways?: string[];       // Renders KeyTakeaways component
+  faqs?: FAQ[];                  // Renders FAQSection component
+  relatedProducts?: string[];  // Renders Related Products section
+  relatedArticles?: string[];    // Renders Related Articles section
+  
+  // REFINEMENT 3: Future-proof for Gallery (not built yet)
+  relatedGalleryProjects?: string[]; // Renders Project Gallery section when Gallery exists
+  
+  featured?: boolean;
+}
+
+// Product type (unchanged except for featured fields)
+export interface Product {
+  slug: string;
+  name: string;
+  description: string;
+  shortDescription: string;
+  image?: string;
+  availability?: "InStock" | "OutOfStock" | "PreOrder" | "LimitedAvailability" | "InquiryOnly";
+  warranty?: string;
+  certifications?: { bis?: boolean; iec?: string; ipRating?: string; countryOfOrigin?: string; };
+  faqs?: FAQ[];
+  seoTitle?: string;
+  metaDescription?: string;
+  relatedProducts?: string[];
+  relatedBlogs?: string[];
+  downloads?: { label: string; url: string }[];
+  updatedAt?: string;
+  featured?: boolean;
+  featuredOrder?: number;
+}
+
+export interface FAQ {
+  question: string;
+  answer: string;
+}
+
+─── ACCEPTANCE CRITERIA ───
+
+1. public/llms.txt exists, auto-generated from brand.ts via npm run llm-context
+2. robots.txt explicitly allows GPTBot, ClaudeBot, PerplexityBot, Google-Extended, Bingbot
+3. SEOHead.tsx extended with DC.type, DC.modified, DC.creator, DC.publisher (Dublin Core)
+4. SEOHead.tsx includes <link rel="help" href="/llms.txt"> (valid HTML)
+5. No speculative meta tags (no ai-*, data-ai-*, llm-context rel)
+6. No invented metrics (no citationScore, entitySignal, promptOptimizer)
+7. ContentGuidelines.tsx provides: ArticleContent, AtAGlance (renamed from ExecutiveSummary), DirectAnswer, KeyTakeaways, FAQSection, RelatedContent
+8. lib/seo.ts extended with generateHowToSchema and generateSpeakableSchema (available but NOT auto-emitted)
+9. Blog detail page shows all optional sections only when data exists
+10. All content sections in BlogArticle are optional: summary, keyTakeaways, faqs, relatedProducts, relatedArticles, relatedGalleryProjects
+11. relatedGalleryProjects field exists in BlogArticle type for future Gallery feature
+12. All content uses semantic HTML: article, section, aside, nav, details/summary, header
+13. No invented data — all from brand.ts
+14. Existing SEO framework untouched and fully functional
+15. Build script runs sitemap + llm-context + vite build in sequence
+16. generateSpeakableSchema() exists in lib/seo.ts but is NOT called automatically on any page
+
+Return only the new files and the specific modifications listed above. Do not touch unrelated components.

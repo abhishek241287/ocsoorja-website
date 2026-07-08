@@ -126,6 +126,8 @@ export default function ProductDetail() {
         canonical={url}
         ogType="product"
         ogImage={product.image ? `${SITE}${product.image}` : undefined}
+        contentType="product"
+        lastModified={product.dateAdded}
       />
       <Container>
         <script type="application/ld+json" dangerouslySetInnerHTML={renderJsonLd(productSchema)} />

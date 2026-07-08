@@ -219,6 +219,59 @@ export function getArticleSchema(article: {
   };
 }
 
+// -----------------------------------------------------------------------------
+// Optional schema generators — AVAILABLE but deliberately NOT emitted anywhere.
+// (Sprint 006 acceptance criteria: exist in lib/seo.ts, never auto-called.)
+// Call one manually and render it with renderJsonLd() only when a page has a
+// clear use case. Named generate* (not get*) to match the sprint checklist.
+// -----------------------------------------------------------------------------
+
+export interface HowToStep {
+  name: string;
+  text: string;
+  url?: string;
+}
+
+/**
+ * HowTo schema for step-by-step guides. NOT used on any page yet — Google
+ * retired HowTo rich results in 2023, so only add it if a real guide page
+ * would benefit for other AI/search consumers.
+ */
+export function generateHowToSchema(
+  name: string,
+  description: string,
+  steps: HowToStep[],
+): Schema {
+  return {
+    "@context": SCHEMA_CONTEXT,
+    "@type": "HowTo",
+    name,
+    description,
+    step: steps.map((step, index) => ({
+      "@type": "HowToStep",
+      position: index + 1,
+      name: step.name,
+      text: step.text,
+      ...(step.url ? { url: step.url } : {}),
+    })),
+  };
+}
+
+/**
+ * Speakable schema for voice assistants. NOT called anywhere — use only when
+ * a clear voice/AI-assistant use case emerges for a specific page.
+ */
+export function generateSpeakableSchema(cssSelectors: string[]): Schema {
+  return {
+    "@context": SCHEMA_CONTEXT,
+    "@type": "WebPage",
+    speakable: {
+      "@type": "SpeakableSpecification",
+      cssSelector: cssSelectors,
+    },
+  };
+}
+
 /**
  * Utility to render a JSON-LD script tag.
  */

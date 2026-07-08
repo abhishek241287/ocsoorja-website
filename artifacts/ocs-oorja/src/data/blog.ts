@@ -27,6 +27,20 @@
 //                       regardless of its date — handy when you publish weekly
 //                       and want editorial control. If no article is marked, the
 //                       newest one is featured automatically.
+//
+// OPTIONAL article extras — each section appears ONLY when you add the field:
+//   • summary         — 1–3 sentences shown in a highlighted "At a glance" box
+//                       near the top of the article.
+//   • keyTakeaways    — short bullet points shown after the article body.
+//   • faqs            — question/answer pairs shown as an expandable FAQ
+//                       section (also sent to Google as FAQ structured data).
+//   • relatedProducts — product slugs (from src/data/products/) shown as
+//                       "Related products" links inside the article.
+//   • relatedArticles — blog slugs to HAND-PICK the "Related articles" grid at
+//                       the bottom (otherwise same-category posts are chosen
+//                       automatically).
+//   • relatedGalleryProjects — reserved for the future Gallery section; not
+//                       shown anywhere yet.
 // =============================================================================
 
 export type ArticleSection = { heading?: string; paragraphs: string[] };
@@ -44,7 +58,17 @@ export type BlogPost = {
   seoDescription: string;
   content: ArticleSection[];
   featured?: boolean; // pin as the /blog featured hero (overrides date order)
+
+  // --- Optional article extras (each renders only when present) -------------
+  summary?: string; // "At a glance" box near the top of the article
+  keyTakeaways?: string[]; // bullet list after the article body
+  faqs?: BlogFaq[]; // FAQ section + FAQ structured data for Google
+  relatedProducts?: string[]; // product slugs → "Related products" links
+  relatedArticles?: string[]; // blog slugs → hand-picked related grid
+  relatedGalleryProjects?: string[]; // future Gallery projects (not rendered yet)
 };
+
+export type BlogFaq = { question: string; answer: string };
 
 export const blogPosts: BlogPost[] = [
   {
@@ -263,7 +287,38 @@ export const blogPosts: BlogPost[] = [
         ],
         "heading": "About OCS OORJA"
       }
-    ]
+    ],
+    summary:
+      "A 5 kW rooftop solar system paired with a 10 kWh LiFePO₄ battery can cut a typical home's grid electricity use by 60–90%. For a household consuming 700 units a month, that means estimated savings of ₹43,000–₹58,000 per year — plus reliable backup power during outages.",
+    keyTakeaways: [
+      "A home using 700 units a month at ₹8 per unit pays about ₹67,200 per year for grid electricity.",
+      "A 5 kW solar + 10 kWh LiFePO₄ system can reduce grid consumption by 60–90%, saving an estimated ₹3,600–₹4,800 every month.",
+      "Unlike plain rooftop solar, a hybrid system with battery storage keeps essential appliances running during power cuts.",
+      "LiFePO₄ batteries last longer, charge faster and need no maintenance compared with lead-acid batteries.",
+      "The same system can also charge electric scooters, cars and e-rickshaws, improving the overall return on investment.",
+    ],
+    faqs: [
+      {
+        question:
+          "How much can a home solar + battery system save on electricity bills?",
+        answer:
+          "For a typical household consuming 700 units a month, a 5 kW solar system with a 10 kWh LiFePO₄ battery can cut grid consumption by 60–90% — roughly ₹43,000–₹58,000 per year. Actual savings depend on usage, tariffs, weather, and system size.",
+      },
+      {
+        question: "Will my appliances keep working during a power cut?",
+        answer:
+          "Yes. A hybrid solar system with battery storage keeps essential loads running — lights, fans, Wi-Fi, TV, refrigerator, laptops, CCTV and, depending on inverter capacity, selected air conditioners.",
+      },
+      {
+        question: "Can the system also charge an electric vehicle?",
+        answer:
+          "Yes. A properly sized residential solar + battery system can support charging for electric scooters, cars, and e-rickshaws, reducing charging costs further.",
+      },
+    ],
+    relatedProducts: [
+      "solar-hybrid-inverter-48v-6kw",
+      "12v-100ah-home-power-storage",
+    ],
   },
   {
     slug: "delhi-ev-policy-2026",

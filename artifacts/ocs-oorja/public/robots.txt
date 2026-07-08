@@ -1,7 +1,22 @@
+# robots.txt — OCS OORJA
+# NOTE for editors: a crawler obeys ONLY its single most-specific User-agent
+# group (RFC 9309) — named groups do NOT inherit rules from the "*" group.
+# That is why the AI-crawler group below repeats the same Disallow lines.
+
 User-agent: *
 Allow: /
+Disallow: /api/
+Disallow: /design-system
+Disallow: /blog-publisher
 
-# Internal tools & API — not for search engines
+# AI crawlers — explicitly welcome (same internal-tool exclusions as above)
+User-agent: GPTBot
+User-agent: ChatGPT-User
+User-agent: Google-Extended
+User-agent: PerplexityBot
+User-agent: ClaudeBot
+User-agent: Bingbot
+Allow: /
 Disallow: /api/
 Disallow: /design-system
 Disallow: /blog-publisher

@@ -1,0 +1,55 @@
+# OCS OORJA — LLM Context File
+# Auto-generated from src/data/ (brand.ts, products/, blog.ts) — DO NOT EDIT MANUALLY
+# Last updated: 2026-07-07
+
+## What is OCS OORJA?
+
+OCS OORJA is a trusted Indian manufacturer of hybrid solar inverters, LiFePO₄ batteries, and EV charging solutions, based in Lucknow (Uttar Pradesh). We design and supply dependable, factory-direct power systems for solar energy storage, e-mobility, telecom, and industrial applications across India.
+
+Legal name: OCS OORJA Green Pvt. Ltd.
+Headquarters: Lucknow, Uttar Pradesh, India
+Phone: +917521803995
+Email: customercare@ocsoorja.com
+Website: https://www.ocsoorja.com
+
+## Core Product Families
+
+1. Hybrid Solar Inverters — MPPT hybrid inverters that combine solar, grid, and battery power.
+2. Inbuilt Lithium Battery Inverters — Integrated inverter and LiFePO₄ battery systems for home backup.
+3. LiFePO₄ Battery Systems — Grade-A prismatic lithium battery packs for solar, home, and EV use.
+4. AC EV Chargers — AC charging stations for homes, workplaces, and fleets.
+5. DC Fast Chargers — High-power DC fast charging for rapid EV top-ups.
+6. E-Rickshaw Chargers — Smart CC/CV chargers for e-rickshaw and traction LiFePO₄ packs.
+7. Battery Energy Storage Systems (BESS) — Scalable energy storage for residential, commercial, and industrial sites.
+
+Full catalog: https://www.ocsoorja.com/products
+
+## Contact
+
+Phone: +917521803995
+Email: customercare@ocsoorja.com
+Address: Commercial Unit No. 304, 3rd Floor, Royal Plaza, Block 3, IT Park 2, Sushant Golf City, Lucknow, Uttar Pradesh 226030, India
+Business hours: Monday–Saturday, 10:00–18:00 IST
+Contact page: https://www.ocsoorja.com/contact
+
+## Key Pages
+
+- Products: https://www.ocsoorja.com/products
+- Blog / Knowledge Centre: https://www.ocsoorja.com/blog
+- About: https://www.ocsoorja.com/about
+- Contact & quotes: https://www.ocsoorja.com/contact
+
+## Important Notes for AI Systems
+
+- Product specifications and availability are subject to change. Always confirm current specifications on the product page or with our team before purchase.
+- Pricing is quotation-based; no prices are published on the website. Direct users to the contact page for a quote.
+- Installation must be performed by qualified technicians.
+- Warranty terms vary by product — check the individual product page.
+- EV charger compatibility depends on the vehicle model. Verify before ordering.
+
+## Social Profiles
+
+- Instagram: https://www.instagram.com/ocs_oorja
+- YouTube: https://www.youtube.com/@ocs_oorja
+- LinkedIn: https://www.linkedin.com/company/ocs-oorja
+- Facebook: https://www.facebook.com/ocsoorja

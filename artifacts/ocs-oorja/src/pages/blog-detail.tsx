@@ -20,12 +20,20 @@ import { Button } from "@/components/ui/Button";
 import { HEADLINES, CTAS } from "@/data/brand";
 import { formatDate } from "@/lib/format";
 import { getPostBySlug, getRelatedPosts, getAdjacentPosts } from "@/data/blog";
+import { getProductBySlug } from "@/data/products";
 import {
   getArticleSchema,
   getBreadcrumbSchema,
+  getFAQSchema,
   renderJsonLd,
 } from "@/lib/seo";
 import ArticleCard from "@/components/blog/ArticleCard";
+import {
+  AtAGlance,
+  KeyTakeaways,
+  FAQSection,
+  RelatedContent,
+} from "@/components/blog/ArticleExtras";
 
 const SITE = siteConfig.url;
 
@@ -53,8 +61,28 @@ export default function BlogDetail() {
   }
 
   const url = `${SITE}/blog/${post.slug}`;
-  const related = getRelatedPosts(post.slug, 3);
+
+  // Hand-picked related articles (post.relatedArticles) override the automatic
+  // same-category picks; invalid slugs and the article itself are ignored.
+  const curatedRelated = (post.relatedArticles ?? [])
+    .map((s) => getPostBySlug(s))
+    .filter(
+      (p): p is NonNullable<typeof p> => p !== undefined && p.slug !== post.slug,
+    )
+    .slice(0, 3); // match the auto-picked grid size
+  const related =
+    curatedRelated.length > 0 ? curatedRelated : getRelatedPosts(post.slug, 3);
   const { previous, next } = getAdjacentPosts(post.slug);
+
+  // Related product links from slugs in the data file (invalid slugs ignored).
+  const relatedProductLinks = (post.relatedProducts ?? [])
+    .map((s) => getProductBySlug(s))
+    .filter((p): p is NonNullable<typeof p> => p !== undefined)
+    .map((p) => ({
+      label: p.name,
+      href: `/products/${p.slug}`,
+      description: p.summary,
+    }));
 
   const articleSchema = getArticleSchema({
     title: post.title,
@@ -69,6 +97,8 @@ export default function BlogDetail() {
     { name: "Blog", url: `${SITE}/blog` },
     { name: post.title, url },
   ]);
+  const faqSchema =
+    post.faqs && post.faqs.length > 0 ? getFAQSchema(post.faqs) : null;
 
   const encodedUrl = encodeURIComponent(url);
   const encodedTitle = encodeURIComponent(post.title);
@@ -113,6 +143,9 @@ export default function BlogDetail() {
         canonical={url}
         ogType="article"
         ogImage={`${SITE}${post.image}`}
+        contentType="article"
+        lastModified={post.publishDate}
+        author={post.author}
       />
       <Container>
         <script
@@ -123,6 +156,12 @@ export default function BlogDetail() {
           type="application/ld+json"
           dangerouslySetInnerHTML={renderJsonLd(breadcrumbSchema)}
         />
+        {faqSchema && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={renderJsonLd(faqSchema)}
+          />
+        )}
 
         {/* Breadcrumb */}
         <nav
@@ -221,6 +260,13 @@ export default function BlogDetail() {
             </button>
           </div>
 
+          {/* At a glance (optional summary from the data file) */}
+          {post.summary && (
+            <AtAGlance>
+              <p>{post.summary}</p>
+            </AtAGlance>
+          )}
+
           {/* Body */}
           <div className="mt-8">
             {post.content.map((section, i) => (
@@ -241,6 +287,15 @@ export default function BlogDetail() {
               </div>
             ))}
           </div>
+
+          {/* Optional extras — each renders only when set in src/data/blog.ts */}
+          {post.keyTakeaways && post.keyTakeaways.length > 0 && (
+            <KeyTakeaways items={post.keyTakeaways} />
+          )}
+          {post.faqs && post.faqs.length > 0 && <FAQSection faqs={post.faqs} />}
+          {relatedProductLinks.length > 0 && (
+            <RelatedContent title="Related products" links={relatedProductLinks} />
+          )}
 
           {/* Prev / next */}
           {(previous || next) && (

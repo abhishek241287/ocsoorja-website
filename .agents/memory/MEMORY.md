@@ -7,6 +7,6 @@
 - [TS data eval in sandbox](ts-data-extraction-in-sandbox.md) — code_execution can't import workspace deps; read the data file as text and eval the literal.
 - [wouter scroll restoration](wouter-scroll-restoration.md) — key each history entry, restore in useLayoutEffect, re-apply on rAF.
 - [wouter Link breaks mailto:/tel:](wouter-link-external-schemes.md) — non-http hrefs must use plain <a>; wouter <Link> silently intercepts them.
-- [SEO & launch config](ocs-oorja-seo-launch.md) — site.ts is single source for url/GA4/Search-Console; sitemap generated in vite.config, so data edits restart the dev server.
+- [SEO & launch config](ocs-oorja-seo-launch.md) — site.ts is single source for url/GA4/Search-Console; sitemap + llms.txt generated in vite.config; robots.txt named groups must repeat Disallows.
 - [Hero & homepage imagery](hero-imagery.md) — scenes=WebP, product renders never recompressed + object-contain; Vite serves MISSING public/ files as 200 HTML.
 - [E2E hover/theme false negatives](e2e-test-false-negatives.md) — Tailwind v4 gates hover: behind @media (hover:hover); verify via compiled CSS, never assert hover in tests.
