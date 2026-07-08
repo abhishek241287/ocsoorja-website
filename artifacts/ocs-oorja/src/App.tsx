@@ -12,7 +12,6 @@ import Products from "@/pages/products";
 import ProductDetail from "@/pages/product-detail";
 import Projects from "@/pages/projects";
 import ProjectDetail from "@/pages/project-detail";
-import Gallery from "@/pages/gallery";
 import Blog from "@/pages/blog";
 import BlogDetail from "@/pages/blog-detail";
 import DesignSystem from "@/pages/design-system";
@@ -28,6 +27,12 @@ const BlogPublisher = import.meta.env.DEV
   ? lazy(() => import("@/pages/blog-publisher"))
   : null;
 
+// Internal Gallery Publisher tool — development workspace only, same pattern
+// as the Blog Publisher above.
+const GalleryPublisher = import.meta.env.DEV
+  ? lazy(() => import("@/pages/gallery-publisher"))
+  : null;
+
 function Router() {
   return (
     <Layout>
@@ -39,8 +44,6 @@ function Router() {
         <Route path="/products/:slug" component={ProductDetail} />
         <Route path="/projects" component={Projects} />
         <Route path="/projects/:slug" component={ProjectDetail} />
-        <Route path="/gallery" component={Gallery} />
-        <Route path="/gallery/photo/:slug" component={Gallery} />
         <Route path="/blog" component={Blog} />
         <Route path="/blog/:slug" component={BlogDetail} />
         <Route path="/design-system" component={DesignSystem} />
@@ -54,6 +57,19 @@ function Router() {
               }
             >
               <BlogPublisher />
+            </Suspense>
+          </Route>
+        ) : null}
+        {GalleryPublisher ? (
+          <Route path="/gallery-publisher">
+            <Suspense
+              fallback={
+                <div className="flex min-h-[60vh] items-center justify-center text-muted-foreground">
+                  Loading the Gallery Publisher…
+                </div>
+              }
+            >
+              <GalleryPublisher />
             </Suspense>
           </Route>
         ) : null}

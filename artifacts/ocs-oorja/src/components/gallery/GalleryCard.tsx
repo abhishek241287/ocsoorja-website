@@ -1,21 +1,21 @@
-import { Link } from "wouter";
 import { MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getCategoryInfo, type GalleryPhoto } from "@/data/gallery";
 
 export type GalleryCardProps = {
   photo: GalleryPhoto;
+  onOpen: (photo: GalleryPhoto) => void;
   className?: string;
 };
 
-export default function GalleryCard({ photo, className }: GalleryCardProps) {
-  const href = `/gallery/photo/${photo.slug}`;
+export default function GalleryCard({ photo, onOpen, className }: GalleryCardProps) {
   const category = getCategoryInfo(photo.category);
   const labelId = `gallery-photo-${photo.id}-label`;
 
   return (
-    <Link
-      href={href}
+    <button
+      type="button"
+      onClick={() => onOpen(photo)}
       aria-labelledby={labelId}
       className={cn(
         "group relative block aspect-[4/3] overflow-hidden rounded-lg border border-card-border bg-neutral-50",
@@ -43,16 +43,18 @@ export default function GalleryCard({ photo, className }: GalleryCardProps) {
             {category.label}
           </span>
         )}
-        <div className="mt-0.5 flex items-center gap-1 text-[13px] text-white">
-          <MapPin className="h-3 w-3 flex-none" aria-hidden="true" />
-          <span>
-            {photo.location.city}, {photo.location.state}
-          </span>
-        </div>
+        {photo.location && (
+          <div className="mt-0.5 flex items-center gap-1 text-[13px] text-white">
+            <MapPin className="h-3 w-3 flex-none" aria-hidden="true" />
+            <span>
+              {photo.location.city}, {photo.location.state}
+            </span>
+          </div>
+        )}
         {photo.caption && (
           <p className="mt-0.5 line-clamp-2 text-[13px] text-white/80">{photo.caption}</p>
         )}
       </div>
-    </Link>
+    </button>
   );
 }

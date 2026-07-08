@@ -8,6 +8,7 @@ Allow: /
 Disallow: /api/
 Disallow: /design-system
 Disallow: /blog-publisher
+Disallow: /gallery-publisher
 
 # AI crawlers — explicitly welcome (same internal-tool exclusions as above)
 User-agent: GPTBot
@@ -20,5 +21,6 @@ Allow: /
 Disallow: /api/
 Disallow: /design-system
 Disallow: /blog-publisher
+Disallow: /gallery-publisher
 
 Sitemap: https://www.ocsoorja.com/sitemap.xml

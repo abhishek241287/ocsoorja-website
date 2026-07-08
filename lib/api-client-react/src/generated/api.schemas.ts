@@ -61,3 +61,33 @@ export interface BlogPublishResponse {
   url: string;
 }
 
+export type GalleryCategory = typeof GalleryCategory[keyof typeof GalleryCategory];
+
+
+export const GalleryCategory = {
+  residential: 'residential',
+  commercial: 'commercial',
+  industrial: 'industrial',
+  solar: 'solar',
+  battery: 'battery',
+  ev: 'ev',
+  'hybrid-inverter': 'hybrid-inverter',
+  lifepo4: 'lifepo4',
+} as const;
+
+export interface GalleryPublishInput {
+  category: GalleryCategory;
+  /**
+     * @minItems 1
+     * @maxItems 20
+     * @items.minLength 50
+     * @items.maxLength 16000000
+     */
+  images: string[];
+}
+
+export interface GalleryPublishResponse {
+  ok: boolean;
+  count: number;
+}
+

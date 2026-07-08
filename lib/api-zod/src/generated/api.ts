@@ -76,3 +76,25 @@ export const PublishBlogArticleResponse = zod.object({
 })
 
 
+/**
+ * Saves uploaded photos under public/images/gallery/<category>/ and appends a minimal entry (category + auto id/slug/publishDate only) to that category's existing data file in src/data/gallery/. Only available in the development workspace; returns 404 in production.
+ * @summary Publish Installation Gallery photos (development workspace only)
+ */
+export const publishGalleryPhotosBodyImagesItemMin = 50;
+export const publishGalleryPhotosBodyImagesItemMax = 16000000;
+
+export const publishGalleryPhotosBodyImagesMax = 20;
+
+
+
+export const PublishGalleryPhotosBody = zod.object({
+  "category": zod.enum(['residential', 'commercial', 'industrial', 'solar', 'battery', 'ev', 'hybrid-inverter', 'lifepo4']),
+  "images": zod.array(zod.string().min(publishGalleryPhotosBodyImagesItemMin).max(publishGalleryPhotosBodyImagesItemMax).describe('Photo as a base64 data URL (png, jpeg or webp)')).min(1).max(publishGalleryPhotosBodyImagesMax)
+})
+
+export const PublishGalleryPhotosResponse = zod.object({
+  "ok": zod.boolean(),
+  "count": zod.number()
+})
+
+

@@ -89,6 +89,41 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+  /gallery/publish:
+    post:
+      operationId: publishGalleryPhotos
+      tags: [gallery]
+      summary: Publish Installation Gallery photos (development workspace only)
+      description: >
+        Saves uploaded photos under public/images/gallery/<category>/ and
+        appends a minimal entry (category + auto id/slug/publishDate only) to
+        that category's existing data file in src/data/gallery/. Only
+        available in the development workspace; returns 404 in production.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GalleryPublishInput"
+      responses:
+        "200":
+          description: Photos written to the website source
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GalleryPublishResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not available (production)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 components:
   schemas:
     HealthStatus:
@@ -164,4 +199,38 @@ components:
           type: string
         url:
           type: string
+    GalleryCategory:
+      type: string
+      enum:
+        - residential
+        - commercial
+        - industrial
+        - solar
+        - battery
+        - ev
+        - hybrid-inverter
+        - lifepo4
+    GalleryPublishInput:
+      type: object
+      required: [category, images]
+      properties:
+        category:
+          $ref: "#/components/schemas/GalleryCategory"
+        images:
+          type: array
+          minItems: 1
+          maxItems: 20
+          items:
+            type: string
+            description: Photo as a base64 data URL (png, jpeg or webp)
+            minLength: 50
+            maxLength: 16000000
+    GalleryPublishResponse:
+      type: object
+      required: [ok, count]
+      properties:
+        ok:
+          type: boolean
+        count:
+          type: integer
 

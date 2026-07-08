@@ -34,8 +34,8 @@ export default function GalleryFilters({ photos, onFilteredPhotos }: GalleryFilt
       const q = debouncedQuery.toLowerCase();
       list = list.filter(
         (p) =>
-          p.location.city.toLowerCase().includes(q) ||
-          p.location.state.toLowerCase().includes(q) ||
+          p.location?.city.toLowerCase().includes(q) ||
+          p.location?.state.toLowerCase().includes(q) ||
           p.category.toLowerCase().includes(q) ||
           p.caption?.toLowerCase().includes(q),
       );

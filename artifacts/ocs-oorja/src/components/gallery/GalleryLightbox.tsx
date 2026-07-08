@@ -115,10 +115,12 @@ export default function GalleryLightbox({ photo, index, total, onClose, onPrev, 
                 {category.label}
               </span>
             )}
-            <span className="inline-flex items-center gap-1 text-sm text-white/80">
-              <MapPin className="h-3.5 w-3.5" aria-hidden="true" />
-              {photo.location.city}, {photo.location.state}
-            </span>
+            {photo.location && (
+              <span className="inline-flex items-center gap-1 text-sm text-white/80">
+                <MapPin className="h-3.5 w-3.5" aria-hidden="true" />
+                {photo.location.city}, {photo.location.state}
+              </span>
+            )}
           </div>
 
           {photo.caption && <p className="mt-2 text-sm text-white/90 sm:text-base">{photo.caption}</p>}

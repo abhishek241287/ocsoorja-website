@@ -25,6 +25,8 @@ import type {
   ContactInput,
   ContactResponse,
   ErrorResponse,
+  GalleryPublishInput,
+  GalleryPublishResponse,
   HealthStatus
 } from './api.schemas';
 
@@ -273,5 +275,76 @@ export const usePublishBlogArticle = <TError = ErrorType<ErrorResponse>,
         TContext
       > => {
       return useMutation(getPublishBlogArticleMutationOptions(options));
+    }
+
+export const getPublishGalleryPhotosUrl = () => {
+
+
+
+
+  return `/api/gallery/publish`
+}
+
+/**
+ * Saves uploaded photos under public/images/gallery/<category>/ and appends a minimal entry (category + auto id/slug/publishDate only) to that category's existing data file in src/data/gallery/. Only available in the development workspace; returns 404 in production.
+ * @summary Publish Installation Gallery photos (development workspace only)
+ */
+export const publishGalleryPhotos = async (galleryPublishInput: GalleryPublishInput, options?: RequestInit): Promise<GalleryPublishResponse> => {
+
+  return customFetch<GalleryPublishResponse>(getPublishGalleryPhotosUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(galleryPublishInput)
+  }
+);}
+
+
+
+
+export const getPublishGalleryPhotosMutationOptions = <TError = ErrorType<ErrorResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof publishGalleryPhotos>>, TError,{data: BodyType<GalleryPublishInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof publishGalleryPhotos>>, TError,{data: BodyType<GalleryPublishInput>}, TContext> => {
+
+const mutationKey = ['publishGalleryPhotos'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof publishGalleryPhotos>>, {data: BodyType<GalleryPublishInput>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  publishGalleryPhotos(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PublishGalleryPhotosMutationResult = NonNullable<Awaited<ReturnType<typeof publishGalleryPhotos>>>
+    export type PublishGalleryPhotosMutationBody = BodyType<GalleryPublishInput>
+    export type PublishGalleryPhotosMutationError = ErrorType<ErrorResponse>
+
+    /**
+ * @summary Publish Installation Gallery photos (development workspace only)
+ */
+export const usePublishGalleryPhotos = <TError = ErrorType<ErrorResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof publishGalleryPhotos>>, TError,{data: BodyType<GalleryPublishInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof publishGalleryPhotos>>,
+        TError,
+        {data: BodyType<GalleryPublishInput>},
+        TContext
+      > => {
+      return useMutation(getPublishGalleryPhotosMutationOptions(options));
     }
 

@@ -10,15 +10,29 @@ import type { GalleryPhoto, GalleryCategory, GalleryCategoryMeta, GallerySortOrd
 import { CATEGORIES } from "./categories";
 import { residential } from "./residential";
 import { commercial } from "./commercial";
+import { industrial } from "./industrial";
+import { solar } from "./solar";
+import { battery } from "./battery";
 import { ev } from "./ev";
+import { hybridInverter } from "./hybrid-inverter";
+import { lifepo4 } from "./lifepo4";
 import { getProductBySlug } from "../products";
 
 export * from "./types";
 export * from "./categories";
 
-// The complete photo catalog. Categories with no seed photos yet (Industrial,
-// Agriculture) simply contribute nothing — no placeholder files.
-export const photos: GalleryPhoto[] = [...residential, ...commercial, ...ev];
+// The complete photo catalog. Categories with no seed photos yet simply
+// contribute nothing — no placeholder entries.
+export const photos: GalleryPhoto[] = [
+  ...residential,
+  ...commercial,
+  ...industrial,
+  ...solar,
+  ...battery,
+  ...ev,
+  ...hybridInverter,
+  ...lifepo4,
+];
 
 // Look up a single photo by its stable slug.
 export function getPhotoBySlug(

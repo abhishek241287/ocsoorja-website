@@ -11,4 +11,7 @@ export * from './blogPublishResponse';
 export * from './contactInput';
 export * from './contactResponse';
 export * from './errorResponse';
+export * from './galleryCategory';
+export * from './galleryPublishInput';
+export * from './galleryPublishResponse';
 export * from './healthStatus';
