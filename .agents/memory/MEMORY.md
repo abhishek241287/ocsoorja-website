@@ -11,3 +11,4 @@
 - [Hero & homepage imagery](hero-imagery.md) — scenes=WebP, product renders never recompressed + object-contain; Vite serves MISSING public/ files as 200 HTML.
 - [E2E hover/theme false negatives](e2e-test-false-negatives.md) — Tailwind v4 gates hover: behind @media (hover:hover); verify via compiled CSS, never assert hover in tests.
 - [Stock photo sourcing pitfalls](ocs-oorja-stock-photo-sourcing.md) — imageSearch can return YouTube-thumbnail text overlays or competitor branding; always open and inspect before using as case-study photography.
+- [vite.config.ts alias imports](vite-config-alias-imports.md) — data files imported from vite.config.ts (sitemap/RSS gen) must use relative imports, not `@/`, or config load fails.

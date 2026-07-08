@@ -1,0 +1,37 @@
+import type { GalleryPhoto } from "./types";
+
+export const residential: GalleryPhoto[] = [
+  {
+    id: "residential-lucknow-hero",
+    slug: "lucknow-residential-rooftop-install",
+    src: "/images/projects/residential/lucknow-residential-hero.jpg",
+    width: 1200,
+    height: 1600,
+    alt: "Installer carrying a solar panel onto a residential rooftop in Lucknow",
+    category: "residential",
+    location: { city: "Lucknow", state: "Uttar Pradesh" },
+    caption: "Rooftop solar installation in progress for a 3BHK home",
+    productsUsed: ["solar-hybrid-inverter-48v-6kw", "24v-100ah-home-power-storage"],
+    installationDate: "2026-02-12",
+    photographer: "OCS OORJA Team",
+    relatedProjectSlug: "lucknow-residential-hybrid-solar-6kw",
+    featured: true,
+    publishDate: "2026-07-08",
+  },
+  {
+    id: "residential-lucknow-rooftop",
+    slug: "lucknow-residential-rooftop-array",
+    src: "/images/projects/residential/lucknow-residential-rooftop.png",
+    width: 1024,
+    height: 576,
+    alt: "Rooftop solar panels installed above a residential home in Lucknow",
+    category: "residential",
+    location: { city: "Lucknow", state: "Uttar Pradesh" },
+    caption: "Completed 6kW rooftop solar array with LiFePO₄ battery backup",
+    productsUsed: ["solar-hybrid-inverter-48v-6kw", "24v-100ah-home-power-storage"],
+    installationDate: "2026-02-20",
+    photographer: "OCS OORJA Team",
+    relatedProjectSlug: "lucknow-residential-hybrid-solar-6kw",
+    publishDate: "2026-07-08",
+  },
+];

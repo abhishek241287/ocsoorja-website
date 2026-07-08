@@ -160,6 +160,16 @@ export const HEADLINES = {
     metaDescription:
       "Browse real OCS OORJA installations — hybrid solar, LiFePO₄ battery storage and EV charging projects across residential, commercial and EV segments in India.",
   },
+  gallery: {
+    // Installation Gallery landing page (/gallery)
+    pageTitle: "Installation Gallery",
+    pageSubtitle:
+      "Explore real OCS OORJA installations across homes, commercial buildings, industries, EV charging stations and energy storage systems throughout India.",
+    // Search-engine copy for the gallery page
+    metaTitle: "Installation Gallery — Real Solar, Battery & EV Projects | OCS OORJA",
+    metaDescription:
+      "Browse real photos of OCS OORJA hybrid solar, LiFePO₄ battery and EV charging installations across residential, commercial and EV projects in India.",
+  },
   blog: {
     // Blog listing page (/blog)
     pageEyebrow: "Insights & Guides",

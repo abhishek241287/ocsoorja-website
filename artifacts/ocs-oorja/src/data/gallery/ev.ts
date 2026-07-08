@@ -1,0 +1,37 @@
+import type { GalleryPhoto } from "./types";
+
+export const ev: GalleryPhoto[] = [
+  {
+    id: "ev-lucknow-hero",
+    slug: "lucknow-erickshaw-charging-hub-fleet",
+    src: "/images/projects/ev/lucknow-erickshaw-hero.jpg",
+    width: 612,
+    height: 459,
+    alt: "Fleet of e-rickshaws lined up at a charging hub in Lucknow",
+    category: "ev",
+    location: { city: "Lucknow", state: "Uttar Pradesh" },
+    caption: "40-vehicle e-rickshaw fleet at the OCS OORJA smart charging hub",
+    productsUsed: ["ocs-oorja-51v-25a-smart-charger", "e-rickshaw-51v2-100ah"],
+    installationDate: "2026-06-01",
+    photographer: "OCS OORJA Team",
+    relatedProjectSlug: "lucknow-erickshaw-charging-hub",
+    featured: true,
+    publishDate: "2026-07-08",
+  },
+  {
+    id: "ev-lucknow-bay",
+    slug: "lucknow-erickshaw-back-in-service",
+    src: "/images/projects/ev/lucknow-erickshaw-bay.jpg",
+    width: 612,
+    height: 459,
+    alt: "E-rickshaw back in daily service after overnight charging",
+    category: "ev",
+    location: { city: "Lucknow", state: "Uttar Pradesh" },
+    caption: "E-rickshaw returning to service after overnight smart charging",
+    productsUsed: ["ocs-oorja-51v-25a-smart-charger", "e-rickshaw-51v2-100ah"],
+    installationDate: "2026-07-01",
+    photographer: "OCS OORJA Team",
+    relatedProjectSlug: "lucknow-erickshaw-charging-hub",
+    publishDate: "2026-07-08",
+  },
+];

@@ -12,6 +12,7 @@ import Products from "@/pages/products";
 import ProductDetail from "@/pages/product-detail";
 import Projects from "@/pages/projects";
 import ProjectDetail from "@/pages/project-detail";
+import Gallery from "@/pages/gallery";
 import Blog from "@/pages/blog";
 import BlogDetail from "@/pages/blog-detail";
 import DesignSystem from "@/pages/design-system";
@@ -38,6 +39,8 @@ function Router() {
         <Route path="/products/:slug" component={ProductDetail} />
         <Route path="/projects" component={Projects} />
         <Route path="/projects/:slug" component={ProjectDetail} />
+        <Route path="/gallery" component={Gallery} />
+        <Route path="/gallery/photo/:slug" component={Gallery} />
         <Route path="/blog" component={Blog} />
         <Route path="/blog/:slug" component={BlogDetail} />
         <Route path="/design-system" component={DesignSystem} />

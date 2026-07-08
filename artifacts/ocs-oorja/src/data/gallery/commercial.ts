@@ -1,0 +1,37 @@
+import type { GalleryPhoto } from "./types";
+
+export const commercial: GalleryPhoto[] = [
+  {
+    id: "commercial-lucknow-hero",
+    slug: "lucknow-commercial-rooftop-array",
+    src: "/images/projects/commercial/lucknow-commercial-hero.webp",
+    width: 2000,
+    height: 1200,
+    alt: "Commercial rooftop solar panel array on a facility roof in Lucknow",
+    category: "commercial",
+    location: { city: "Lucknow", state: "Uttar Pradesh" },
+    caption: "24kW rooftop solar array powering a manufacturing facility",
+    productsUsed: ["bess-100kwh-commercial", "solar-hybrid-inverter-48v-6kw"],
+    installationDate: "2026-03-28",
+    photographer: "OCS OORJA Team",
+    relatedProjectSlug: "lucknow-commercial-rooftop-solar-bess",
+    featured: true,
+    publishDate: "2026-07-08",
+  },
+  {
+    id: "commercial-lucknow-array",
+    slug: "lucknow-commercial-solar-array-closeup",
+    src: "/images/projects/commercial/lucknow-commercial-array.webp",
+    width: 600,
+    height: 326,
+    alt: "Rooftop solar panel array installed on a factory and warehouse roof",
+    category: "commercial",
+    location: { city: "Lucknow", state: "Uttar Pradesh" },
+    caption: "Rooftop array feeding a 100kWh battery energy storage system",
+    productsUsed: ["bess-100kwh-commercial", "solar-hybrid-inverter-48v-6kw"],
+    installationDate: "2026-04-15",
+    photographer: "OCS OORJA Team",
+    relatedProjectSlug: "lucknow-commercial-rooftop-solar-bess",
+    publishDate: "2026-07-08",
+  },
+];

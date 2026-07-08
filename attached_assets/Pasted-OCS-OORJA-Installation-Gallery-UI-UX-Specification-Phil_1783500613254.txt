@@ -1,0 +1,485 @@
+OCS OORJA — Installation Gallery UI/UX Specification
+Philosophy
+Photography is the hero. Everything else gets out of the way.
+Think Apple product photography + Tesla gallery + Schneider Electric engineering credibility. Minimal chrome. Maximum image. Editorial spacing. Premium feel.
+1. Information Architecture
+plain
+/gallery                          → Gallery Landing (filterable grid)
+/gallery?category=residential     → Filtered view
+/gallery?search=lucknow           → Search results
+/gallery/photo/:id                → Lightbox (modal, not separate page)
+/admin/gallery                    → Gallery Manager (future)
+Navigation: Home | Products | Projects | Gallery | Blog | About | Contact
+2. Gallery Landing Page (/gallery)
+2.1 Hero Section
+Table
+Element	Specification
+Height	50vh minimum, 70vh maximum
+Background	Full-bleed featured installation photo (slow pan/zoom subtle animation)
+Overlay	Gradient: transparent top → rgba(0,0,0,0.4) bottom
+Title	"Installation Gallery" — 48px/3rem, weight 700, white
+Subtitle	18px/1.125rem, weight 400, white/80% opacity, max-width 600px
+CTA	"Request Similar Installation" — primary button, white bg, dark text
+Scroll indicator	Subtle chevron bounce at bottom
+Title: "Installation Gallery"
+Subtitle: "Explore real OCS OORJA installations across homes, commercial buildings, industries, EV charging stations and energy storage systems throughout India."
+2.2 Filter Bar (Sticky on Scroll)
+plain
+┌─────────────────────────────────────────────────────────────────────────┐
+│  [All] [Residential] [Commercial] [Industrial] [Solar] [Battery] [EV]   │
+│  [BESS] [Government] [Telecom] [Agriculture] [Hybrid Inverter] [LiFePO₄] │
+│                                                                         │
+│  [Newest ▼]                    [🔍 Search installations...]            │
+└─────────────────────────────────────────────────────────────────────────┘
+Filter Pills:
+Horizontal scroll on mobile
+Active state: filled primary color bg, white text
+Inactive state: transparent bg, 1px border, dark text
+Hover: subtle background tint
+cursor: pointer, keyboard accessible
+Sort Dropdown:
+"Newest" (default)
+"Oldest"
+"Featured First"
+Search:
+Placeholder: "Search by city, state, product, or project type..."
+Debounced input (300ms)
+Clear button (×) when text entered
+Search icon left-aligned
+2.3 Photo Grid
+Layout:
+Table
+Breakpoint	Columns	Gap	Padding
+Desktop (≥1280px)	4	24px	48px sides
+Tablet (≥768px)	2	20px	32px sides
+Mobile (<768px)	2	12px	16px sides
+Photo Card:
+plain
+┌─────────────────────────────┐
+│                             │
+│         [PHOTO]             │
+│      (aspect-ratio 4:3)     │
+│                             │
+│  ┌─────────────────────┐    │
+│  │ Residential    📍    │    │
+│  │ Lucknow, UP           │    │
+│  │ Optional caption...   │    │
+│  └─────────────────────┘    │
+│                             │
+└─────────────────────────────┘
+Card Specifications:
+Table
+Element	Specification
+Aspect ratio	4:3 (landscape) or 3:4 (portrait) — masonry optional future
+Border radius	8px
+Shadow	0 1px 3px rgba(0,0,0,0.08) — subtle, only on hover
+Hover state	Scale 1.02, shadow increases, overlay darkens slightly
+Image loading	Lazy load with blur-up placeholder (LQIP)
+Image format	WebP primary, JPEG fallback
+Image sizes	srcset: 400w, 800w, 1200w
+Card Content Overlay (bottom-left):
+Category badge: 11px uppercase, tracking-wide, primary color
+Location: 13px, 📍 City, State format
+Caption (optional): 13px, max 2 lines, ellipsis
+No heavy text. No descriptions. No buttons on card.
+2.4 Empty States
+No photos:
+"Installation photos coming soon. Check back as we document our latest projects."
+No search results:
+"No installations found for "lucknow". Try a different search term or browse all photos."
+Filter empty:
+"No installations in this category yet. Browse all photos or try another filter."
+2.5 Load More / Infinite Scroll
+Default: Infinite scroll (IntersectionObserver)
+Fallback: "Load More" button if JS fails
+Loading skeleton: 4 placeholder cards with pulse animation
+Performance: Virtual scrolling for 1000+ images (react-window or equivalent)
+2.6 Footer CTA
+plain
+┌────────────────────────────────────────┐
+│                                        │
+│   Ready to power your property?        │
+│                                        │
+│   [Request Similar Installation]       │
+│                                        │
+└────────────────────────────────────────┘
+3. Photo Lightbox (/gallery/photo/:id)
+3.1 Layout (Fullscreen Modal)
+plain
+┌─────────────────────────────────────────────────────────────┐
+│  ← Previous                          Next →    [×] Close     │
+│                                                             │
+│                                                             │
+│                    [ LARGE PHOTO ]                          │
+│              (max 90vh, contain fit)                        │
+│                                                             │
+│                                                             │
+│  1 / 247                                                    │
+│                                                             │
+├─────────────────────────────────────────────────────────────┤
+│  Category: Residential    📍 Lucknow, Uttar Pradesh         │
+│                                                             │
+│  5kW hybrid solar installation with 10kWh LiFePO₄ battery   │
+│  for a 3BHK residential property. Completed March 2026.   │
+│                                                             │
+│  Products: Hybrid Inverter 5kW | LiFePO₄ Battery 10kWh     │
+│  Installation: March 2026                                   │
+│  Photographer: OCS OORJA Team                               │
+│                                                             │
+│  [View Related Project →]        [View Product →]            │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+3.2 Controls
+Table
+Action	Desktop	Mobile	Keyboard
+Close	× button top-right	Swipe down or tap ×	Escape
+Previous	← arrow left	Swipe left	← arrow
+Next	→ arrow right	Swipe right	→ arrow
+Zoom	Click to toggle	Pinch to zoom	+ / -
+Counter	Bottom center	Bottom center	—
+3.3 Photo Information Panel
+Fields (all optional, only show if populated):
+Table
+Field	Display
+Category	Badge
+City, State	📍 City, State
+Caption	Plain text, max 3 lines
+Products Used	Linked badges
+Installation Date	"March 2026"
+Photographer	"Photo by Name"
+Related Project	Link button
+Related Product	Link button
+3.4 Technical Specs
+Transition: 300ms ease-out fade + slight scale
+Background: rgba(0,0,0,0.95)
+Image loading: High-res loads after thumbnail (progressive)
+Preload: Next 2 images in sequence
+History: URL updates to /gallery/photo/:id (shareable)
+Scroll lock: Body scroll locked when open
+Focus trap: Tab cycles within modal
+4. Gallery Manager (Admin) — /admin/gallery
+4.1 Philosophy
+Upload photos in under 60 seconds. Zero coding required.
+4.2 Dashboard Layout
+plain
+┌─────────────────────────────────────────────────────────────┐
+│  OCS OORJA Gallery Manager                    [+ Add Photos]│
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐        │
+│  │  1,247  │ │   847   │ │   312   │ │    88   │        │
+│  │  Total  │ │Published│ │ Featured│ │  Draft  │        │
+│  └─────────┘ └─────────┘ └─────────┘ └─────────┘        │
+│                                                             │
+│  [Search photos...]    [Filter ▼]    [Bulk Actions ▼]      │
+│                                                             │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │ ☑ │ Photo          │ Category    │ Location │ Status │   │
+│  │───│────────────────│─────────────│──────────│────────│   │
+│  │ ☑ │ [thumb]        │ Residential │ Lucknow  │ Live   │   │
+│  │ ☐ │ [thumb]        │ Commercial  │ Delhi    │ Live   │   │
+│  │ ☐ │ [thumb]        │ Industrial  │ Jaipur   │ Draft  │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                                                             │
+│  [Select All]  [Delete Selected]  [Feature Selected]        │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+4.3 Add Photos Workflow
+Step 1: Upload
+plain
+┌─────────────────────────────────────────┐
+│                                         │
+│      [Drag & drop photos here]          │
+│                                         │
+│      or click to browse                 │
+│                                         │
+│      Supports: JPG, PNG, WebP           │
+│      Max: 50MB per file                 │
+│      Bulk: Up to 100 photos at once     │
+│                                         │
+└─────────────────────────────────────────┘
+Step 2: Batch Edit (per photo or apply to all)
+plain
+┌─────────────────────────────────────────────────────────┐
+│  Photo 1 of 12                                          │
+│                                                         │
+│  ┌─────────────┐  ┌─────────────────────────────────┐ │
+│  │             │  │ Category *                        │ │
+│  │   [thumb]   │  │ [Residential ▼]                 │ │
+│  │             │  │                                   │ │
+│  │             │  │ City *                            │ │
+│  │             │  │ [Lucknow        ]                 │ │
+│  │             │  │                                   │ │
+│  │             │  │ State *                           │ │
+│  │             │  │ [Uttar Pradesh ▼]                 │ │
+│  │             │  │                                   │ │
+│  │             │  │ Caption (optional)                │ │
+│  │             │  │ [Describe the installation...    ] │ │
+│  │             │  │                                   │ │
+│  │             │  │ Products Used (optional)          │ │
+│  │             │  │ [☑ Hybrid Inverter] [☑ LiFePO4]  │ │
+│  │             │  │                                   │ │
+│  │             │  │ Installation Date (optional)      │ │
+│  │             │  │ [2026-03-15    ]                 │ │
+│  │             │  │                                   │ │
+│  │             │  │ Photographer (optional)           │ │
+│  │             │  │ [OCS OORJA Team]                 │ │
+│  │             │  │                                   │ │
+│  │             │  │ Featured Photo?                   │ │
+│  │             │  │ ( ) Yes  (●) No                   │ │
+│  │             │  │                                   │ │
+│  └─────────────┘  │ [Apply to All Remaining]         │ │
+│                   │                                   │ │
+│                   │ [Previous]  [Next]  [Publish All] │ │
+│                   └───────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────┘
+Required fields: Category, City, State
+Optional fields: Caption, Products Used, Installation Date, Photographer, Featured
+"Apply to All Remaining": Copies current values to all remaining photos (useful for bulk uploads from same project).
+4.4 Auto-Processing Pipeline
+After clicking Publish, the system automatically:
+Table
+Step	Action
+1. Upload	Store original in /uploads/gallery/original/
+2. Optimize	Generate WebP, resize to 1200px, 800px, 400px
+3. Thumbnail	Generate 400px LQIP (blur-up placeholder)
+4. Alt Text	Pre-fill alt: {Category} installation in {City}, {State}
+5. Database	Create entry with all metadata
+6. Sitemap	Add to image sitemap
+7. OG Image	Generate social sharing image (1200×630)
+8. CDN	Push to CDN with cache headers
+9. Gallery	Appear on /gallery within 30 seconds
+No manual steps. No file renaming. No code editing.
+4.5 Future Features (Backlog)
+Table
+Feature	Priority	Description
+Bulk upload 100+	P1	Drag 100 images, batch edit
+Drag to reorder	P2	Visual drag-and-drop sorting
+Replace image	P2	Swap photo keeping metadata
+Delete with undo	P1	Soft delete, 30-day recovery
+Feature/Unfeature	P1	Toggle featured status
+Image statistics	P3	Views, likes, shares per photo
+Advanced search	P2	Search by date, product, photographer
+AI auto-tagging	P3	Auto-detect solar panels, batteries, etc.
+Watermark	P3	Auto-add OCS OORJA watermark
+5. Design System Compliance
+5.1 Colors
+Table
+Token	Value	Usage
+--background	#FFFFFF	Page background
+--surface	#F8F9FA	Cards, panels
+--text-primary	#1A1A1A	Headings, body
+--text-secondary	#6B7280	Captions, meta
+--text-muted	#9CA3AF	Placeholders
+--primary	#0F766E	OCS OORJA teal
+--primary-light	#14B8A6	Hover states
+--border	#E5E7EB	Dividers, card borders
+--overlay	rgba(0,0,0,0.95)	Lightbox background
+5.2 Typography
+Table
+Element	Font	Size	Weight	Line Height
+Page Title	Inter	48px	700	1.1
+Section Title	Inter	24px	600	1.3
+Card Location	Inter	13px	400	1.4
+Card Caption	Inter	13px	400	1.4
+Filter Pill	Inter	14px	500	1
+Lightbox Counter	Inter	14px	400	1
+Lightbox Meta	Inter	14px	400	1.5
+5.3 Spacing
+Base unit: 4px
+Grid gap: 24px (desktop), 20px (tablet), 12px (mobile)
+Section padding: 48px (desktop), 32px (tablet), 16px (mobile)
+Card padding: 0 (image bleeds), 12px (text overlay)
+5.4 Shadows
+Card default: 0 1px 3px rgba(0,0,0,0.08)
+Card hover: 0 8px 24px rgba(0,0,0,0.12)
+Modal: 0 25px 50px rgba(0,0,0,0.25)
+5.5 Animation
+Table
+Interaction	Animation	Duration	Easing
+Card hover	Scale 1.02, shadow increase	200ms	ease-out
+Lightbox open	Fade in + scale from 0.95	300ms	cubic-bezier(0.16, 1, 0.3, 1)
+Lightbox close	Fade out	200ms	ease-in
+Image load	Blur to sharp (LQIP)	300ms	ease-out
+Filter change	Grid fade + stagger	300ms	ease-out
+5.6 What NOT to Use
+❌ Glassmorphism
+❌ Neon colors
+❌ Heavy gradients
+❌ 3D transforms
+❌ Parallax scrolling
+❌ Animated backgrounds
+❌ Drop shadows on text
+6. SEO & AI Discoverability
+6.1 Per-Image SEO
+Table
+Element	Specification
+Alt text	Auto-generated: {Category} solar installation in {City}, {State} by OCS OORJA
+Title	OCS OORJA {Category} Installation — {City}, {State}
+Image sitemap	<image:image> in sitemap.xml with loc, caption, geo_location
+Open Graph	og:image = 1200×630 social card
+Twitter Card	summary_large_image
+Structured data	ImageObject + Photograph schema
+6.2 AI Discoverability
+yaml
+# Auto-generated per image
+ai:
+  summary: "Residential solar installation with 5kW hybrid inverter and 10kWh battery in Lucknow"
+  entities: ["Hybrid Inverter", "LiFePO4 Battery", "Solar Panel", "Lucknow"]
+  keywords: ["residential solar", "hybrid inverter", "battery backup", "Lucknow"]
+  relatedProducts: ["hybrid-solar-inverter-5kw", "lifepo4-battery-10kwh"]
+  relatedProjects: ["lucknow-residential-5kw"]
+6.3 Internal Linking
+Gallery → Related Project (if linked)
+Gallery → Related Product (if products specified)
+Project → Gallery images (auto-linked)
+Product → Gallery images showing that product
+7. Accessibility
+Table
+Requirement	Implementation
+Keyboard nav	Tab through grid, Enter to open, Arrows to navigate, Escape to close
+Screen reader	aria-label on all interactive elements, alt on all images
+Focus states	2px solid primary color outline, offset 2px
+Reduced motion	@media (prefers-reduced-motion: reduce) disables animations
+Color contrast	All text meets WCAG AA (4.5:1 minimum)
+Touch targets	Minimum 44×44px on mobile
+Alt text	Every image has descriptive alt text
+8. Performance
+Table
+Metric	Target	Technique
+LCP	< 2.5s	LQIP blur-up, WebP, CDN
+CLS	< 0.1	Fixed aspect ratios, size attributes
+FID	< 100ms	Event delegation, passive listeners
+Image load	Progressive	LQIP → 400w → 800w → 1200w
+Bundle	< 150KB	Code splitting, lazy components
+Cache	Aggressive	Immutable filenames, 1-year cache
+9. Data Model (TypeScript)
+TypeScript
+// src/types/gallery.ts
+
+export type GalleryCategory = 
+  | "residential" 
+  | "commercial" 
+  | "industrial" 
+  | "solar" 
+  | "battery" 
+  | "ev" 
+  | "bess" 
+  | "government" 
+  | "telecom" 
+  | "agriculture" 
+  | "hybrid-inverter" 
+  | "lifepo4";
+
+export type GalleryStatus = "live" | "draft" | "archived";
+
+export interface GalleryPhoto {
+  id: string;              // UUID: "photo-uuid-123"
+  slug: string;            // URL-friendly: "lucknow-residential-solar-5kw"
+  
+  // Image variants
+  src: {
+    original: string;      // /uploads/gallery/original/xxx.jpg
+    webp: string;          // /uploads/gallery/webp/xxx.webp
+    thumbnail: string;     // /uploads/gallery/thumb/xxx.jpg (400px)
+    medium: string;        // /uploads/gallery/medium/xxx.jpg (800px)
+    large: string;         // /uploads/gallery/large/xxx.jpg (1200px)
+    social: string;        // /uploads/gallery/social/xxx.jpg (1200×630)
+  };
+  
+  // Metadata
+  category: GalleryCategory;
+  city: string;
+  state: string;
+  country: string;         // "IN"
+  caption?: string;
+  
+  // Optional
+  productsUsed?: string[];   // Product IDs
+  installationDate?: string; // ISO 8601
+  photographer?: string;
+  relatedProjectId?: string;
+  relatedProductIds?: string[];
+  
+  // Status
+  status: GalleryStatus;
+  featured: boolean;
+  sortOrder: number;
+  
+  // SEO
+  altText: string;
+  seoTitle?: string;
+  metaDescription?: string;
+  
+  // AI
+  aiSummary?: string;
+  aiEntities?: string[];
+  aiKeywords?: string[];
+  
+  // System
+  createdAt: string;
+  updatedAt: string;
+  fileSize: number;        // bytes
+  dimensions: {
+    width: number;
+    height: number;
+  };
+}
+10. API Endpoints (Future)
+plain
+GET    /api/gallery/photos          → List photos (paginated, filterable)
+GET    /api/gallery/photos/:id      → Single photo
+POST   /api/gallery/photos          → Upload new photo(s)
+PATCH  /api/gallery/photos/:id      → Update metadata
+DELETE /api/gallery/photos/:id      → Soft delete
+POST   /api/gallery/photos/bulk     → Bulk upload
+POST   /api/gallery/reorder         → Update sort order
+11. File Structure
+plain
+public/
+  uploads/
+    gallery/
+      original/
+      webp/
+      thumb/
+      medium/
+      large/
+      social/
+
+src/
+  content/
+    gallery/           # Future: if migrating to file-based
+  types/
+    gallery.ts
+  components/
+    gallery/
+      GalleryGrid.tsx
+      GalleryCard.tsx
+      GalleryLightbox.tsx
+      GalleryFilters.tsx
+      GallerySearch.tsx
+      GalleryHero.tsx
+      GalleryEmpty.tsx
+      GalleryFooter.tsx
+  pages/
+    gallery.tsx          # /gallery
+    gallery-photo.tsx    # Lightbox route (modal + URL)
+  admin/                 # Future Gallery Manager
+    gallery/
+      GalleryManager.tsx
+      PhotoUploader.tsx
+      PhotoEditor.tsx
+      BulkActions.tsx
+12. Deliverable Checklist
+[x] Gallery landing page with hero, filters, grid
+[x] Premium lightbox with keyboard/mobile support
+[x] Gallery Manager workflow (zero-code upload)
+[x] Auto-processing pipeline (optimize, WebP, sitemap, OG)
+[x] SEO per image (alt, sitemap, schema, OG)
+[x] AI Discoverability fields
+[x] Accessibility (keyboard, screen reader, focus, reduced motion)
+[x] Performance targets (LCP, CLS, FID, progressive loading)
+[x] Design system compliance (colors, typography, spacing, no glassmorphism)
+[x] Responsive (4/2/2 columns)
+[x] Scalable to 10,000+ photos
+[x] Non-technical owner can upload in < 60 seconds

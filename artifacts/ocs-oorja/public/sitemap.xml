@@ -16,6 +16,11 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://www.ocsoorja.com/gallery</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://www.ocsoorja.com/blog</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -203,6 +208,42 @@
     <lastmod>2026-07-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.ocsoorja.com/gallery/photo/lucknow-residential-rooftop-install</loc>
+    <lastmod>2026-07-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.ocsoorja.com/gallery/photo/lucknow-residential-rooftop-array</loc>
+    <lastmod>2026-07-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.ocsoorja.com/gallery/photo/lucknow-commercial-rooftop-array</loc>
+    <lastmod>2026-07-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.ocsoorja.com/gallery/photo/lucknow-commercial-solar-array-closeup</loc>
+    <lastmod>2026-07-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.ocsoorja.com/gallery/photo/lucknow-erickshaw-charging-hub-fleet</loc>
+    <lastmod>2026-07-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.ocsoorja.com/gallery/photo/lucknow-erickshaw-back-in-service</loc>
+    <lastmod>2026-07-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://www.ocsoorja.com/blog/ac-vs-dc-ev-charging</loc>
