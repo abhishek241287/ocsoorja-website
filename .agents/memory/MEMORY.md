@@ -13,3 +13,4 @@
 - [Stock photo sourcing pitfalls](ocs-oorja-stock-photo-sourcing.md) — imageSearch can return YouTube-thumbnail text overlays or competitor branding; always open and inspect before using as case-study photography.
 - [vite.config.ts alias imports](vite-config-alias-imports.md) — data files imported from vite.config.ts (sitemap/RSS gen) must use relative imports, not `@/`, or config load fails.
 - [Publisher-tool pattern](publisher-tool-pattern.md) — OCS OORJA's Blog/Gallery Publisher admin tools regex-append into existing `src/data/*` `.ts` files instead of a DB/JSON store; reuse this pattern for future publishers.
+- [Cross-page data reuse](ocs-oorja-cross-page-data-reuse.md) — add an optional field to an existing shared data file (e.g. industries.ts) to power a new section on another page, rather than duplicating the data.

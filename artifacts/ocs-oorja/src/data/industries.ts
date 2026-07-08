@@ -7,6 +7,10 @@
 //   • image — a path under public/ (e.g. "/images/home/industries-telecom.webp").
 //             Replace the file at that path to change the photo — no code edit.
 //   • href  — where the card's link goes. Defaults to the products catalogue.
+//   • icon  — a lucide-react icon NAME (a string), used by the icon-card layout
+//             on the About page's "Industries We Serve" section. The UI layer
+//             maps the name to a real icon component. Browse names at
+//             https://lucide.dev/icons.
 // =============================================================================
 
 export type Industry = {
@@ -15,6 +19,7 @@ export type Industry = {
   description: string;
   image: string; // photo shown on the card (path under public/)
   href: string; // destination for the card's call-to-action
+  icon: string; // lucide icon name, used by icon-card layouts (e.g. About page)
 };
 
 export const industries: Industry[] = [
@@ -25,6 +30,7 @@ export const industries: Industry[] = [
       "Hybrid inverters and LiFePO₄ storage for reliable day-and-night power backup in homes and apartments.",
     image: "/images/home/industries-residential.webp",
     href: "/products",
+    icon: "Home",
   },
   {
     id: "commercial",
@@ -33,6 +39,7 @@ export const industries: Industry[] = [
       "Scalable storage and power systems that cut diesel dependence and keep offices, hotels and shops running through outages.",
     image: "/images/home/industries-commercial.webp",
     href: "/products",
+    icon: "Building",
   },
   {
     id: "industrial",
@@ -41,6 +48,7 @@ export const industries: Industry[] = [
       "Robust energy storage and power electronics for factories, warehouses and process plants with demanding duty cycles.",
     image: "/images/home/industries-industrial.webp",
     href: "/products",
+    icon: "Factory",
   },
   {
     id: "telecom",
@@ -49,6 +57,7 @@ export const industries: Industry[] = [
       "Wide-temperature LiFePO₄ backup for telecom towers and mission-critical sites that cannot afford downtime.",
     image: "/images/home/industries-telecom.webp",
     href: "/products",
+    icon: "Signal",
   },
   {
     id: "ev-infrastructure",
@@ -57,6 +66,7 @@ export const industries: Industry[] = [
       "AC and DC fast chargers for homes, workplaces, fleets and public charging points across India.",
     image: "/images/home/industries-ev.webp",
     href: "/products",
+    icon: "Car",
   },
   {
     id: "agriculture",
@@ -65,5 +75,6 @@ export const industries: Industry[] = [
       "Solar-powered energy for irrigation, cold storage and rural sites where dependable off-grid power matters most.",
     image: "/images/home/industries-agriculture.webp",
     href: "/products",
+    icon: "Tractor",
   },
 ];

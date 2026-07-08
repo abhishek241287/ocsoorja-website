@@ -17,6 +17,9 @@ export default function Footer() {
               className="h-16 w-auto"
             />
           </Link>
+          <p className="text-xs font-medium tracking-wide text-primary-strong">
+            {BRAND.motto}
+          </p>
           <p className="text-sm leading-relaxed text-foreground/70">
             {BRAND.positioning}
           </p>

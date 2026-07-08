@@ -40,6 +40,12 @@ export const BRAND = {
   promise:
     "Reliable, factory-direct power systems engineered in Lucknow — built for Indian conditions, priced for scale, and backed by up to a 5-year warranty on our LiFePO₄ batteries.",
 
+  // Official brand motto. Used ONLY in premium, high-impact locations: the
+  // homepage hero (below the H1), the About page hero (below the H1), and the
+  // footer (below the logo). Do NOT add it to product pages, blog articles,
+  // case studies, gallery, or every page heading — it loses impact if overused.
+  motto: "Powering Lives. Empowering Earth.",
+
   // Writing guidance (voice & tone) — a reference for anyone editing copy.
   tone: [
     "Confident and factual — no hype or superlatives beyond what the specs support.",
@@ -173,9 +179,14 @@ export const HEADLINES = {
       "Engineer-written guides on hybrid solar inverters, LiFePO₄ batteries and EV charging for Indian conditions, from OCS OORJA in Lucknow.",
   },
   about: {
-    title: "About OCS OORJA",
+    // About page hero
+    title: "Engineering India's Energy Future",
     subtitle:
-      "We build safe, reliable clean-energy systems so our customers can innovate with confidence.",
+      "Clean-energy systems designed for Indian homes, businesses, and industries. From power generation to intelligent storage and management.",
+    // Search-engine copy for the About page
+    metaTitle: "About OCS OORJA — Indian Clean-Energy Technology Company",
+    metaDescription:
+      "OCS OORJA engineers and manufactures hybrid solar inverters, LiFePO₄ batteries, and EV charging solutions. Powering Lives. Empowering Earth.",
   },
   contact: {
     title: "Contact Us",

@@ -3,7 +3,7 @@ import { Link } from "wouter";
 import { Container } from "@/components/layout/Container";
 import { Button } from "@/components/ui/Button";
 import HeroEcosystem from "@/components/sections/HeroEcosystem";
-import { HEADLINES, CTAS } from "@/data/brand";
+import { BRAND, HEADLINES, CTAS } from "@/data/brand";
 
 // Auto-cycling background videos. To swap a clip, replace the matching files in
 // public/videos/ keeping the SAME names — each slide needs BOTH a .webm and a
@@ -190,6 +190,10 @@ export default function Hero() {
                 {HEADLINES.home.title[1]}
               </span>
             </h1>
+
+            <p className="mt-4 text-sm font-medium tracking-[0.03em] text-emerald-200/80 motion-reduce:animate-none animate-[fade-in-up_680ms_ease-out_140ms_both]">
+              {BRAND.motto}
+            </p>
 
             <p className="mt-6 max-w-[46ch] text-base text-white/80 sm:text-lg motion-reduce:animate-none animate-[fade-in-up_700ms_ease-out_180ms_both]">
               {HEADLINES.home.subhead}
