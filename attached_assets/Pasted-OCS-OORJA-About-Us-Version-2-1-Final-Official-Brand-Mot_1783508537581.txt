@@ -1,0 +1,223 @@
+OCS OORJA — About Us (Version 2.1 — Final)
+Official Brand Motto: Powering Lives. Empowering Earth.
+1. UX Structure
+plain
+/about
+
+┌─────────────────────────────────────────┐
+│  HERO                                   │
+│  "Engineering India's Energy Future"    │
+│  Powering Lives. Empowering Earth.      │
+│  Dark teal gradient, geometric pattern  │
+├─────────────────────────────────────────┤
+│                                         │
+│  OUR STORY                              │
+│  Why we exist, what we solve            │
+│  Timeless, no invented dates            │
+│                                         │
+├─────────────────────────────────────────┤
+│                                         │
+│  VISION                                 │
+│  "To become India's most trusted..."      │
+│                                         │
+├─────────────────────────────────────────┤
+│                                         │
+│  MISSION                                │
+│  5 engineering pillars                  │
+│                                         │
+├─────────────────────────────────────────┤
+│                                         │
+│  CORE VALUES                            │
+│  6 principle cards                      │
+│                                         │
+├─────────────────────────────────────────┤
+│                                         │
+│  ENGINEERING CAPABILITIES               │
+│  8 technical domains                    │
+│                                         │
+├─────────────────────────────────────────┤
+│                                         │
+│  INDUSTRIES WE SERVE                    │
+│  ← NEW SECTION                          │
+│                                         │
+├─────────────────────────────────────────┤
+│                                         │
+│  WHY CHOOSE OCS OORJA                   │
+│  6 genuine differentiators              │
+│                                         │
+├─────────────────────────────────────────┤
+│                                         │
+│  ENGINEERING EXCELLENCE               │
+│  Philosophy, validation, quality        │
+│                                         │
+├─────────────────────────────────────────┤
+│                                         │
+│  CTA                                    │
+│  "Let's Power India's                   │
+│   Sustainable Future Together"         │
+│                                         │
+└─────────────────────────────────────────┘
+2. Complete Copy
+HERO
+Background: Full-bleed dark teal gradient (#0A4F4A → #0F766E), subtle hexagonal pattern overlay (3% opacity), 60vh minimum.
+H1: "Engineering India's Energy Future"
+Motto (below H1, 18px/400, white/80%, letter-spacing 0.05em):
+Powering Lives. Empowering Earth.
+Subtitle: "Clean-energy systems designed for Indian homes, businesses, and industries. From power generation to intelligent storage and management."
+CTA Primary: "Get a Free Consultation" (white bg, teal text)
+CTA Secondary: "Explore Our Products" (transparent, white border, white text)
+OUR STORY
+Layout: Two-column desktop, single column mobile. White background. Padding 96px.
+H2: "Why We Exist"
+Body:
+India's energy landscape is changing. Solar adoption is accelerating. Electric vehicles are entering the market. Businesses need reliable backup. Homes want independence from grid outages and rising electricity costs.
+Yet the gap between energy generation and intelligent storage remains wide. Many systems are designed for stable Western grids, not for Indian conditions — voltage fluctuations, extreme temperatures, dust, monsoon humidity, and long power cuts.
+OCS OORJA exists to bridge that gap. We engineer clean-energy systems that work reliably in Indian conditions. We design for the voltage swings, the heat, the dust, and the monsoons. We manufacture locally because we believe India's energy future depends on Indian engineering and production.
+Every product we build is tested for the conditions it will actually face — not ideal laboratory conditions, but real rooftops, real factories, real homes across India.
+Visual Right: Abstract illustration or photograph of Indian rooftop solar installation. If no photo, clean geometric composition with teal accent.
+VISION
+Layout: Centered, single statement, 120px padding, light gray #F8F9FA.
+H2: "Our Vision"
+Statement:
+"To become India's most trusted clean-energy technology company — engineering reliable, intelligent power systems that advance energy independence, sustainability, and long-term value for every customer we serve."
+Supporting line:
+Innovation · Reliability · Sustainability · Smart Energy · Indian Manufacturing · Long-term Leadership
+MISSION
+Layout: 5 cards, horizontal row (desktop), 2+1 wrap (tablet), single column (mobile). White background. Padding 96px.
+H2: "Our Mission"
+Table
+Icon	Title	Description
+Zap	Engineer Reliable Energy Solutions	Design power systems that perform consistently in India's climate, voltage conditions, and grid environment.
+Microscope	Drive Continuous Innovation	Advance battery chemistry, power electronics, and intelligent monitoring to meet evolving energy needs.
+Flag	Strengthen India's Energy Future	Manufacture locally, reduce import dependency, and strengthen India's renewable energy ecosystem.
+Handshake	Deliver Exceptional Customer Value	Provide honest guidance, clear specifications, and responsive support from inquiry through long-term operation.
+Leaf	Build a Cleaner Future	Enable measurable reductions in carbon emissions through efficient energy storage and EV charging technology.
+CORE VALUES
+Layout: 3×2 grid (desktop), 2×3 (tablet), single column (mobile). White background. Padding 96px.
+H2: "What We Stand For"
+Table
+Icon	Title	Description
+Shield	Safety First	Every design decision prioritizes the safety of users, installers, and maintenance personnel.
+CheckCircle	Quality Without Compromise	We validate components, processes, and finished products against rigorous standards.
+Lightbulb	Innovation	We solve practical problems — from voltage fluctuations to monsoon humidity — through engineering ingenuity.
+Heart	Customer Commitment	We measure success by system performance and customer satisfaction, not by sales volume alone.
+Scale	Integrity	Transparent specifications, honest pricing, and clear communication in every interaction.
+Globe	Sustainability	Long-lasting products that reduce waste, lower emissions, and support circular energy systems.
+ENGINEERING CAPABILITIES
+Layout: 4×2 grid (desktop), 2×4 (tablet), single column (mobile). Light gray #F8F9FA. Padding 96px.
+H2: "What We Engineer"
+Table
+Icon	Title	Description
+Battery	Battery Engineering	Design and assembly of lithium battery packs for residential, commercial, and industrial energy storage.
+Cpu	Battery Management Systems (BMS)	Intelligent cell monitoring, balancing, and protection systems that extend battery life and ensure safety.
+Sun	Hybrid Solar Inverters	Power conversion systems that integrate solar generation, battery storage, and grid connectivity.
+Database	Energy Storage Systems	Scalable battery solutions for homes, businesses, and utility-scale applications.
+Plug	EV Charging Solutions	AC and DC charging infrastructure for homes, commercial spaces, and fleet operations.
+Grid3x3	Solar Integration	System design and component matching for optimal solar energy harvest and utilization.
+Factory	Custom Manufacturing	Custom engineering and production services for partners and enterprise clients with specific requirements.
+Smartphone	Smart Energy Management	Remote monitoring, diagnostics, and performance optimization through connected platforms.
+INDUSTRIES WE SERVE ← NEW SECTION
+Layout: 3×2 grid (desktop), 2×3 (tablet), single column (mobile). White background. Padding 96px.
+H2: "Industries We Serve"
+Table
+Icon	Industry	Description
+Home	Residential	Homes, apartments, and housing communities seeking energy independence and backup power.
+Building	Commercial	Offices, shops, hotels, and institutions requiring reliable power and cost management.
+Factory	Industrial	Factories, warehouses, and production facilities with high energy demands and critical uptime.
+Tractor	Agriculture	Farms, irrigation systems, and rural operations in areas with unreliable grid supply.
+Car	Electric Mobility	EV charging infrastructure for homes, businesses, and public charging networks.
+Signal	Telecom	Communication towers and remote installations requiring uninterrupted power in off-grid locations.
+Card design: White bg, rounded 12px, padding 32px, icon 24px teal, title 18px/600, description 14px/400.
+WHY CHOOSE OCS OORJA
+Layout: 3×2 grid (desktop), 2×3 (tablet), single column (mobile). Light gray #F8F9FA. Padding 96px.
+H2: "Why OCS OORJA"
+Table
+Icon	Title	Description
+MapPin	Indian Engineering	Designed and manufactured for Indian conditions — voltage fluctuations, heat, dust, and monsoon humidity.
+Layers	Integrated Energy Solutions	Complete systems from solar generation to battery storage, inverter technology, and intelligent monitoring.
+Award	Reliable Products	Rigorous testing and validation ensure consistent performance in real-world conditions.
+Wrench	Application Expertise	Deep understanding of residential, commercial, industrial, agricultural, and EV charging applications.
+Headphones	Technical Support	Direct access to engineering expertise for system design, troubleshooting, and optimization.
+Rocket	Future-Ready Technology	Modular designs that support expansion, upgrades, and integration with emerging energy technologies.
+ENGINEERING EXCELLENCE
+Layout: Two-column desktop, single column mobile. White background. Padding 96px.
+H2: "How We Engineer"
+Left Column:
+Philosophy
+We believe that energy systems should be judged by how they perform after years of operation, not by specifications on paper. Our engineering process prioritizes reliability, safety, and long-term value over short-term metrics.
+Product Validation
+Every product design undergoes extensive validation before production. We test for thermal performance, electrical safety, electromagnetic compatibility, and mechanical durability. We simulate years of operation through accelerated stress testing.
+Quality Assurance
+Our quality system covers incoming materials, in-process manufacturing, and final product verification. We trace every component back to its source. We record test data for every unit that leaves our facility.
+Safety
+Safety is not a feature — it is the foundation. Our designs incorporate multiple layers of protection: electrical isolation, thermal management, fault detection, and fail-safe operation. We design for the worst-case scenario so our customers never have to experience it.
+Testing
+We test beyond standard requirements. Our products undergo temperature cycling, humidity exposure, vibration testing, and electrical stress testing. We validate performance at the edges of specified operating ranges, not just at nominal conditions.
+Reliability
+Reliability is the result of good design, quality components, and controlled manufacturing. We select components rated for extended temperature ranges. We design circuits with appropriate safety margins. We monitor field performance and feed lessons back into design improvements.
+Continuous Improvement
+Engineering is never finished. We collect performance data from installed systems. We analyze failure modes. We update designs based on field experience. Every product generation is better than the last.
+Right Column: Technical diagram or engineering illustration.
+CTA
+Layout: Full-width, dark teal #0F766E, white text, centered, 100px padding.
+H2: "Let's Power India's Sustainable Future Together"
+Body: "Whether you are powering a home, a business, or an entire community — we are ready to engineer the right solution."
+CTA: "Get a Free Consultation" (white bg, teal text, large)
+Secondary: "View Our Products" → /products (white text, underline)
+3. Brand Motto Placement
+Table
+Location	Usage
+Homepage Hero	Below H1: "Powering Lives. Empowering Earth."
+About Hero	Below H1: "Powering Lives. Empowering Earth."
+Footer	Below logo: "Powering Lives. Empowering Earth."
+Company Profile	Tagline on cover page
+Brochures	Bottom of every page
+Email Signature	Below company name
+Exhibition Booth	Large banner text
+LinkedIn Banner	Subtle placement
+Do NOT use on:
+Product pages
+Blog articles
+Case studies
+Gallery
+Every page heading
+Use only in premium, high-impact locations.
+4. Replit-Ready Implementation
+Step 1: Create src/pages/about.tsx
+Step 2: Create section components:
+HeroAbout.tsx — include motto "Powering Lives. Empowering Earth."
+StorySection.tsx
+VisionSection.tsx
+MissionSection.tsx
+ValuesSection.tsx
+CapabilitiesSection.tsx
+IndustriesSection.tsx ← NEW
+WhyChooseSection.tsx
+ExcellenceSection.tsx
+AboutCTA.tsx — "Let's Power India's Sustainable Future Together"
+Step 3: Add motto to:
+src/pages/home.tsx (Hero section)
+src/components/global/Footer.tsx (below logo)
+Step 4: Add route:
+tsx
+<Route path="/about" component={AboutPage} />
+Step 5: Add to navigation:
+tsx
+{ label: "About", href: "/about" }
+Step 6: SEO:
+tsx
+<SEOHead
+  title="About OCS OORJA — Indian Clean-Energy Technology Company"
+  description="OCS OORJA engineers and manufactures hybrid solar inverters, LiFePO₄ batteries, and EV charging solutions. Powering Lives. Empowering Earth."
+  canonical="/about"
+/>
+5. Changes from Version 2.0
+Table
+Change	Before	After
+Vision	"To be India's..."	"To become India's..."
+Hero subtitle	"Clean-energy systems..."	More customer-focused: "Clean-energy systems designed for Indian homes, businesses, and industries"
+Mission pillar	"Support India's Energy Independence"	"Strengthen India's Energy Future"
+Capabilities	"OEM Manufacturing"	"Custom Manufacturing"
+New section	—	"Industries We Serve" (6 cards)
+CTA	"Let's Build India's..."	"Let's Power India's Sustainable Future Together"
+Brand motto	—	"Powering Lives. Empowering Earth." (official)
