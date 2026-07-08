@@ -1,0 +1,395 @@
+Final Specification: OCS OORJA Projects & Case Studies
+Core Philosophy
+This is not a photo gallery. It is the portfolio of a serious engineering company. Every project page is a Case Study that demonstrates expertise, builds trust, and drives commercial intent.
+Data Model (TypeScript)
+TypeScript
+// src/types/projects.ts
+
+export type ProjectStatus = "completed" | "commissioning" | "in-progress" | "upcoming";
+
+export type IndustrySegment = "Residential" | "Commercial" | "Industrial" | "Agriculture" | "EV";
+
+export type ProjectTechnology = 
+  | "LiFePO4" 
+  | "Hybrid Inverter" 
+  | "BMS" 
+  | "MPPT" 
+  | "Solar" 
+  | "EV Charger" 
+  | "Smart Monitoring";
+
+export interface ProjectTimeline {
+  survey?: string;      // ISO date
+  engineering?: string;
+  installation?: string;
+  commissioning?: string;
+  handover?: string;
+}
+
+export interface BeforeAfterImage {
+  before: {
+    src: string;
+    alt: string;
+    caption?: string;
+  };
+  after: {
+    src: string;
+    alt: string;
+    caption?: string;
+  };
+}
+
+export interface ROIData {
+  estimatedMonthlySavings?: number;    // INR
+  annualSavings?: number;              // INR
+  backupDuration?: number;             // hours
+  estimatedPayback?: number;           // years
+  co2Reduction?: number;               // kg/year
+  energyGenerated?: number;            // kWh/year
+}
+
+export interface ProjectCaseStudy {
+  // ─── Core Identity ───
+  id: string;              // Meaningful: "lucknow-residential-5kw"
+  slug: string;
+  title: string;
+  subtitle?: string;       // "5kW Hybrid Solar + 10kWh Battery for 3BHK Home"
+  
+  // ─── Status & Classification ───
+  status: ProjectStatus;
+  segment: IndustrySegment;
+  location: {
+    city: string;
+    state: string;
+    country: string;      // "IN"
+  };
+  
+  // ─── Dates ───
+  completedDate?: string;  // ISO 8601
+  publishDate: string;
+  updatedAt: string;
+  
+  // ─── Client Info ───
+  clientName?: string;     // "Confidential" or actual name with permission
+  clientType: "Homeowner" | "Small Business" | "Enterprise" | "Government" | "Educational";
+  
+  // ─── Technical Specs ───
+  systemSize: {
+    solarKw: number;
+    batteryKwh: number;
+    inverterKw: number;
+  };
+  technologies: ProjectTechnology[];
+  productsUsed: string[];  // Product IDs from product catalog
+  
+  // ─── ROI & Performance ───
+  roi?: ROIData;
+  
+  // ─── Challenge & Solution ───
+  challenge: string;       // What problem did the client face?
+  solution: string;        // How did OCS OORJA solve it?
+  results: string;         // What measurable outcomes were achieved?
+  
+  // ─── Visual Content ───
+  heroImage: {
+    src: string;
+    alt: string;
+    width: number;
+    height: number;
+  };
+  galleryImages: {
+    src: string;
+    alt: string;
+    caption?: string;
+    category: "installation" | "commissioning" | "monitoring" | "team" | "site";
+  }[];
+  beforeAfter?: BeforeAfterImage[];
+  
+  // ─── Timeline ───
+  timeline?: ProjectTimeline;
+  
+  // ─── Downloads & Links ───
+  brochureUrl?: string;
+  caseStudyPdf?: string;
+  testimonialId?: string;  // Link to future testimonial
+  
+  // ─── SEO & AI ───
+  seoTitle?: string;
+  metaDescription?: string;
+  keywords?: string[];
+  summary: string;         // For AI extraction
+  directAnswer: string;    // "What did this project achieve?"
+  
+  // ─── Related Content ───
+  relatedArticleIds?: string[];
+  relatedProductIds?: string[];
+  
+  // ─── Team & Attribution ───
+  projectEngineer?: string;
+  installationTeam?: string[];
+  
+  // ─── Schema.org ───
+  schemaType: "Project" | "CaseStudy";
+}
+URL Structure
+plain
+/projects                          → Projects Listing (main navigation)
+/projects/lucknow-residential-5kw  → Case Study Detail Page
+Navigation label: "Projects"
+Page title: "Projects & Case Studies"
+H1: "OCS OORJA Projects — Real Installations, Real Results"
+Projects Listing Page (/projects)
+Layout:
+Hero section with "Engineering Portfolio" messaging
+Filter bar: Status (All | Completed | In Progress | Upcoming) + Segment (All | Residential | Commercial | Industrial | Agriculture | EV)
+Grid of project cards
+Project Card:
+TypeScript
+interface ProjectCardProps {
+  id: string;
+  title: string;
+  subtitle: string;
+  status: ProjectStatus;
+  segment: IndustrySegment;
+  location: { city: string; state: string };
+  heroImage: { src: string; alt: string };
+  systemSize: { solarKw: number; batteryKwh: number };
+  roi?: { annualSavings?: number; estimatedPayback?: number };
+  summary: string;
+}
+Card Design:
+Status badge (color-coded: green=completed, blue=commissioning, amber=in-progress, gray=upcoming)
+Hero image thumbnail
+Title + subtitle
+Location pin
+System size badge: "5kW Solar + 10kWh Battery"
+Optional ROI teaser: "₹45,000/year savings" or "4.5 year payback"
+"View Case Study" CTA
+Case Study Detail Page (/projects/:slug)
+Sections (in order):
+Hero
+Full-width hero image
+Status badge
+Title + subtitle
+Location + completion date
+Quick stats row: System Size | Annual Savings | Backup Duration | Payback
+Challenge → Solution → Results
+Three-column layout or vertical story
+Challenge: "Client faced 6-hour daily power cuts and ₹8,000/month electricity bills"
+Solution: "Installed 5kW hybrid system with 10kWh LiFePO₄ battery and OCS ONE monitoring"
+Results: "Zero power cuts, ₹45,000/year savings, 4.5-year payback"
+Technical Specifications
+Table or spec cards
+Solar array details (panel type, quantity, orientation)
+Inverter model and capacity
+Battery bank configuration
+Monitoring system
+Products used (linked to product pages)
+ROI & Performance
+Data cards with icons
+Estimated Monthly Savings: ₹3,750
+Annual Savings: ₹45,000
+Backup Duration: 8 hours
+Estimated Payback: 4.5 years
+CO₂ Reduction: 2,100 kg/year
+Energy Generated: 7,500 kWh/year
+Project Timeline (if available)
+Horizontal timeline or vertical steps
+Survey → Engineering → Installation → Commissioning → Handover
+Dates for each milestone
+Before/After (if available)
+Side-by-side image comparison slider
+Or stacked before/after with captions
+Examples: Electricity bill before/after, rooftop before/after, load profile before/after
+Gallery
+Grid of installation photos
+Categories: Installation, Commissioning, Monitoring, Team, Site
+Lightbox for full-size viewing
+Testimonial (if available)
+Quote from client
+Name, title, photo (with permission)
+Link to full testimonial page (future)
+Related Content
+Related products (linked)
+Related articles (linked)
+"Request Similar Project" CTA
+CTA Section
+"Start Your Project" — contact form or phone number
+"Download Brochure" — PDF download
+"View More Projects" — back to listing
+Content Files
+Store as Markdown with YAML frontmatter:
+yaml
+# content/projects/lucknow-residential-5kw.md
+---
+id: "lucknow-residential-5kw"
+slug: "lucknow-residential-5kw-hybrid-solar"
+title: "Lucknow Residential Solar + Battery Installation"
+subtitle: "5kW Hybrid Solar + 10kWh LiFePO₄ Battery for 3BHK Home"
+status: "completed"
+segment: "Residential"
+location:
+  city: "Lucknow"
+  state: "Uttar Pradesh"
+  country: "IN"
+completedDate: "2026-03-15"
+publishDate: "2026-07-08"
+updatedAt: "2026-07-08"
+clientName: "Confidential"
+clientType: "Homeowner"
+systemSize:
+  solarKw: 5
+  batteryKwh: 10
+  inverterKw: 5
+technologies:
+  - "Hybrid Inverter"
+  - "LiFePO4"
+  - "MPPT"
+  - "Solar"
+  - "Smart Monitoring"
+productsUsed:
+  - "hybrid-solar-inverter-5kw"
+  - "lifepo4-battery-48v-200ah"
+  - "ocs-one-monitoring"
+roi:
+  estimatedMonthlySavings: 3750
+  annualSavings: 45000
+  backupDuration: 8
+  estimatedPayback: 4.5
+  co2Reduction: 2100
+  energyGenerated: 7500
+challenge: "The client faced 6-hour daily power cuts during summer months and electricity bills averaging ₹8,000/month. They needed reliable backup for critical loads including refrigerator, lights, fans, and home office equipment."
+solution: "We designed a 5kW hybrid solar system with 10kWh LiFePO₄ battery storage. The system includes 12 × 440W monocrystalline panels, OCS OORJA 5kW hybrid inverter with dual MPPT, and OCS ONE smart monitoring. Installation included proper DC cabling, earthing, and net metering integration."
+results: "The client now has zero power cuts, reduced electricity bills by 75%, and generates 85% of their power from solar. The system paid for itself in 4.5 years. Battery health remains at 98% after 12 months of operation."
+heroImage:
+  src: "/images/projects/lucknow-residential-hero.jpg"
+  alt: "5kW hybrid solar installation on residential rooftop in Lucknow"
+  width: 1200
+  height: 630
+galleryImages:
+  - src: "/images/projects/lucknow-residential-1.jpg"
+    alt: "Solar panel array installation on rooftop"
+    category: "installation"
+  - src: "/images/projects/lucknow-residential-2.jpg"
+    alt: "Hybrid inverter and battery bank installation"
+    category: "installation"
+  - src: "/images/projects/lucknow-residential-3.jpg"
+    alt: "OCS ONE monitoring dashboard showing real-time data"
+    category: "monitoring"
+beforeAfter:
+  - before:
+      src: "/images/projects/lucknow-bill-before.jpg"
+      alt: "Electricity bill before solar installation: ₹8,200"
+      caption: "Before: ₹8,200/month average"
+    after:
+      src: "/images/projects/lucknow-bill-after.jpg"
+      alt: "Electricity bill after solar installation: ₹1,800"
+      caption: "After: ₹1,800/month average"
+timeline:
+  survey: "2026-01-10"
+  engineering: "2026-01-25"
+  installation: "2026-02-15"
+  commissioning: "2026-03-10"
+  handover: "2026-03-15"
+brochureUrl: "/downloads/residential-solar-brochure.pdf"
+caseStudyPdf: "/downloads/lucknow-residential-case-study.pdf"
+seoTitle: "Lucknow Residential Solar Case Study | 5kW Hybrid + 10kWh Battery | OCS OORJA"
+metaDescription: "See how a Lucknow home eliminated power cuts and reduced electricity bills by 75% with a 5kW hybrid solar system. Real results, real data."
+keywords:
+  - "residential solar case study"
+  - "hybrid solar installation lucknow"
+  - "solar battery backup home"
+  - "5kW solar system india"
+summary: "A Lucknow home eliminated 6-hour daily power cuts and reduced electricity bills by 75% with a 5kW hybrid solar + 10kWh battery system."
+directAnswer: "This Lucknow residential project achieved 75% electricity bill reduction, 8-hour backup power, and 4.5-year payback using a 5kW hybrid solar system with 10kWh LiFePO₄ battery."
+relatedArticleIds:
+  - "hybrid-solar-inverter-guide"
+  - "how-much-can-a-home-solar-battery-system-save-on-electricity-bills"
+relatedProductIds:
+  - "hybrid-solar-inverter-5kw"
+  - "lifepo4-battery-48v-200ah"
+projectEngineer: "Rajesh Kumar"
+---
+Schema.org Markup
+JSON
+{
+  "@context": "https://schema.org",
+  "@type": "Project",
+  "@id": "https://www.ocsoorja.com/projects/lucknow-residential-5kw",
+  "name": "Lucknow Residential Solar + Battery Installation",
+  "description": "5kW Hybrid Solar + 10kWh LiFePO₄ Battery for 3BHK Home",
+  "url": "https://www.ocsoorja.com/projects/lucknow-residential-5kw",
+  "image": "https://www.ocsoorja.com/images/projects/lucknow-residential-hero.jpg",
+  "status": "Completed",
+  "location": {
+    "@type": "Place",
+    "name": "Lucknow, Uttar Pradesh, India",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Lucknow",
+      "addressRegion": "Uttar Pradesh",
+      "addressCountry": "IN"
+    }
+  },
+  "member": {
+    "@type": "Organization",
+    "name": "OCS OORJA",
+    "url": "https://www.ocsoorja.com"
+  },
+  "subjectOf": [
+    {
+      "@type": "Product",
+      "name": "OCS OORJA 5kW Hybrid Solar Inverter"
+    },
+    {
+      "@type": "Product",
+      "name": "OCS OORJA LiFePO₄ Battery 48V 200Ah"
+    }
+  ]
+}
+Integration Points
+Table
+System	Integration
+Products	Case studies link to products used. Product pages show "Used in Projects" section.
+Blog	Articles reference real projects. Project pages link to related articles.
+AI Discoverability	Project summaries feed into LLM context. ROI data structured for AI extraction.
+Testimonials (future)	Testimonial IDs link to project case studies.
+SEO	Each project page has unique title, description, canonical, schema.
+Sitemap	All project pages included with lastmod and priority.
+Search Index	Projects searchable by location, segment, technology, savings.
+Future Gallery Publisher Enhancements
+When building the Gallery Publisher tool (future sprint), it should support:
+Before/After image uploads with caption fields
+ROI data entry: Monthly savings, annual savings, backup duration, payback
+Project timeline dates: Survey, engineering, installation, commissioning, handover
+Brochure upload: PDF attachment
+Status selection: Dropdown with 4 states
+Product linking: Multi-select from product catalog
+Location picker: City + state dropdown
+Client type: Radio buttons
+Lighthouse Best Practices (Not Fixed Targets)
+Instead of fixed scores, follow these practices and measure results:
+Images: WebP/AVIF, lazy loading, proper dimensions, descriptive alt text
+Fonts: Preload critical fonts, use font-display: swap
+CSS/JS: Code splitting, tree shaking, minimal critical CSS
+Caching: Static asset caching, ISR for project pages
+Accessibility: Semantic HTML, ARIA labels, keyboard navigation, color contrast
+Core Web Vitals: Measure LCP, FID, CLS in production
+Mobile: Responsive design, touch targets, readable fonts
+Measure with: Chrome DevTools Lighthouse, PageSpeed Insights, Web Vitals RUM.
+Acceptance Criteria
+Projects page is main navigation item, labeled "Projects"
+Each project detail page is presented as a "Case Study"
+Project data model includes: status, segment, location, system size, technologies, products used, ROI data, timeline, before/after, downloads
+ROI fields are optional but structured: monthly savings, annual savings, backup duration, payback, CO₂ reduction, energy generated
+Timeline supports: Survey → Engineering → Installation → Commissioning → Handover
+Before/After image comparisons supported with captions
+Gallery images categorized: installation, commissioning, monitoring, team, site
+Related products and articles linked bidirectionally
+Schema.org Project markup on every case study page
+SEO metadata unique per project: title, description, keywords, canonical
+AI Discoverability: summary, direct answer, entities, topics in frontmatter
+Filterable listing page by status and segment
+Status badges color-coded and accessible
+No fixed Lighthouse targets — follow best practices and measure
+TypeScript clean, no console errors
