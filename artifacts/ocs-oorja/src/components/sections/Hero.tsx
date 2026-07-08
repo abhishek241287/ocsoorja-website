@@ -177,14 +177,7 @@ export default function Hero() {
       <Container className="relative z-30 py-24 md:py-28 lg:py-16">
         <div className="grid grid-cols-1 items-center gap-16 lg:grid-cols-12 lg:gap-8">
           <div className="lg:col-span-7">
-            <div className="flex items-center gap-3 motion-reduce:animate-none animate-[fade-in-up_600ms_ease-out_0ms_both]">
-              <span className="h-px w-8 bg-emerald-400" aria-hidden="true" />
-              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">
-                {HEADLINES.home.eyebrow}
-              </span>
-            </div>
-
-            <h1 className="mt-6 max-w-[20ch] text-4xl font-semibold leading-[1.1] tracking-tight text-white sm:text-5xl lg:max-w-[22ch] lg:text-6xl motion-reduce:animate-none animate-[fade-in-up_650ms_ease-out_100ms_both]">
+            <h1 className="max-w-[20ch] text-4xl font-semibold leading-[1.1] tracking-tight text-white sm:text-5xl lg:max-w-[22ch] lg:text-6xl motion-reduce:animate-none animate-[fade-in-up_650ms_ease-out_100ms_both]">
               <span className="block">{HEADLINES.home.title[0]}</span>
               <span className="block text-emerald-300">
                 {HEADLINES.home.title[1]}
