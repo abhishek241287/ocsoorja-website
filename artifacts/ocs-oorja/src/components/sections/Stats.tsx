@@ -4,7 +4,7 @@ const stats = [
   { label: "Cycle life", value: "≥ 5000" },
   { label: "Battery protection", value: "Advanced BMS" },
   { label: "Avg. lead time", value: "1–2 weeks" },
-  { label: "Supply & pricing", value: "Factory-Direct" },
+  { label: "Company type", value: "Integrated Energy" },
 ];
 
 export default function Stats() {

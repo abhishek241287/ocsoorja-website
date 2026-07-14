@@ -25,7 +25,7 @@ type Cta = { label: string; href: string };
 const POSITIONING_LEAD =
   "OCS OORJA is a trusted Indian manufacturer of hybrid solar inverters, LiFePO₄ batteries, and EV charging solutions, based in Lucknow (Uttar Pradesh).";
 const POSITIONING_BODY =
-  "We design and supply dependable, factory-direct power systems for solar energy storage, e-mobility, telecom, and industrial applications across India.";
+  "We design and deliver integrated energy infrastructure solutions for solar energy storage, e-mobility, telecom, and industrial applications across India.";
 
 export const BRAND = {
   name: "OCS OORJA",
@@ -38,7 +38,7 @@ export const BRAND = {
 
   // One-line promise summarizing what customers get.
   promise:
-    "Reliable, factory-direct power systems engineered in Lucknow — built for Indian conditions, priced for scale, and backed by up to a 5-year warranty on our LiFePO₄ batteries.",
+    "Integrated energy infrastructure — intelligently engineered in India for Indian conditions, backed by up to a 5-year warranty on our LiFePO₄ batteries.",
 
   // Official brand motto. Used ONLY in premium, high-impact locations: the
   // homepage hero (below the H1), the About page hero (below the H1), and the
@@ -61,7 +61,7 @@ export const BRAND = {
     batteries: "LiFePO₄ batteries",
     storage: "energy storage (BESS)",
     evCharging: "EV charging",
-    pricing: "factory-direct",
+    pricing: "integrated energy infrastructure",
     region: "Lucknow (U.P.)",
   },
 } as const;
@@ -137,7 +137,7 @@ export const HEADLINES = {
     subhead:
       "OCS OORJA Green Private Limited is an engineering-led energy infrastructure company delivering intelligent battery energy storage, renewable energy and smart power solutions for modern buildings and sustainable communities.",
     highlights:
-      "Up to 5-Year Warranty · Factory-Direct Pricing · Pan-India Delivery",
+      "Up to 5-Year Warranty · Integrated Energy Infrastructure · Pan-India Delivery",
   },
   products: {
     // Home-page products section
@@ -149,11 +149,11 @@ export const HEADLINES = {
     pageEyebrow: "Product Catalogue",
     pageTitle: "Products",
     pageSubtitle:
-      "Hybrid solar inverters, LiFePO₄ batteries and BESS, and EV charging — standard, factory-direct models ready to deploy.",
+      "Hybrid solar inverters, LiFePO₄ batteries and BESS, and EV charging — integrated energy infrastructure solutions ready to deploy.",
     // Search-engine copy for the catalogue page
     metaTitle: "Products — Hybrid Solar Inverters, LiFePO₄ Batteries & EV Chargers",
     metaDescription:
-      "Browse OCS OORJA's catalogue of hybrid solar inverters, LiFePO₄ batteries and BESS, and AC/DC EV chargers — factory-direct power systems engineered in Lucknow for Indian conditions.",
+      "Browse OCS OORJA's catalogue of hybrid solar inverters, LiFePO₄ batteries and BESS, and AC/DC EV chargers — integrated energy infrastructure solutions engineered in Lucknow for Indian conditions.",
   },
   projects: {
     // Projects listing page (/projects)

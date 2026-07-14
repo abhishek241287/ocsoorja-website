@@ -23,7 +23,7 @@ export const HOME_SECTIONS = {
     eyebrow: "Why OCS OORJA",
     title: "Engineering-grade power, built in India",
     subtitle:
-      "We manufacture clean-energy systems in Lucknow and sell them factory-direct — so you get proven reliability, real support and honest pricing.",
+      "We are an integrated energy infrastructure company — manufacturing clean-energy systems in Lucknow to deliver proven reliability, real engineering support, and transparent pricing.",
   },
   industries: {
     eyebrow: "Industries We Serve",
@@ -69,10 +69,10 @@ export type HomeFeature = { icon: string; title: string; description: string };
 
 export const WHY_OCS_OORJA: HomeFeature[] = [
   {
-    icon: "IndianRupee",
-    title: "Factory-Direct Pricing",
+    icon: "Layers",
+    title: "Integrated Energy Infrastructure",
     description:
-      "Buy straight from the manufacturer — engineering-grade quality without distributor markups.",
+      "End-to-end energy solutions — from generation and storage to EV charging — engineered and delivered under one roof.",
   },
   {
     icon: "Factory",
@@ -197,5 +197,5 @@ export const HERO_ECOSYSTEM = {
 export const HOME_FINAL_CTA = {
   eyebrow: "Get Started",
   title: "Ready to Power Your Next Project?",
-  body: "Talk to our engineers for sizing, product selection and factory-direct pricing — or send us your requirements for a custom quote.",
+  body: "Talk to our engineers for sizing, product selection and integrated energy infrastructure solutions — or send us your requirements for a custom quote.",
 } as const;
