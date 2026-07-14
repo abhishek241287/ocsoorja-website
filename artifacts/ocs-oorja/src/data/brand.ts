@@ -135,7 +135,7 @@ export const HEADLINES = {
     // Two lines of the hero title; the second line is visually highlighted.
     title: ["Hybrid Solar Inverters,", "LiFePO₄ Batteries & EV Charging"],
     subhead:
-      "Reliable, factory-direct power systems engineered in Lucknow — built for Indian conditions, priced for scale, and backed by up to a 5-year warranty.",
+      "OCS OORJA Green Private Limited is an engineering-led energy infrastructure company delivering intelligent battery energy storage, renewable energy and smart power solutions for modern buildings and sustainable communities.",
     highlights:
       "Up to 5-Year Warranty · Factory-Direct Pricing · Pan-India Delivery",
   },
