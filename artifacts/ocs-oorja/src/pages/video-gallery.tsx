@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { Film, Play, Search, Star, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { Link } from "wouter";
 import { Seo } from "@/components/Seo";
 import { Container } from "@/components/layout/Container";
 import { Input } from "@/components/ui/Input";
@@ -72,6 +73,25 @@ export default function VideoGalleryPage() {
       />
 
       <Container className="py-12 sm:py-16">
+        {/* Back nav */}
+        <div className="mb-8 inline-flex flex-wrap gap-1 rounded-full border border-border bg-card p-1">
+          <Link
+            href="/projects"
+            className="rounded-full px-5 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+          >
+            Case Studies
+          </Link>
+          <Link
+            href="/projects"
+            className="rounded-full px-5 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+          >
+            Installation Gallery
+          </Link>
+          <span className="rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground shadow-sm">
+            Video Gallery
+          </span>
+        </div>
+
         {/* Header */}
         <div className="mb-10">
           <p className="text-sm font-semibold uppercase tracking-widest text-primary-strong">

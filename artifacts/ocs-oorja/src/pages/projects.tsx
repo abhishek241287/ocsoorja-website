@@ -116,6 +116,12 @@ export default function Projects() {
         <div className="mb-8 inline-flex flex-wrap gap-1 rounded-full border border-border bg-card p-1">
           {tabButton("case-studies", "Case Studies")}
           {tabButton("gallery", "Installation Gallery")}
+          <Link
+            href="/projects/videos"
+            className="rounded-full px-5 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+          >
+            Video Gallery
+          </Link>
         </div>
 
         {activeTab === "case-studies" ? (
