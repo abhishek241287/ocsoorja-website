@@ -15,6 +15,13 @@ import ProjectDetail from "@/pages/project-detail";
 import Blog from "@/pages/blog";
 import BlogDetail from "@/pages/blog-detail";
 import DesignSystem from "@/pages/design-system";
+import EngineeringToolsHub from "@/pages/engineering-tools/index";
+import SolarSizingCalculator from "@/pages/engineering-tools/solar-sizing";
+import BatteryBackupCalculator from "@/pages/engineering-tools/battery-backup";
+import InverterSizingCalculator from "@/pages/engineering-tools/inverter-sizing";
+import CableSizingCalculator from "@/pages/engineering-tools/cable-sizing";
+import ROICalculatorPage from "@/pages/engineering-tools/roi-calculator";
+import EVChargingCalculator from "@/pages/engineering-tools/ev-charging";
 import ScrollRestoration from "@/components/ScrollRestoration";
 import { Analytics } from "@/components/Analytics";
 import { WhatsAppWidget } from "@/components/global/WhatsAppWidget";
@@ -46,6 +53,13 @@ function Router() {
         <Route path="/projects/:slug" component={ProjectDetail} />
         <Route path="/blog" component={Blog} />
         <Route path="/blog/:slug" component={BlogDetail} />
+        <Route path="/engineering-tools" component={EngineeringToolsHub} />
+        <Route path="/engineering-tools/solar-sizing" component={SolarSizingCalculator} />
+        <Route path="/engineering-tools/battery-backup" component={BatteryBackupCalculator} />
+        <Route path="/engineering-tools/inverter-sizing" component={InverterSizingCalculator} />
+        <Route path="/engineering-tools/cable-sizing" component={CableSizingCalculator} />
+        <Route path="/engineering-tools/roi-calculator" component={ROICalculatorPage} />
+        <Route path="/engineering-tools/ev-charging" component={EVChargingCalculator} />
         <Route path="/design-system" component={DesignSystem} />
         {BlogPublisher ? (
           <Route path="/blog-publisher">

@@ -1,0 +1,1143 @@
+Build a professional Engineering Tools hub for the OCS OORJA website.
+
+CRITICAL RULES:
+- Completely neutral, no product recommendations, no brand mentions
+- All engineering constants in a single configurable file
+- Basic/Advanced toggle for every calculator
+- Show transparent calculation steps (expandable)
+- Download PDF, Print, Share Link for every result
+- Unified hub at /engineering-tools, not isolated pages
+- Strengthened disclaimer on every calculator
+
+Return the following files:
+
+─── FILE 1: src/lib/engineering/constants.ts ───
+
+// src/lib/engineering/constants.ts
+// Single source of truth for all engineering assumptions.
+// Update this file to change assumptions across all calculators.
+
+export const ENGINEERING_CONSTANTS = {
+  solar: {
+    defaultPerformanceRatio: 0.80,
+    defaultPanelDegradation: 0.005,
+    defaultTemperatureLoss: 0.10,
+    defaultDustLoss: 0.05,
+    areaPerKw: 100,
+    moduleEfficiency: 0.20,
+    peakSunHours: {
+      "Uttar Pradesh": 5.0,
+      "Rajasthan": 5.5,
+      "Gujarat": 5.3,
+      "Maharashtra": 5.0,
+      "Karnataka": 5.2,
+      "Tamil Nadu": 5.4,
+      "Delhi": 4.8,
+      "Telangana": 5.1,
+      "West Bengal": 4.7,
+      "Madhya Pradesh": 5.0,
+      "Punjab": 4.9,
+      "Haryana": 4.9,
+      "Bihar": 4.6,
+      "Odisha": 4.8,
+      "Kerala": 5.0,
+      "Assam": 4.5,
+      "Jharkhand": 4.7,
+      "Chhattisgarh": 4.8,
+      "Uttarakhand": 5.2,
+      "Himachal Pradesh": 5.0,
+      "Jammu and Kashmir": 5.0,
+      "Goa": 5.2,
+      "Chandigarh": 4.9,
+      "Puducherry": 5.3,
+      "Andaman and Nicobar Islands": 4.8,
+    },
+    standardSizes: [1, 2, 3, 5, 6, 8, 10, 15, 20, 25, 50, 100],
+  },
+
+  battery: {
+    lifepo4: {
+      dod: 0.90,
+      efficiency: 0.95,
+      cycleLife: 6000,
+      selfDischarge: 0.02,
+    },
+    leadAcid: {
+      dod: 0.50,
+      efficiency: 0.85,
+      cycleLife: 800,
+      selfDischarge: 0.05,
+    },
+    standardVoltages: [12, 24, 48, 96, 192],
+    standardCapacitiesKwh: [2.4, 5, 10, 15, 20, 30, 50, 100],
+    standardCapacitiesAh: [50, 100, 150, 200, 300, 400, 500],
+  },
+
+  inverter: {
+    powerFactor: 0.80,
+    surgeFactor: 1.5,
+    futureExpansion: { none: 1.0, low: 1.2, high: 1.5 },
+    standardSizes: [1, 2, 3, 5, 7.5, 10, 15, 20, 25, 50],
+  },
+
+  cable: {
+    copperResistivity: 0.0175,
+    aluminumResistivity: 0.028,
+    standardSizes: [1.5, 2.5, 4, 6, 10, 16, 25, 35, 50, 70, 95, 120, 150, 185, 240],
+    ampacityDerating: {
+      conduit: 0.8,
+      tray: 1.0,
+      underground: 0.7,
+      aerial: 0.9,
+    },
+  },
+
+  ev: {
+    defaultEfficiency: 7.0,
+    standardChargerSizes: [3.3, 7.2, 11, 22, 50, 120],
+  },
+
+  financial: {
+    defaultTariffEscalation: 0.06,
+    defaultMaintenanceCost: 0.01,
+    defaultAnalysisPeriod: 25,
+    discountRate: 0.08,
+  },
+
+  appliances: {
+    ledBulb: 10,
+    ceilingFan: 75,
+    tubeLight: 40,
+    refrigerator: 200,
+    tv: 100,
+    computer: 150,
+    washingMachine: 500,
+    ac1Ton: 1500,
+    ac1_5Ton: 2000,
+    waterPump: 750,
+    mixer: 500,
+    iron: 1000,
+    geyser: 2000,
+    microwave: 1200,
+    wifiRouter: 20,
+    exhaustFan: 40,
+    airCooler: 200,
+    printer: 50,
+    waterPurifier: 60,
+  },
+} as const;
+
+export type StateName = keyof typeof ENGINEERING_CONSTANTS.solar.peakSunHours;
+export type BatteryChemistry = "lifepo4" | "leadAcid";
+
+export function getPeakSunHours(state: string): number {
+  return ENGINEERING_CONSTANTS.solar.peakSunHours[state as StateName] || 5.0;
+}
+
+export function roundToStandardSize(calculated: number, sizes: number[]): number {
+  const valid = sizes.filter((s) => s >= calculated);
+  return valid.length > 0 ? valid[0] : sizes[sizes.length - 1];
+}
+
+export function getBatteryChemistry(chemistry: BatteryChemistry) {
+  return ENGINEERING_CONSTANTS.battery[chemistry];
+}
+
+─── FILE 2: src/lib/engineering/calculations/solar-sizing.ts ───
+
+// src/lib/engineering/calculations/solar-sizing.ts
+
+import { ENGINEERING_CONSTANTS, getPeakSunHours, roundToStandardSize } from "../constants";
+
+export interface SolarInputs {
+  monthlyBill: number;
+  tariff: number;
+  state: string;
+  roofArea?: number;
+  performanceRatio?: number;
+  panelDegradation?: number;
+  temperatureLoss?: number;
+  dustLoss?: number;
+  shadingLoss?: number;
+  orientationLoss?: number;
+}
+
+export interface SolarStep {
+  label: string;
+  value: string;
+  unit?: string;
+}
+
+export interface SolarResult {
+  recommendedCapacity: number;
+  standardSize: number;
+  dailyGeneration: number;
+  monthlyGeneration: number;
+  monthlySavings: number;
+  areaRequired: number;
+  steps: SolarStep[];
+}
+
+export function calculateSolarSizing(inputs: SolarInputs): SolarResult {
+  const {
+    monthlyBill,
+    tariff,
+    state,
+    performanceRatio = ENGINEERING_CONSTANTS.solar.defaultPerformanceRatio,
+    temperatureLoss = ENGINEERING_CONSTANTS.solar.defaultTemperatureLoss,
+    dustLoss = ENGINEERING_CONSTANTS.solar.defaultDustLoss,
+    shadingLoss = 0,
+    orientationLoss = 0,
+  } = inputs;
+
+  const peakSunHours = getPeakSunHours(state);
+  
+  // Step 1: Monthly consumption
+  const monthlyConsumption = monthlyBill / tariff;
+  
+  // Step 2: Daily consumption
+  const dailyConsumption = monthlyConsumption / 30;
+  
+  // Step 3: Adjusted performance ratio
+  const adjustedPR = performanceRatio * (1 - temperatureLoss) * (1 - dustLoss) * (1 - shadingLoss) * (1 - orientationLoss);
+  
+  // Step 4: Raw capacity needed
+  const rawCapacity = dailyConsumption / (peakSunHours * adjustedPR);
+  
+  // Step 5: Standard size
+  const standardSize = roundToStandardSize(rawCapacity, ENGINEERING_CONSTANTS.solar.standardSizes);
+  
+  // Results
+  const dailyGeneration = standardSize * peakSunHours * adjustedPR;
+  const monthlyGeneration = dailyGeneration * 30;
+  const monthlySavings = monthlyGeneration * tariff;
+  const areaRequired = standardSize * ENGINEERING_CONSTANTS.solar.areaPerKw;
+
+  const steps: SolarStep[] = [
+    { label: "Monthly Bill", value: `₹ ${monthlyBill.toLocaleString()}`, unit: "INR" },
+    { label: "Electricity Tariff", value: `₹ ${tariff}`, unit: "per kWh" },
+    { label: "Monthly Consumption", value: monthlyConsumption.toFixed(1), unit: "kWh" },
+    { label: "Daily Consumption", value: dailyConsumption.toFixed(1), unit: "kWh" },
+    { label: "Peak Sun Hours", value: peakSunHours.toFixed(1), unit: "hours/day" },
+    { label: "Performance Ratio", value: adjustedPR.toFixed(2), unit: "" },
+    { label: "Raw Capacity Needed", value: rawCapacity.toFixed(2), unit: "kW" },
+    { label: "Nearest Standard Size", value: standardSize.toString(), unit: "kW" },
+  ];
+
+  return {
+    recommendedCapacity: rawCapacity,
+    standardSize,
+    dailyGeneration,
+    monthlyGeneration,
+    monthlySavings,
+    areaRequired,
+    steps,
+  };
+}
+
+─── FILE 3: src/lib/engineering/calculations/battery-backup.ts ───
+
+// src/lib/engineering/calculations/battery-backup.ts
+
+import { ENGINEERING_CONSTANTS, getBatteryChemistry, roundToStandardSize } from "../constants";
+import type { BatteryChemistry } from "../constants";
+
+export interface ApplianceLoad {
+  name: string;
+  wattage: number;
+  quantity: number;
+}
+
+export interface BatteryInputs {
+  appliances: ApplianceLoad[];
+  backupHours: number;
+  voltage: number;
+  chemistry: BatteryChemistry;
+  reserveMargin?: number;
+}
+
+export interface BatteryStep {
+  label: string;
+  value: string;
+  unit?: string;
+}
+
+export interface BatteryResult {
+  totalLoad: number;
+  totalEnergy: number;
+  requiredCapacityWh: number;
+  requiredCapacityAh: number;
+  standardCapacityKwh: number;
+  standardCapacityAh: number;
+  actualBackupTime: number;
+  steps: BatteryStep[];
+}
+
+export function calculateBatteryBackup(inputs: BatteryInputs): BatteryResult {
+  const { appliances, backupHours, voltage, chemistry, reserveMargin = 0 } = inputs;
+  
+  const batterySpecs = getBatteryChemistry(chemistry);
+  const dod = batterySpecs.dod;
+  const efficiency = batterySpecs.efficiency;
+
+  // Step 1: Total load
+  const totalLoad = appliances.reduce((sum, app) => sum + (app.wattage * app.quantity), 0);
+  
+  // Step 2: Total energy needed
+  const totalEnergy = totalLoad * backupHours;
+  
+  // Step 3: Account for DoD and efficiency
+  const requiredCapacityWh = totalEnergy / (dod * efficiency);
+  const requiredCapacityAh = requiredCapacityWh / voltage;
+  
+  // Step 4: Add reserve margin
+  const capacityWithReserve = requiredCapacityWh * (1 + reserveMargin);
+  
+  // Step 5: Standard size
+  const standardCapacityKwh = roundToStandardSize(capacityWithReserve / 1000, ENGINEERING_CONSTANTS.battery.standardCapacitiesKwh);
+  const standardCapacityAh = roundToStandardSize(requiredCapacityAh, ENGINEERING_CONSTANTS.battery.standardCapacitiesAh);
+  
+  // Actual backup time
+  const actualBackupTime = (standardCapacityKwh * 1000 * dod * efficiency) / totalLoad;
+
+  const steps: BatteryStep[] = [
+    { label: "Total Load", value: totalLoad.toString(), unit: "W" },
+    { label: "Backup Duration", value: backupHours.toString(), unit: "hours" },
+    { label: "Total Energy Needed", value: totalEnergy.toString(), unit: "Wh" },
+    { label: "Depth of Discharge", value: `${(dod * 100).toFixed(0)}%`, unit: "" },
+    { label: "Battery Efficiency", value: `${(efficiency * 100).toFixed(0)}%`, unit: "" },
+    { label: "Required Capacity", value: requiredCapacityWh.toFixed(0), unit: "Wh" },
+    { label: "Required Capacity", value: requiredCapacityAh.toFixed(0), unit: "Ah" },
+    { label: "Standard Capacity", value: standardCapacityKwh.toString(), unit: "kWh" },
+  ];
+
+  return {
+    totalLoad,
+    totalEnergy,
+    requiredCapacityWh,
+    requiredCapacityAh,
+    standardCapacityKwh,
+    standardCapacityAh,
+    actualBackupTime,
+    steps,
+  };
+}
+
+─── FILE 4: src/lib/engineering/calculations/inverter-sizing.ts ───
+
+// src/lib/engineering/calculations/inverter-sizing.ts
+
+import { ENGINEERING_CONSTANTS, roundToStandardSize } from "../constants";
+
+export interface InverterAppliance {
+  name: string;
+  wattage: number;
+  quantity: number;
+  isMotor?: boolean;
+}
+
+export interface InverterInputs {
+  appliances: InverterAppliance[];
+  futureExpansion: "none" | "low" | "high";
+  powerFactor?: number;
+  surgeFactor?: number;
+  diversityFactor?: number;
+}
+
+export interface InverterStep {
+  label: string;
+  value: string;
+  unit?: string;
+}
+
+export interface InverterResult {
+  runningLoad: number;
+  peakSurgeLoad: number;
+  requiredCapacity: number;
+  standardSize: number;
+  futureHeadroom: number;
+  steps: InverterStep[];
+}
+
+export function calculateInverterSizing(inputs: InverterInputs): InverterResult {
+  const {
+    appliances,
+    futureExpansion,
+    powerFactor = ENGINEERING_CONSTANTS.inverter.powerFactor,
+    surgeFactor = ENGINEERING_CONSTANTS.inverter.surgeFactor,
+    diversityFactor = 1.0,
+  } = inputs;
+
+  const futureFactor = ENGINEERING_CONSTANTS.inverter.futureExpansion[futureExpansion];
+
+  // Step 1: Running load
+  const runningLoad = appliances.reduce((sum, app) => sum + (app.wattage * app.quantity), 0);
+  
+  // Step 2: Surge load (motor starting)
+  const motorLoad = appliances
+    .filter((app) => app.isMotor)
+    .reduce((sum, app) => sum + (app.wattage * app.quantity * surgeFactor), 0);
+  const nonMotorLoad = appliances
+    .filter((app) => !app.isMotor)
+    .reduce((sum, app) => sum + (app.wattage * app.quantity), 0);
+  const peakSurgeLoad = motorLoad + nonMotorLoad;
+  
+  // Step 3: Apply diversity and future expansion
+  const adjustedLoad = Math.max(runningLoad, peakSurgeLoad) * diversityFactor * futureFactor;
+  
+  // Step 4: Convert to kVA
+  const requiredCapacity = adjustedLoad / powerFactor / 1000;
+  
+  // Step 5: Standard size
+  const standardSize = roundToStandardSize(requiredCapacity, ENGINEERING_CONSTANTS.inverter.standardSizes);
+  
+  const futureHeadroom = ((futureFactor - 1) * 100).toFixed(0);
+
+  const steps: InverterStep[] = [
+    { label: "Running Load", value: runningLoad.toString(), unit: "W" },
+    { label: "Peak Surge Load", value: peakSurgeLoad.toString(), unit: "W" },
+    { label: "Diversity Factor", value: diversityFactor.toFixed(2), unit: "" },
+    { label: "Future Expansion", value: `${futureHeadroom}%`, unit: "" },
+    { label: "Required Capacity", value: requiredCapacity.toFixed(2), unit: "kVA" },
+    { label: "Standard Size", value: standardSize.toString(), unit: "kVA" },
+  ];
+
+  return {
+    runningLoad,
+    peakSurgeLoad,
+    requiredCapacity,
+    standardSize,
+    futureHeadroom: parseInt(futureHeadroom),
+    steps,
+  };
+}
+
+─── FILE 5: src/lib/engineering/calculations/cable-sizing.ts ───
+
+// src/lib/engineering/calculations/cable-sizing.ts
+
+import { ENGINEERING_CONSTANTS, roundToStandardSize } from "../constants";
+
+export interface CableInputs {
+  current: number;
+  distance: number;
+  voltage: number;
+  maxVoltageDrop: number;
+  cableType: "copper" | "aluminum";
+  installation: "conduit" | "tray" | "underground" | "aerial";
+  ambientTemperature?: number;
+}
+
+export interface CableStep {
+  label: string;
+  value: string;
+  unit?: string;
+}
+
+export interface CableResult {
+  requiredSize: number;
+  standardSize: number;
+  actualVoltageDrop: number;
+  actualVoltageDropPercent: number;
+  cableAmpacity: number;
+  safetyMargin: number;
+  steps: CableStep[];
+}
+
+export function calculateCableSizing(inputs: CableInputs): CableResult {
+  const {
+    current,
+    distance,
+    voltage,
+    maxVoltageDrop,
+    cableType,
+    installation,
+  } = inputs;
+
+  const resistivity = cableType === "copper" 
+    ? ENGINEERING_CONSTANTS.cable.copperResistivity 
+    : ENGINEERING_CONSTANTS.cable.aluminumResistivity;
+  
+  const derating = ENGINEERING_CONSTANTS.cable.ampacityDerating[installation];
+
+  // Step 1: Calculate required cross-section for voltage drop
+  const maxDropVolts = voltage * (maxVoltageDrop / 100);
+  const requiredSize = (2 * current * distance * resistivity) / maxDropVolts;
+  
+  // Step 2: Round to standard size
+  const standardSize = roundToStandardSize(requiredSize, ENGINEERING_CONSTANTS.cable.standardSizes);
+  
+  // Step 3: Calculate actual voltage drop with standard size
+  const actualVoltageDrop = (2 * current * distance * resistivity) / standardSize;
+  const actualVoltageDropPercent = (actualVoltageDrop / voltage) * 100;
+  
+  // Step 4: Estimate ampacity (simplified)
+  const baseAmpacity = standardSize * 8; // rough estimate: 8A per sq mm
+  const cableAmpacity = baseAmpacity * derating;
+  
+  // Step 5: Safety margin
+  const safetyMargin = ((cableAmpacity - current) / current) * 100;
+
+  const steps: CableStep[] = [
+    { label: "Current", value: current.toString(), unit: "A" },
+    { label: "Distance", value: distance.toString(), unit: "m" },
+    { label: "Voltage", value: voltage.toString(), unit: "V" },
+    { label: "Max Voltage Drop", value: `${maxVoltageDrop}%`, unit: "" },
+    { label: "Resistivity", value: resistivity.toString(), unit: "Ω·mm²/m" },
+    { label: "Required Size", value: requiredSize.toFixed(2), unit: "sq mm" },
+    { label: "Standard Size", value: standardSize.toString(), unit: "sq mm" },
+    { label: "Actual Voltage Drop", value: actualVoltageDropPercent.toFixed(2), unit: "%" },
+  ];
+
+  return {
+    requiredSize,
+    standardSize,
+    actualVoltageDrop,
+    actualVoltageDropPercent,
+    cableAmpacity,
+    safetyMargin,
+    steps,
+  };
+}
+
+─── FILE 6: src/lib/engineering/calculations/roi-calculator.ts ───
+
+// src/lib/engineering/calculations/roi-calculator.ts
+
+import { ENGINEERING_CONSTANTS } from "../constants";
+
+export interface ROIInputs {
+  systemCost: number;
+  systemCapacity: number;
+  electricityTariff: number;
+  annualGeneration?: number;
+  tariffEscalation?: number;
+  maintenanceCost?: number;
+  analysisPeriod?: number;
+}
+
+export interface YearlyData {
+  year: number;
+  generation: number;
+  savings: number;
+  cumulativeSavings: number;
+  maintenance: number;
+  netSavings: number;
+}
+
+export interface ROIStep {
+  label: string;
+  value: string;
+  unit?: string;
+}
+
+export interface ROIResult {
+  paybackPeriod: number;
+  tenYearSavings: number;
+  totalSavings: number;
+  roi: number;
+  npv: number;
+  yearlyData: YearlyData[];
+  steps: ROIStep[];
+}
+
+export function calculateROI(inputs: ROIInputs): ROIResult {
+  const {
+    systemCost,
+    systemCapacity,
+    electricityTariff,
+    annualGeneration,
+    tariffEscalation = ENGINEERING_CONSTANTS.financial.defaultTariffEscalation,
+    maintenanceCost = ENGINEERING_CONSTANTS.financial.defaultMaintenanceCost,
+    analysisPeriod = ENGINEERING_CONSTANTS.financial.defaultAnalysisPeriod,
+  } = inputs;
+
+  const peakSunHours = 5.0; // default
+  const performanceRatio = ENGINEERING_CONSTANTS.solar.defaultPerformanceRatio;
+  
+  // Calculate generation if not provided
+  const actualAnnualGeneration = annualGeneration || (systemCapacity * peakSunHours * 365 * performanceRatio);
+  
+  const yearlyMaintenance = systemCost * maintenanceCost;
+  
+  const yearlyData: YearlyData[] = [];
+  let cumulativeSavings = 0;
+  let paybackPeriod = 0;
+  let paybackFound = false;
+
+  for (let year = 1; year <= analysisPeriod; year++) {
+    const tariff = electricityTariff * Math.pow(1 + tariffEscalation, year - 1);
+    const savings = actualAnnualGeneration * tariff;
+    const netSavings = savings - yearlyMaintenance;
+    cumulativeSavings += netSavings;
+    
+    if (!paybackFound && cumulativeSavings >= systemCost) {
+      paybackPeriod = year - 1 + (systemCost - (cumulativeSavings - netSavings)) / netSavings;
+      paybackFound = true;
+    }
+    
+    yearlyData.push({
+      year,
+      generation: actualAnnualGeneration,
+      savings,
+      cumulativeSavings,
+      maintenance: yearlyMaintenance,
+      netSavings,
+    });
+  }
+
+  const totalSavings = cumulativeSavings;
+  const roi = ((totalSavings - systemCost) / systemCost) * 100;
+  const tenYearSavings = yearlyData.slice(0, 10).reduce((sum, y) => sum + y.netSavings, 0);
+
+  const steps: ROIStep[] = [
+    { label: "System Cost", value: `₹ ${systemCost.toLocaleString()}`, unit: "INR" },
+    { label: "System Capacity", value: systemCapacity.toString(), unit: "kW" },
+    { label: "Annual Generation", value: actualAnnualGeneration.toFixed(0), unit: "kWh" },
+    { label: "Tariff Escalation", value: `${(tariffEscalation * 100).toFixed(0)}%`, unit: "per year" },
+    { label: "Payback Period", value: paybackPeriod.toFixed(1), unit: "years" },
+    { label: "10-Year Savings", value: `₹ ${tenYearSavings.toLocaleString()}`, unit: "INR" },
+    { label: "Total ROI", value: `${roi.toFixed(0)}%`, unit: "" },
+  ];
+
+  return {
+    paybackPeriod,
+    tenYearSavings,
+    totalSavings,
+    roi,
+    npv: 0, // simplified
+    yearlyData,
+    steps,
+  };
+}
+
+─── FILE 7: src/lib/engineering/calculations/ev-charging.ts ───
+
+// src/lib/engineering/calculations/ev-charging.ts
+
+import { ENGINEERING_CONSTANTS, roundToStandardSize } from "../constants";
+
+export interface EVInputs {
+  batterySize: number;
+  dailyCommute: number;
+  efficiency?: number;
+  chargerType: "ac-3.3" | "ac-7.2" | "ac-11" | "ac-22" | "dc-50" | "dc-120";
+  electricityTariff: number;
+  chargingLocation: "home" | "office" | "public";
+}
+
+export interface EVStep {
+  label: string;
+  value: string;
+  unit?: string;
+}
+
+export interface EVResult {
+  dailyEnergyNeeded: number;
+  chargerPower: number;
+  chargingTime: number;
+  dailyCost: number;
+  monthlyCost: number;
+  rangePerHour: number;
+  fullChargeTime: number;
+  standardChargerSize: number;
+  steps: EVStep[];
+}
+
+export function calculateEVCharging(inputs: EVInputs): EVResult {
+  const {
+    batterySize,
+    dailyCommute,
+    efficiency = ENGINEERING_CONSTANTS.ev.defaultEfficiency,
+    chargerType,
+    electricityTariff,
+  } = inputs;
+
+  const chargerPowerMap: Record<string, number> = {
+    "ac-3.3": 3.3,
+    "ac-7.2": 7.2,
+    "ac-11": 11,
+    "ac-22": 22,
+    "dc-50": 50,
+    "dc-120": 120,
+  };
+
+  const chargerPower = chargerPowerMap[chargerType];
+  
+  // Step 1: Daily energy needed
+  const dailyEnergyNeeded = dailyCommute / efficiency;
+  
+  // Step 2: Charging time
+  const chargingTime = dailyEnergyNeeded / chargerPower;
+  
+  // Step 3: Costs
+  const dailyCost = dailyEnergyNeeded * electricityTariff;
+  const monthlyCost = dailyCost * 30;
+  
+  // Step 4: Range per hour
+  const rangePerHour = chargerPower * efficiency;
+  
+  // Step 5: Full charge time
+  const fullChargeTime = batterySize / chargerPower;
+  
+  // Step 6: Standard size
+  const standardChargerSize = roundToStandardSize(chargerPower, ENGINEERING_CONSTANTS.ev.standardChargerSizes);
+
+  const steps: EVStep[] = [
+    { label: "Daily Commute", value: dailyCommute.toString(), unit: "km" },
+    { label: "Vehicle Efficiency", value: efficiency.toString(), unit: "km/kWh" },
+    { label: "Daily Energy Needed", value: dailyEnergyNeeded.toFixed(2), unit: "kWh" },
+    { label: "Charger Power", value: chargerPower.toString(), unit: "kW" },
+    { label: "Charging Time", value: chargingTime.toFixed(2), unit: "hours" },
+    { label: "Daily Cost", value: `₹ ${dailyCost.toFixed(2)}`, unit: "INR" },
+    { label: "Monthly Cost", value: `₹ ${monthlyCost.toFixed(0)}`, unit: "INR" },
+    { label: "Standard Charger", value: standardChargerSize.toString(), unit: "kW" },
+  ];
+
+  return {
+    dailyEnergyNeeded,
+    chargerPower,
+    chargingTime,
+    dailyCost,
+    monthlyCost,
+    rangePerHour,
+    fullChargeTime,
+    standardChargerSize,
+    steps,
+  };
+}
+
+─── FILE 8: src/components/engineering/CalculatorLayout.tsx ───
+
+// src/components/engineering/CalculatorLayout.tsx
+// Shared layout with Basic/Advanced toggle
+
+import { useState } from "react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+
+interface CalculatorLayoutProps {
+  title: string;
+  description: string;
+  children: (mode: "basic" | "advanced") => React.ReactNode;
+  onCalculate: (mode: "basic" | "advanced") => void;
+  result?: React.ReactNode;
+}
+
+export function CalculatorLayout({ title, description, children, onCalculate, result }: CalculatorLayoutProps) {
+  const [mode, setMode] = useState<"basic" | "advanced">("basic");
+
+  return (
+    <div className="container mx-auto max-w-4xl px-4 py-12">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
+        <p className="mt-2 text-muted-foreground">{description}</p>
+      </div>
+
+      {/* Basic / Advanced Toggle */}
+      <div className="mb-6 inline-flex rounded-lg border border-border p-1">
+        <button
+          onClick={() => setMode("basic")}
+          className={cn(
+            "rounded-md px-4 py-2 text-sm font-medium transition-colors",
+            mode === "basic" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+          )}
+        >
+          Basic
+        </button>
+        <button
+          onClick={() => setMode("advanced")}
+          className={cn(
+            "rounded-md px-4 py-2 text-sm font-medium transition-colors",
+            mode === "advanced" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+          )}
+        >
+          Advanced
+        </button>
+      </div>
+
+      {/* Form */}
+      <div className="rounded-xl border border-border bg-card p-6">
+        {children(mode)}
+        
+        <div className="mt-6">
+          <Button onClick={() => onCalculate(mode)} className="w-full">
+            Calculate
+          </Button>
+        </div>
+      </div>
+
+      {/* Results */}
+      {result && (
+        <div className="mt-8">
+          {result}
+        </div>
+      )}
+
+      {/* Disclaimer */}
+      <p className="mt-8 text-xs text-muted-foreground">
+        The calculations provided are engineering estimates based on the information entered by the user and standard design assumptions. 
+        Actual system sizing may vary depending on site conditions, equipment specifications, applicable standards, and local regulations. 
+        Final system design should be verified by a qualified engineer.
+      </p>
+    </div>
+  );
+}
+
+─── FILE 9: src/components/engineering/CalculationSteps.tsx ───
+
+// src/components/engineering/CalculationSteps.tsx
+// Expandable calculation steps
+
+import { useState } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
+
+interface Step {
+  label: string;
+  value: string;
+  unit?: string;
+}
+
+interface CalculationStepsProps {
+  steps: Step[];
+}
+
+export function CalculationSteps({ steps }: CalculationStepsProps) {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <div className="rounded-lg border border-border bg-muted/50">
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="flex w-full items-center justify-between px-4 py-3 text-sm font-medium"
+      >
+        <span>{expanded ? "Hide Calculation Steps" : "Show Calculation Steps"}</span>
+        {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+      </button>
+      
+      {expanded && (
+        <div className="border-t border-border px-4 py-3">
+          <div className="space-y-2">
+            {steps.map((step, index) => (
+              <div key={index} className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">{step.label}</span>
+                <span className="font-medium">
+                  {step.value} {step.unit && <span className="text-muted-foreground">{step.unit}</span>}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+─── FILE 10: src/components/engineering/ResultCard.tsx ───
+
+// src/components/engineering/ResultCard.tsx
+// Displays result with standard size highlighted
+
+import { Button } from "@/components/ui/button";
+import { Download, Printer, Share2 } from "lucide-react";
+
+interface ResultCardProps {
+  title: string;
+  results: { label: string; value: string; unit?: string; highlight?: boolean }[];
+  onDownload?: () => void;
+  onPrint?: () => void;
+  onShare?: () => void;
+}
+
+export function ResultCard({ title, results, onDownload, onPrint, onShare }: ResultCardProps) {
+  return (
+    <div className="rounded-xl border border-border bg-card p-6">
+      <h3 className="mb-4 text-lg font-semibold">{title}</h3>
+      
+      <div className="space-y-3">
+        {results.map((result, index) => (
+          <div
+            key={index}
+            className={cn(
+              "flex items-center justify-between rounded-lg px-4 py-3",
+              result.highlight ? "bg-primary/10" : "bg-muted/50"
+            )}
+          >
+            <span className="text-sm text-muted-foreground">{result.label}</span>
+            <span className={cn("font-semibold", result.highlight && "text-primary")}>
+              {result.value} {result.unit && <span className="text-sm font-normal text-muted-foreground">{result.unit}</span>}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-6 flex gap-2">
+        {onDownload && (
+          <Button variant="outline" size="sm" onClick={onDownload}>
+            <Download className="mr-2 h-4 w-4" />
+            PDF
+          </Button>
+        )}
+        {onPrint && (
+          <Button variant="outline" size="sm" onClick={onPrint}>
+            <Printer className="mr-2 h-4 w-4" />
+            Print
+          </Button>
+        )}
+        {onShare && (
+          <Button variant="outline" size="sm" onClick={onShare}>
+            <Share2 className="mr-2 h-4 w-4" />
+            Share
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+─── FILE 11: src/pages/engineering-tools/index.tsx ───
+
+// src/pages/engineering-tools/index.tsx
+// Hub page for all calculators
+
+import { Link } from "wouter";
+import { CalculatorLayout } from "@/components/engineering/CalculatorLayout";
+import { Sun, Battery, Zap, Cable, TrendingUp, Car } from "lucide-react";
+
+const calculators = [
+  {
+    id: "solar-sizing",
+    title: "Solar Sizing Calculator",
+    description: "Calculate the right solar capacity for your home or business based on electricity consumption and location.",
+    icon: Sun,
+    href: "/engineering-tools/solar-sizing",
+  },
+  {
+    id: "battery-backup",
+    title: "Battery Backup Calculator",
+    description: "Size your battery bank for reliable backup power during outages.",
+    icon: Battery,
+    href: "/engineering-tools/battery-backup",
+  },
+  {
+    id: "inverter-sizing",
+    title: "Inverter Sizing Calculator",
+    description: "Select the right inverter capacity for your load requirements.",
+    icon: Zap,
+    href: "/engineering-tools/inverter-sizing",
+  },
+  {
+    id: "cable-sizing",
+    title: "Cable Sizing Calculator",
+    description: "Calculate the correct cable gauge for your electrical installation.",
+    icon: Cable,
+    href: "/engineering-tools/cable-sizing",
+  },
+  {
+    id: "roi-calculator",
+    title: "ROI Calculator",
+    description: "Estimate payback period, savings, and return on investment for your solar system.",
+    icon: TrendingUp,
+    href: "/engineering-tools/roi-calculator",
+  },
+  {
+    id: "ev-charging",
+    title: "EV Charging Calculator",
+    description: "Calculate charger capacity, charging time, and running costs for electric vehicles.",
+    icon: Car,
+    href: "/engineering-tools/ev-charging",
+  },
+];
+
+export default function EngineeringToolsHub() {
+  return (
+    <div className="container mx-auto px-4 py-12">
+      <div className="mb-12 text-center">
+        <h1 className="text-4xl font-bold tracking-tight">Engineering Tools</h1>
+        <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
+          Professional calculators for solar, battery, inverter, cable, ROI, and EV system design. 
+          Brand-independent engineering reference tools.
+        </p>
+      </div>
+
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {calculators.map((calc) => (
+          <Link key={calc.id} href={calc.href}>
+            <a className="group rounded-xl border border-border bg-card p-6 transition-all hover:shadow-md">
+              <calc.icon className="h-10 w-10 text-primary" />
+              <h3 className="mt-4 text-xl font-semibold group-hover:text-primary">
+                {calc.title}
+              </h3>
+              <p className="mt-2 text-sm text-muted-foreground">
+                {calc.description}
+              </p>
+            </a>
+          </Link>
+        ))}
+      </div>
+
+      <div className="mt-12 rounded-lg border border-border bg-muted/50 p-6 text-center">
+        <p className="text-sm text-muted-foreground">
+          All calculators use standard engineering practices and are brand-independent. 
+          Results should be verified by a qualified engineer.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+─── FILE 12: src/pages/engineering-tools/solar-sizing.tsx ───
+
+// src/pages/engineering-tools/solar-sizing.tsx
+// Example calculator page — Solar Sizing
+
+import { useState } from "react";
+import { CalculatorLayout } from "@/components/engineering/CalculatorLayout";
+import { CalculationSteps } from "@/components/engineering/CalculationSteps";
+import { ResultCard } from "@/components/engineering/ResultCard";
+import { calculateSolarSizing, type SolarInputs, type SolarResult } from "@/lib/engineering/calculations/solar-sizing";
+import { ENGINEERING_CONSTANTS } from "@/lib/engineering/constants";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
+const STATES = Object.keys(ENGINEERING_CONSTANTS.solar.peakSunHours);
+
+export default function SolarSizingCalculator() {
+  const [result, setResult] = useState<SolarResult | null>(null);
+  const [inputs, setInputs] = useState<Partial<SolarInputs>>({});
+
+  const handleCalculate = (mode: "basic" | "advanced") => {
+    const calculationInputs: SolarInputs = {
+      monthlyBill: Number(inputs.monthlyBill) || 0,
+      tariff: Number(inputs.tariff) || 7,
+      state: inputs.state || "Uttar Pradesh",
+      performanceRatio: mode === "advanced" ? Number(inputs.performanceRatio) : undefined,
+      temperatureLoss: mode === "advanced" ? Number(inputs.temperatureLoss) : undefined,
+      dustLoss: mode === "advanced" ? Number(inputs.dustLoss) : undefined,
+    };
+
+    const calcResult = calculateSolarSizing(calculationInputs);
+    setResult(calcResult);
+  };
+
+  return (
+    <CalculatorLayout
+      title="Solar Sizing Calculator"
+      description="Calculate the right solar capacity for your electricity needs."
+      onCalculate={handleCalculate}
+      result={result && (
+        <div className="space-y-6">
+          <ResultCard
+            title="Results"
+            results={[
+              { label: "Recommended Solar Capacity", value: result.standardSize.toString(), unit: "kW", highlight: true },
+              { label: "Estimated Daily Generation", value: result.dailyGeneration.toFixed(1), unit: "kWh" },
+              { label: "Estimated Monthly Generation", value: result.monthlyGeneration.toFixed(0), unit: "kWh" },
+              { label: "Estimated Monthly Savings", value: `₹ ${result.monthlySavings.toFixed(0)}`, unit: "INR" },
+              { label: "Roof Area Required", value: result.areaRequired.toFixed(0), unit: "sq ft" },
+            ]}
+          />
+          <CalculationSteps steps={result.steps} />
+        </div>
+      )}
+    >
+      {(mode) => (
+        <div className="space-y-4">
+          <div>
+            <Label>Monthly Electricity Bill (₹) *</Label>
+            <Input
+              type="number"
+              placeholder="8000"
+              value={inputs.monthlyBill || ""}
+              onChange={(e) => setInputs({ ...inputs, monthlyBill: e.target.value })}
+            />
+          </div>
+
+          <div>
+            <Label>State *</Label>
+            <select
+              className="w-full rounded-md border border-input px-3 py-2"
+              value={inputs.state || ""}
+              onChange={(e) => setInputs({ ...inputs, state: e.target.value })}
+            >
+              <option value="">Select state...</option>
+              {STATES.map((state) => (
+                <option key={state} value={state}>{state}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <Label>Average Electricity Tariff (₹/kWh)</Label>
+            <Input
+              type="number"
+              step="0.1"
+              placeholder="7.0"
+              value={inputs.tariff || ""}
+              onChange={(e) => setInputs({ ...inputs, tariff: e.target.value })}
+            />
+          </div>
+
+          {mode === "advanced" && (
+            <>
+              <div>
+                <Label>Performance Ratio</Label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  placeholder="0.80"
+                  value={inputs.performanceRatio || ""}
+                  onChange={(e) => setInputs({ ...inputs, performanceRatio: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label>Temperature Loss (%)</Label>
+                <Input
+                  type="number"
+                  placeholder="10"
+                  value={inputs.temperatureLoss || ""}
+                  onChange={(e) => setInputs({ ...inputs, temperatureLoss: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label>Dust/Soiling Loss (%)</Label>
+                <Input
+                  type="number"
+                  placeholder="5"
+                  value={inputs.dustLoss || ""}
+                  onChange={(e) => setInputs({ ...inputs, dustLoss: e.target.value })}
+                />
+              </div>
+            </>
+          )}
+        </div>
+      )}
+    </CalculatorLayout>
+  );
+}
+
+─── FILE 13: Route additions in src/App.tsx ───
+
+// Add to your router:
+<Route path="/engineering-tools" component={EngineeringToolsHub} />
+<Route path="/engineering-tools/solar-sizing" component={SolarSizingCalculator} />
+<Route path="/engineering-tools/battery-backup" component={BatteryBackupCalculator} />
+<Route path="/engineering-tools/inverter-sizing" component={InverterSizingCalculator} />
+<Route path="/engineering-tools/cable-sizing" component={CableSizingCalculator} />
+<Route path="/engineering-tools/roi-calculator" component={ROICalculator} />
+<Route path="/engineering-tools/ev-charging" component={EVChargingCalculator} />
+
+─── ACCEPTANCE CRITERIA ───
+
+1. All 6 calculators use configurable constants from single file
+2. Basic/Advanced toggle on every calculator
+3. Calculation steps expandable and transparent
+4. Results show standard market sizes highlighted
+5. Download PDF, Print, Share buttons on results
+6. Strengthened disclaimer on every calculator
+7. Hub page at /engineering-tools with all 6 calculators
+8. No product recommendations, no brand mentions
+9. Mobile-first, WCAG accessible
+10. TypeScript clean, no errors
+
+Return all files listed above.
