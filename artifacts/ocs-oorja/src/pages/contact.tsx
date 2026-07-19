@@ -3,6 +3,7 @@ import { SITE } from "@/data/site";
 import { Container } from "@/components/layout/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import ContactForm from "@/components/contact/ContactForm";
+import { FindUs } from "@/components/contact/FindUs";
 import { Phone, Mail, MapPin } from "lucide-react";
 import { BRAND, HEADLINES, CONTACT } from "@/data/brand";
 import { getBreadcrumbSchema, renderJsonLd } from "@/lib/seo";
@@ -51,6 +52,8 @@ export default function ContactPage() {
                 <p>Commercial Unit No. 304 on 3rd Floor Royal Plaza, Block-3 in IT Park-2, at Sushant Golf City, Lucknow</p>
               </div>
             </div>
+
+            <FindUs />
           </div>
 
           {/* Form column */}

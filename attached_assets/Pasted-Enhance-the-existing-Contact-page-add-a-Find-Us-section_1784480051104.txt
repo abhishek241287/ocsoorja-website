@@ -1,0 +1,69 @@
+Enhance the existing Contact page — add a "Find Us" section below the Office card.
+DO NOT create a new page. Keep layout and contact form unchanged.
+─── FILE 1: src/components/contact/FindUs.tsx (NEW FILE) ───
+// src/components/contact/FindUs.tsx
+// "Find Us" — embedded Google Map + Get Directions button.
+// ⚠️ Update OFFICE below with the exact address (or lat,lng) once — both the
+//    map pin and the directions link use it automatically.
+import { MapPin, Compass } from "lucide-react";
+const OFFICE = {
+name: "OCS OORJA Green Private Limited",
+// Replace with the full street address, or exact "26.8467,80.9462" style coordinates.
+// Exact coordinates = most precise pin. To get them: Google Maps → right-click the pin → copy numbers.
+address: "City Park, Lucknow, Uttar Pradesh, India",
+};
+const q = encodeURIComponent(OFFICE.address);
+const EMBED_URL = https://www.google.com/maps?q=${q}&z=16&output=embed;
+const DIRECTIONS_URL = https://www.google.com/maps/dir/?api=1&destination=${q};
+export function FindUs() {
+return (
+<section className="mt-8"><div className="mb-4 flex items-center gap-3"><div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10"><MapPin className="h-5 w-5 text-primary" />
+<div><h2 className="text-xl font-semibold tracking-tight">
+<p className="text-sm text-muted-foreground">
+
+plain
+  {/* Map — responsive 16:10, rounded corners, subtle gold-ringed border */}
+  <div className="relative overflow-hidden rounded-2xl border border-border shadow-sm ring-1 ring-[#C9A227]/20">
+    <div className="aspect-[16/10] w-full sm:aspect-[16/9] lg:aspect-[4/3]">
+      <iframe
+        title="OCS OORJA office location — Google Map"
+        src={EMBED_URL}
+        loading="lazy"
+        referrerPolicy="no-referrer-when-downgrade"
+        allowFullScreen
+        className="h-full w-full border-0"
+      />
+    </div>
+  </div>
+
+  {/* Get Directions — premium green→gold button */}
+  <a
+    href={DIRECTIONS_URL}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="group mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground shadow-md transition-all hover:-translate-y-0.5 hover:shadow-lg hover:ring-2 hover:ring-[#C9A227]/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C9A227]"
+  >
+    <Compass className="h-4 w-4 transition-transform group-hover:rotate-12" />
+    Get Directions
+  </a>
+</section>
+);
+}
+─── FILE 2: src/pages/contact.tsx (ONE SMALL EDIT — existing page) ───
+// 1. Add the import at the top of your existing Contact page:
+import { FindUs } from "@/components/contact/FindUs";
+// 2. In the LEFT column, directly BELOW the existing "Office" information card,
+//    render the component — nothing else on the page changes:
+//
+//    <div>
+─── NOTES ───
+• No API key required — uses the standard google.com/maps embed, so zoom,
+pan, and the office pin all work out of the box.
+• If the pin is slightly off with the text address, paste exact coordinates
+into OFFICE.address (e.g. "26.8467,80.9462") — pin and directions both
+become exact.
+• If you later prefer your brand-styled map (green/gold theme), swap the
+iframe for Google Maps JavaScript API with a custom style — that needs an
+API key; the embed above stays free forever.
+• The gold accent uses #C9A227 — if your theme defines a gold token
+(e.g. text-accent / ring-accent), replace the hex values with that token.
