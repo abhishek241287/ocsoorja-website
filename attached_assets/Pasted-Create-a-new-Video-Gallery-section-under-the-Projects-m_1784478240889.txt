@@ -1,0 +1,678 @@
+Create a new "Video Gallery" section under the Projects menu — media gallery only.
+RULES:
+Uploads: MP4, MOV, AVI, MKV, WEBM · plus YouTube and Vimeo links
+Responsive cards: thumbnail, play button, title (featured badge + duration)
+Click → fullscreen lightbox; uploads stream via HTTP Range (no full download);
+native controls = seek bar, volume, fullscreen, playback speed, PiP
+Search by title, lazy thumbnails, infinite scroll, mobile responsive,
+auto-generated thumbnails, "No videos available" empty state
+Admin: upload, add embed URL, edit title/description/category, delete,
+drag-and-drop reorder, mark Featured (featured always on top)
+Integrates with the existing admin panel — future videos need zero code changes
+Stack assumed: React + wouter + shadcn/ui + Tailwind, Express + Drizzle/Postgres
+Return the following files:
+─── FILE 1: shared/schema.ts (ADD to existing file) ───
+// Add this table to your existing shared/schema.ts
+// Then run: npm run db:push
+import { pgTable, serial, text, boolean, integer, timestamp } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod";
+export const videos = pgTable("videos", {
+id: serial("id").primaryKey(),
+title: text("title").notNull(),
+description: text("description"),
+category: text("category").notNull().default("General"),
+type: text("type").notNull(),                    // "upload" | "youtube" | "vimeo"
+url: text("url").notNull(),                      // "/uploads/videos/xxx.mp4" OR full YouTube/Vimeo URL
+thumbnail: text("thumbnail"),                    // "/uploads/thumbs/xxx.jpg" OR auto-fetched embed thumb
+duration: text("duration"),                      // optional display string e.g. "3:42"
+featured: boolean("featured").notNull().default(false),
+sortOrder: integer("sort_order").notNull().default(0),
+createdAt: timestamp("created_at").defaultNow(),
+});
+export const insertVideoSchema = createInsertSchema(videos).omit({ id: true, createdAt: true });
+export type InsertVideo = z.infer<typeof insertVideoSchema>
+// ─── Shared helpers (used by both server routes and client) ───
+export function parseVideoUrl(url: string): { type: "youtube" | "vimeo" | null; embedUrl: string | null; id: string | null } {
+// YouTube: watch?v=, youtu.be/, /shorts/, /embed/
+const yt = url.match(/(?:youtube.com/(?:watch?v=|shorts/|embed/)|youtu.be/)([\w-]{6,})/);
+if (yt) return { type: "youtube", id: yt[1], embedUrl: https://www.youtube.com/embed/${yt[1]} };
+// Vimeo: vimeo.com/12345678
+const vm = url.match(/vimeo.com/(\d+)/);
+if (vm) return { type: "vimeo", id: vm[1], embedUrl: https://player.vimeo.com/video/${vm[1]} };
+return { type: null, id: null, embedUrl: null };
+}
+export function getEmbedThumbnail(type: "youtube" | "vimeo", id: string): string {
+// YouTube thumbnails are served directly. Vimeo requires the oEmbed API —
+// the server route fetches it at creation time and stores the result.
+if (type === "youtube") return https://img.youtube.com/vi/${id}/hqdefault.jpg;
+return ""; // vimeo: filled in by server
+}
+export const VIDEO_CATEGORIES = ["General", "Projects", "Installations", "Testimonials", "Events", "Behind the Scenes"] as const;
+─── FILE 2: server/routes/videos.ts (NEW FILE) ───
+// server/routes/videos.ts
+// Video gallery API: CRUD + upload + drag-drop reorder + HTTP Range streaming.
+// Register in server/routes.ts:  app.use("/api/videos", videoRoutes);
+import { Router } from "express";
+import multer from "multer";
+import path from "path";
+import fs from "fs";
+import { db } from "../db";                          // your existing drizzle instance
+import { videos, insertVideoSchema, parseVideoUrl } from "../../shared/schema";
+import { eq, asc, desc, ilike, sql } from "drizzle-orm";
+const router = Router();
+// ─── Upload setup ───
+const UPLOAD_DIR = path.join(process.cwd(), "uploads", "videos");
+const THUMB_DIR = path.join(process.cwd(), "uploads", "thumbs");
+for (const dir of [UPLOAD_DIR, THUMB_DIR]) fs.mkdirSync(dir, { recursive: true });
+const ALLOWED_EXT = [".mp4", ".mov", ".avi", ".mkv", ".webm"];
+const upload = multer({
+storage: multer.diskStorage({
+destination: UPLOAD_DIR,
+filename: (_req, file, cb) => {
+const safe = ${Date.now()}-${file.originalname.replace(/[^\w.-]/g, "_")};
+cb(null, safe);
+},
+}),
+limits: { fileSize: 1024 * 1024 * 1024 }, // 1 GB cap — adjust as needed
+fileFilter: (_req, file, cb) => {
+const ext = path.extname(file.originalname).toLowerCase();
+if (ALLOWED_EXT.includes(ext)) cb(null, true);
+else cb(new Error(Unsupported format. Allowed: ${ALLOWED_EXT.join(", ")}));
+},
+});
+const thumbUpload = multer({
+storage: multer.diskStorage({
+destination: THUMB_DIR,
+filename: (_req, file, cb) => cb(null, ${Date.now()}-thumb.jpg),
+}),
+limits: { fileSize: 5 * 1024 * 1024 },
+});
+// ─── Auth guard: reuse your existing admin middleware ───
+// import { requireAdmin } from "../middleware/auth";  // ← use whatever your admin panel uses
+const requireAdmin = (_req: any, _res: any, next: any) => next(); // REPLACE with real middleware
+// ═══ PUBLIC ═══
+// GET /api/videos?search=&category=&page=&limit=
+// Featured first, then manual sortOrder, then newest.
+router.get("/", async (req, res) => {
+const { search = "", category = "", page = "1", limit = "12" } = req.query as Record<string, string>;
+const pageNum = Math.max(1, parseInt(page));
+const limitNum = Math.min(50, Math.max(1, parseInt(limit)));
+const conditions = [];
+if (search) conditions.push(ilike(videos.title, %${search}%));
+if (category && category !== "All") conditions.push(eq(videos.category, category));
+const where = conditions.length ? sql${sql.join(conditions, sql AND )} : undefined;
+const [rows, [{ count }]] = await Promise.all([
+db.select().from(videos).where(where)
+.orderBy(desc(videos.featured), asc(videos.sortOrder), desc(videos.createdAt))
+.limit(limitNum).offset((pageNum - 1) * limitNum),
+db.select({ count: sql<number>
+res.json({ videos: rows, total: count, page: pageNum, hasMore: pageNum * limitNum < count });
+});
+// GET /api/videos/stream/:filename — HTTP Range streaming (seek without full download)
+router.get("/stream/:filename", (req, res) => {
+const filename = path.basename(req.params.filename); // prevent path traversal
+const filePath = path.join(UPLOAD_DIR, filename);
+if (!fs.existsSync(filePath)) return res.status(404).json({ error: "Video not found" });
+const stat = fs.statSync(filePath);
+const range = req.headers.range;
+const ext = path.extname(filename).toLowerCase();
+const mime: Record<string, string> = {
+".mp4": "video/mp4", ".webm": "video/webm", ".mov": "video/quicktime",
+".avi": "video/x-msvideo", ".mkv": "video/x-matroska",
+};
+const contentType = mime[ext] || "application/octet-stream";
+if (!range) {
+res.writeHead(200, { "Content-Length": stat.size, "Content-Type": contentType, "Accept-Ranges": "bytes" });
+return fs.createReadStream(filePath).pipe(res);
+}
+const [startStr, endStr] = range.replace(/bytes=/, "").split("-");
+const start = parseInt(startStr, 10);
+const end = endStr ? parseInt(endStr, 10) : stat.size - 1;
+if (start >= stat.size) return res.status(416).set("Content-Range", bytes */${stat.size}).end();
+res.writeHead(206, {
+"Content-Range": bytes ${start}-${end}/${stat.size},
+"Accept-Ranges": "bytes",
+"Content-Length": end - start + 1,
+"Content-Type": contentType,
+});
+fs.createReadStream(filePath, { start, end }).pipe(res);
+});
+// ═══ ADMIN ═══
+// POST /api/videos/upload — multipart: video file + optional thumbnail (client-generated) + fields
+router.post("/upload", requireAdmin, upload.single("video"), async (req, res) => {
+if (!req.file) return res.status(400).json({ error: "No video file provided" });
+const { title, description = "", category = "General", duration = "" } = req.body;
+const thumbnail = req.body.thumbnailPath || null;
+const [{ maxOrder }] = await db.select({ maxOrder: sql<number>
+// POST /api/videos/upload-thumbnail — client-captured thumbnail (canvas snapshot)
+router.post("/upload-thumbnail", requireAdmin, thumbUpload.single("thumbnail"), (req, res) => {
+if (!req.file) return res.status(400).json({ error: "No thumbnail provided" });
+res.json({ path: /uploads/thumbs/${req.file.filename} });
+});
+// POST /api/videos/embed — add a YouTube or Vimeo link
+router.post("/embed", requireAdmin, async (req, res) => {
+const parsed = insertVideoSchema.pick({ title: true }).safeParse(req.body);
+const { title, description = "", category = "General", url } = req.body;
+if (!title || !url) return res.status(400).json({ error: "title and url are required" });
+const info = parseVideoUrl(url);
+if (!info.type || !info.id) return res.status(400).json({ error: "Not a valid YouTube or Vimeo URL" });
+let thumbnail = "";
+if (info.type === "youtube") {
+thumbnail = https://img.youtube.com/vi/${info.id}/hqdefault.jpg;
+} else {
+try { // Vimeo oEmbed
+const r = await fetch(https://vimeo.com/api/oembed.json?url=${encodeURIComponent(url)});
+if (r.ok) thumbnail = (await r.json()).thumbnail_url ?? "";
+} catch { /* thumbnail optional */ }
+}
+const [{ maxOrder }] = await db.select({ maxOrder: sql<number>
+// PATCH /api/videos/:id — edit title, description, category, featured
+router.patch("/:id", requireAdmin, async (req, res) => {
+const id = parseInt(req.params.id);
+const allowed = (({ title, description, category, featured, duration }) =>
+({ title, description, category, featured, duration }))(req.body);
+const clean = Object.fromEntries(Object.entries(allowed).filter(([, v]) => v !== undefined));
+const [video] = await db.update(videos).set(clean).where(eq(videos.id, id)).returning();
+if (!video) return res.status(404).json({ error: "Not found" });
+res.json(video);
+});
+// PUT /api/videos/reorder — drag-and-drop result: { orderedIds: number[] }
+router.put("/reorder", requireAdmin, async (req, res) => {
+const { orderedIds } = req.body as { orderedIds: number[] };
+if (!Array.isArray(orderedIds)) return res.status(400).json({ error: "orderedIds required" });
+await db.transaction(async (tx) => {
+for (let i = 0; i < orderedIds.length; i++) {
+await tx.update(videos).set({ sortOrder: i }).where(eq(videos.id, orderedIds[i]));
+}
+});
+res.json({ ok: true });
+});
+// DELETE /api/videos/:id — removes DB row + uploaded file/thumb if local
+router.delete("/:id", requireAdmin, async (req, res) => {
+const id = parseInt(req.params.id);
+const [video] = await db.delete(videos).where(eq(videos.id, id)).returning();
+if (!video) return res.status(404).json({ error: "Not found" });
+for (const p of [video.url, video.thumbnail]) {
+if (p && p.startsWith("/api/videos/stream/")) {
+const f = path.join(UPLOAD_DIR, path.basename(p));
+if (fs.existsSync(f)) fs.unlinkSync(f);
+} else if (p && p.startsWith("/uploads/")) {
+const f = path.join(process.cwd(), p);
+if (fs.existsSync(f)) fs.unlinkSync(f);
+}
+}
+res.json({ ok: true });
+});
+export default router;
+─── ALSO: serve thumbnails statically (one line in server/index.ts) ───
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+─── FILE 3: src/pages/projects/video-gallery.tsx (NEW FILE — public gallery) ───
+// src/pages/projects/video-gallery.tsx
+// Public Video Gallery under Projects. Featured first, infinite scroll, search, lightbox.
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { Search, Play, Star, Film } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+import type { Video } from "@shared/schema";
+import { VIDEO_CATEGORIES, parseVideoUrl } from "@shared/schema";
+const PAGE_SIZE = 12;
+// ─── Fetch ───
+function useVideos(search: string, category: string) {
+return useInfiniteQuery({
+queryKey: ["videos", search, category],
+queryFn: async ({ pageParam = 1 }) => {
+const params = new URLSearchParams({ page: String(pageParam), limit: String(PAGE_SIZE) });
+if (search) params.set("search", search);
+if (category && category !== "All") params.set("category", category);
+const r = await fetch(/api/videos?${params});
+if (!r.ok) throw new Error("Failed to load videos");
+return r.json() as Promise<{ videos: Video[]; hasMore: boolean }>;
+},
+getNextPageParam: (last, pages) => (last.hasMore ? pages.length + 1 : undefined),
+initialPageParam: 1,
+});
+}
+export default function VideoGalleryPage() {
+const [searchInput, setSearchInput] = useState("");
+const [search, setSearch] = useState("");           // debounced
+const [category, setCategory] = useState("All");
+const [activeVideo, setActiveVideo] = useState<Video | null>(null);
+const loadMoreRef = useRef<HTMLDivElement>
+useEffect(() => {
+const t = setTimeout(() => setSearch(searchInput), 350);
+return () => clearTimeout(t);
+}, [searchInput]);
+const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useVideos(search, category);
+const videos = useMemo(() => data?.pages.flatMap((p) => p.videos) ?? [], [data]);
+// Infinite scroll
+useEffect(() => {
+const el = loadMoreRef.current;
+if (!el) return;
+const obs = new IntersectionObserver(
+(entries) => entries[0].isIntersecting && hasNextPage && !isFetchingNextPage && fetchNextPage(),
+{ rootMargin: "400px" }
+);
+obs.observe(el);
+return () => obs.disconnect();
+}, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+return (
+<div className="container mx-auto max-w-7xl px-4 py-12"><div className="mb-8"><p className="text-sm font-medium uppercase tracking-widest text-primary">
+<h1 className="mt-1 text-3xl font-bold tracking-tight sm:text-4xl">
+<p className="mt-2 max-w-2xl text-muted-foreground">
+plain
+  {/* Search + categories */}
+  <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="relative w-full sm:max-w-xs">
+      <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+      <Input
+        placeholder="Search videos by title…"
+        value={searchInput}
+        onChange={(e) => setSearchInput(e.target.value)}
+        className="pl-9"
+      />
+    </div>
+    <div className="flex flex-wrap gap-2">
+      {["All", ...VIDEO_CATEGORIES].map((c) => (
+        <button
+          key={c}
+          onClick={() => setCategory(c)}
+          className={cn(
+            "rounded-full border px-3 py-1 text-xs font-medium transition-colors",
+            category === c
+              ? "border-primary bg-primary text-primary-foreground"
+              : "border-border text-muted-foreground hover:text-foreground"
+          )}
+        >
+          {c}
+        </button>
+      ))}
+    </div>
+  </div>
+
+  {/* Grid */}
+  {isLoading ? (
+    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <div key={i} className="aspect-video animate-pulse rounded-xl bg-muted" />
+      ))}
+    </div>
+  ) : videos.length === 0 ? (
+    <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border py-24 text-center">
+      <Film className="h-10 w-10 text-muted-foreground/50" />
+      <p className="mt-4 text-lg font-medium">No videos available</p>
+      <p className="mt-1 text-sm text-muted-foreground">
+        {search ? "Try a different search term." : "Check back soon."}
+      </p>
+    </div>
+  ) : (
+    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {videos.map((video) => (
+        <VideoCard key={video.id} video={video} onPlay={() => setActiveVideo(video)} />
+      ))}
+    </div>
+  )}
+
+  {/* Infinite scroll sentinel */}
+  <div ref={loadMoreRef} className="h-1" />
+  {isFetchingNextPage && (
+    <p className="mt-6 text-center text-sm text-muted-foreground">Loading more videos…</p>
+  )}
+
+  {/* Lightbox */}
+  {activeVideo && <VideoLightbox video={activeVideo} onClose={() => setActiveVideo(null)} />}
+</div>
+);
+}
+// ─── Card ───
+function VideoCard({ video, onPlay }: { video: Video; onPlay: () => void }) {
+const [imgLoaded, setImgLoaded] = useState(false);
+return (
+<button
+   onClick={onPlay}
+   className="group overflow-hidden rounded-xl border border-border bg-card text-left transition-all hover:-translate-y-0.5 hover:shadow-lg"
+ ><div className="relative aspect-video bg-muted"><div className="flex h-full items-center justify-center"><Film className="h-10 w-10 text-muted-foreground/40" />
+)}
+plain
+    {/* Play button */}
+    <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors group-hover:bg-black/30">
+      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/90 text-primary-foreground opacity-90 shadow-lg transition-transform group-hover:scale-110">
+        <Play className="ml-0.5 h-6 w-6 fill-current" />
+      </div>
+    </div>
+
+    {video.featured && (
+      <span className="absolute left-3 top-3 flex items-center gap-1 rounded-full bg-primary px-2.5 py-1 text-[11px] font-semibold text-primary-foreground">
+        <Star className="h-3 w-3 fill-current" /> Featured
+      </span>
+    )}
+    {video.duration && (
+      <span className="absolute bottom-3 right-3 rounded bg-black/70 px-1.5 py-0.5 text-[11px] font-medium text-white">
+        {video.duration}
+      </span>
+    )}
+  </div>
+
+  <div className="p-4">
+    <h3 className="line-clamp-1 font-semibold group-hover:text-primary">{video.title}</h3>
+    {video.description && (
+      <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{video.description}</p>
+    )}
+    <span className="mt-2 inline-block rounded-full bg-muted px-2 py-0.5 text-[11px] text-muted-foreground">
+      {video.category}
+    </span>
+  </div>
+</button>
+);
+}
+// ─── Lightbox ───
+// Uploads: <video controls>
+const embed = video.type !== "upload" ? parseVideoUrl(video.url) : null;
+return (
+<div
+   className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+   onClick={onClose}
+   role="dialog"
+   aria-modal="true"
+ ><div className="mb-3 flex items-center justify-between text-white"><h3 className="truncate pr-4 text-lg font-semibold">
+<button onClick={onClose} className="rounded-full bg-white/10 px-3 py-1.5 text-sm hover:bg-white/20">
+plain
+    <div className="aspect-video w-full overflow-hidden rounded-xl bg-black">
+      {video.type === "upload" ? (
+        <video
+          src={video.url}
+          controls
+          autoPlay
+          playsInline
+          controlsList="nodownload"
+          className="h-full w-full"
+        />
+      ) : (
+        <iframe
+          src={`${embed?.embedUrl}?autoplay=1`}
+          title={video.title}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+          allowFullScreen
+          className="h-full w-full border-0"
+        />
+      )}
+    </div>
+
+    {video.description && (
+      <p className="mt-3 text-sm text-white/70">{video.description}</p>
+    )}
+  </div>
+</div>
+);
+}
+─── ROUTING (wouter) ───
+// In your router file:
+//   import VideoGalleryPage from "@/pages/projects/video-gallery";
+//   <Route path="/projects/videos" component={VideoGalleryPage} />
+─── NAVIGATION (Projects menu) ───
+// In your header/nav component, add under the Projects dropdown:
+//   { label: "Video Gallery", href: "/projects/videos" }
+─── FILE 4: src/pages/admin/videos.tsx (NEW FILE — admin management) ───
+// src/pages/admin/videos.tsx
+// Admin: upload videos, add YouTube/Vimeo links, edit, delete, feature, drag-drop reorder.
+// Mount inside your existing admin layout/route: <Route path="/admin/videos" component={AdminVideos} />
+import { useRef, useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+import {
+Upload, Link2, Pencil, Trash2, Star, GripVertical, Film, X,
+} from "lucide-react";
+import type { Video } from "@shared/schema";
+import { VIDEO_CATEGORIES } from "@shared/schema";
+// ─── Client-side thumbnail capture (no ffmpeg needed) ───
+// Grabs a frame ~1s into the video via canvas and uploads it as JPEG.
+async function captureThumbnail(file: File): Promise<string | null> {
+try {
+const url = URL.createObjectURL(file);
+const video = document.createElement("video");
+video.muted = true; video.playsInline = true; video.src = url;
+await new Promise<void>
+async function getDuration(file: File): Promise<string>
+export default function AdminVideos() {
+const qc = useQueryClient();
+const { data, isLoading } = useQuery({
+queryKey: ["admin-videos"],
+queryFn: async () => (await fetch("/api/videos?limit=50")).json() as Promise<{ videos: Video[] }>,
+});
+const videos = data?.videos ?? [];
+const invalidate = () => {
+qc.invalidateQueries({ queryKey: ["admin-videos"] });
+qc.invalidateQueries({ queryKey: ["videos"] }); // public gallery
+};
+// ─── Upload form state ───
+const fileRef = useRef<HTMLInputElement>
+const uploadMutation = useMutation({
+mutationFn: async (file: File) => {
+const [thumbnailPath, duration] = await Promise.all([captureThumbnail(file), getDuration(file)]);
+const fd = new FormData();
+fd.append("video", file);
+fd.append("title", uploadTitle || file.name.replace(/.[^.]+$/, ""));
+fd.append("category", uploadCategory);
+fd.append("duration", duration);
+if (thumbnailPath) fd.append("thumbnailPath", thumbnailPath);
+const r = await fetch("/api/videos/upload", { method: "POST", body: fd });
+if (!r.ok) throw new Error((await r.json()).error || "Upload failed");
+return r.json();
+},
+onSuccess: () => { invalidate(); setUploadTitle(""); if (fileRef.current) fileRef.current.value = ""; },
+});
+const embedMutation = useMutation({
+mutationFn: async () => {
+const r = await fetch("/api/videos/embed", {
+method: "POST",
+headers: { "Content-Type": "application/json" },
+body: JSON.stringify({ title: embedTitle, url: embedUrl, category: embedCategory }),
+});
+if (!r.ok) throw new Error((await r.json()).error || "Failed");
+return r.json();
+},
+onSuccess: () => { invalidate(); setEmbedUrl(""); setEmbedTitle(""); },
+});
+const patchMutation = useMutation({
+mutationFn: async ({ id, ...patch }: Partial<Video>
+const deleteMutation = useMutation({
+mutationFn: async (id: number) => fetch(/api/videos/${id}, { method: "DELETE" }),
+onSuccess: invalidate,
+});
+// ─── Native HTML5 drag-and-drop reorder ───
+const dragId = useRef<number | null>(null);
+const [ordered, setOrdered] = useState<Video[] | null>(null);
+const list = ordered ?? videos;
+const reorderMutation = useMutation({
+mutationFn: async (orderedIds: number[]) =>
+fetch("/api/videos/reorder", {
+method: "PUT",
+headers: { "Content-Type": "application/json" },
+body: JSON.stringify({ orderedIds }),
+}),
+onSuccess: () => { setOrdered(null); invalidate(); },
+});
+const handleDrop = (targetId: number) => {
+if (dragId.current === null || dragId.current === targetId) return;
+const items = [...list];
+const from = items.findIndex((v) => v.id === dragId.current);
+const to = items.findIndex((v) => v.id === targetId);
+const [moved] = items.splice(from, 1);
+items.splice(to, 0, moved);
+setOrdered(items);
+dragId.current = null;
+reorderMutation.mutate(items.map((v) => v.id));
+};
+// ─── Edit dialog state ───
+const [editing, setEditing] = useState<Video | null>(null);
+return (
+<div className="container mx-auto max-w-5xl px-4 py-10"><h1 className="text-2xl font-bold">
+<p className="mt-1 text-sm text-muted-foreground">
+plain
+  {/* ── Upload video file ── */}
+  <section className="mt-8 rounded-xl border border-border bg-card p-5">
+    <h2 className="flex items-center gap-2 font-semibold"><Upload className="h-4 w-4" /> Upload Video</h2>
+    <p className="mt-1 text-xs text-muted-foreground">MP4, MOV, AVI, MKV, WEBM · thumbnail auto-generated · max 1 GB</p>
+    <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_1fr_180px_auto]">
+      <Input placeholder="Title (optional — defaults to filename)" value={uploadTitle} onChange={(e) => setUploadTitle(e.target.value)} />
+      <input ref={fileRef} type="file" accept=".mp4,.mov,.avi,.mkv,.webm,video/*" className="text-sm file:mr-3 file:rounded-md file:border-0 file:bg-primary file:px-3 file:py-1.5 file:text-sm file:text-primary-foreground"
+        onChange={(e) => e.target.files?.[0] && uploadMutation.mutate(e.target.files[0])} />
+      <select value={uploadCategory} onChange={(e) => setUploadCategory(e.target.value)} className="rounded-md border border-border bg-background px-2 py-2 text-sm">
+        {VIDEO_CATEGORIES.map((c) => <option key={c}>{c}</option>)}
+      </select>
+      <Button disabled={uploadMutation.isPending} onClick={() => fileRef.current?.click()}>
+        {uploadMutation.isPending ? "Uploading…" : "Choose & Upload"}
+      </Button>
+    </div>
+    {uploadMutation.isError && <p className="mt-2 text-sm text-destructive">{String(uploadMutation.error)}</p>}
+  </section>
+
+  {/* ── Add YouTube / Vimeo ── */}
+  <section className="mt-6 rounded-xl border border-border bg-card p-5">
+    <h2 className="flex items-center gap-2 font-semibold"><Link2 className="h-4 w-4" /> Add YouTube / Vimeo Link</h2>
+    <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_1fr_180px_auto]">
+      <Input placeholder="Video title *" value={embedTitle} onChange={(e) => setEmbedTitle(e.target.value)} />
+      <Input placeholder="https://youtube.com/watch?v=… or vimeo.com/…" value={embedUrl} onChange={(e) => setEmbedUrl(e.target.value)} />
+      <select value={embedCategory} onChange={(e) => setEmbedCategory(e.target.value)} className="rounded-md border border-border bg-background px-2 py-2 text-sm">
+        {VIDEO_CATEGORIES.map((c) => <option key={c}>{c}</option>)}
+      </select>
+      <Button disabled={!embedTitle || !embedUrl || embedMutation.isPending} onClick={() => embedMutation.mutate()}>
+        {embedMutation.isPending ? "Adding…" : "Add Link"}
+      </Button>
+    </div>
+    {embedMutation.isError && <p className="mt-2 text-sm text-destructive">{String(embedMutation.error)}</p>}
+  </section>
+
+  {/* ── Video list ── */}
+  <section className="mt-8">
+    <h2 className="mb-3 font-semibold">All Videos ({list.length})</h2>
+    {isLoading ? (
+      <p className="text-sm text-muted-foreground">Loading…</p>
+    ) : list.length === 0 ? (
+      <div className="flex flex-col items-center rounded-xl border border-dashed border-border py-16 text-center">
+        <Film className="h-8 w-8 text-muted-foreground/50" />
+        <p className="mt-3 text-sm text-muted-foreground">No videos available — upload your first one above.</p>
+      </div>
+    ) : (
+      <ul className="space-y-2">
+        {list.map((video) => (
+          <li
+            key={video.id}
+            draggable
+            onDragStart={() => (dragId.current = video.id)}
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={() => handleDrop(video.id)}
+            className="flex items-center gap-3 rounded-xl border border-border bg-card p-3"
+          >
+            <GripVertical className="h-4 w-4 shrink-0 cursor-grab text-muted-foreground" />
+            <div className="h-14 w-24 shrink-0 overflow-hidden rounded-md bg-muted">
+              {video.thumbnail
+                ? <img src={video.thumbnail} alt="" className="h-full w-full object-cover" loading="lazy" />
+                : <div className="flex h-full items-center justify-center"><Film className="h-5 w-5 text-muted-foreground/40" /></div>}
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="truncate font-medium">{video.title}</p>
+              <p className="text-xs text-muted-foreground">
+                {video.type} · {video.category}{video.duration ? ` · ${video.duration}` : ""}
+              </p>
+            </div>
+            <button
+              title={video.featured ? "Unfeature" : "Mark as Featured"}
+              onClick={() => patchMutation.mutate({ id: video.id, featured: !video.featured })}
+              className={cn("rounded-md p-2", video.featured ? "text-primary" : "text-muted-foreground hover:text-foreground")}
+            >
+              <Star className={cn("h-4 w-4", video.featured && "fill-current")} />
+            </button>
+            <button onClick={() => setEditing(video)} className="rounded-md p-2 text-muted-foreground hover:text-foreground">
+              <Pencil className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => confirm(`Delete "${video.title}"?`) && deleteMutation.mutate(video.id)}
+              className="rounded-md p-2 text-muted-foreground hover:text-destructive"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          </li>
+        ))}
+      </ul>
+    )}
+  </section>
+
+  {/* ── Edit dialog ── */}
+  {editing && (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={() => setEditing(null)}>
+      <div className="w-full max-w-md rounded-xl bg-card p-6" onClick={(e) => e.stopPropagation()}>
+        <div className="mb-4 flex items-center justify-between">
+          <h3 className="font-semibold">Edit Video</h3>
+          <button onClick={() => setEditing(null)}><X className="h-4 w-4" /></button>
+        </div>
+        <div className="space-y-3">
+          <label className="block text-sm">
+            <span className="text-muted-foreground">Title</span>
+            <Input value={editing.title} onChange={(e) => setEditing({ ...editing, title: e.target.value })} className="mt-1" />
+          </label>
+          <label className="block text-sm">
+            <span className="text-muted-foreground">Description</span>
+            <textarea
+              value={editing.description ?? ""}
+              onChange={(e) => setEditing({ ...editing, description: e.target.value })}
+              rows={3}
+              className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+            />
+          </label>
+          <label className="block text-sm">
+            <span className="text-muted-foreground">Category</span>
+            <select
+              value={editing.category}
+              onChange={(e) => setEditing({ ...editing, category: e.target.value })}
+              className="mt-1 w-full rounded-md border border-border bg-background px-2 py-2 text-sm"
+            >
+              {VIDEO_CATEGORIES.map((c) => <option key={c}>{c}</option>)}
+            </select>
+          </label>
+          <Button
+            className="w-full"
+            onClick={() => {
+              patchMutation.mutate({
+                id: editing.id,
+                title: editing.title,
+                description: editing.description,
+                category: editing.category,
+              });
+              setEditing(null);
+            }}
+          >
+            Save Changes
+          </Button>
+        </div>
+      </div>
+    </div>
+  )}
+</div>
+);
+}
+─── ADMIN NAV ───
+// Add to your existing admin sidebar/menu:
+//   { label: "Videos", href: "/admin/videos", icon: Film }
+// And route: <Route path="/admin/videos" component={AdminVideos} />
+─── SETUP CHECKLIST ───
+npm install multer && npm install -D @types/multer
+(@tanstack/react-query, drizzle-orm, drizzle-zod, lucide-react already in your stack)
+Add the videos table to shared/schema.ts (File 1), then:
+npm run db:push
+Create server/routes/videos.ts (File 2) and register in server/routes.ts:
+import videoRoutes from "./routes/videos";
+app.use("/api/videos", videoRoutes);
+Also add: app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+IMPORTANT — replace the placeholder requireAdmin in server/routes/videos.ts
+with your existing admin auth middleware so only admins can upload/edit/delete.
+Add the public page (File 3) + route /projects/videos + "Video Gallery" link
+under the Projects menu.
+Add the admin page (File 4) + route /admin/videos + admin sidebar link.
+─── NOTES ───
+• Streaming: /api/videos/stream/:filename supports HTTP Range requests, so
+playback starts immediately and seeking works without downloading the file.
+• Controls: native <video controls>

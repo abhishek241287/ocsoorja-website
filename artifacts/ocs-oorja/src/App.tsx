@@ -41,6 +41,13 @@ const GalleryPublisher = import.meta.env.DEV
   ? lazy(() => import("@/pages/gallery-publisher"))
   : null;
 
+// Internal Video Publisher tool — development workspace only.
+const VideoPublisher = import.meta.env.DEV
+  ? lazy(() => import("@/pages/video-publisher"))
+  : null;
+
+const VideoGallery = lazy(() => import("@/pages/video-gallery"));
+
 function Router() {
   return (
     <Layout>
@@ -51,6 +58,17 @@ function Router() {
         <Route path="/products" component={Products} />
         <Route path="/products/:slug" component={ProductDetail} />
         <Route path="/projects" component={Projects} />
+        <Route path="/projects/videos">
+          <Suspense
+            fallback={
+              <div className="flex min-h-[60vh] items-center justify-center text-muted-foreground">
+                Loading…
+              </div>
+            }
+          >
+            <VideoGallery />
+          </Suspense>
+        </Route>
         <Route path="/projects/:slug" component={ProjectDetail} />
         <Route path="/blog" component={Blog} />
         <Route path="/blog/:slug" component={BlogDetail} />
@@ -86,6 +104,19 @@ function Router() {
               }
             >
               <GalleryPublisher />
+            </Suspense>
+          </Route>
+        ) : null}
+        {VideoPublisher ? (
+          <Route path="/video-publisher">
+            <Suspense
+              fallback={
+                <div className="flex min-h-[60vh] items-center justify-center text-muted-foreground">
+                  Loading the Video Publisher…
+                </div>
+              }
+            >
+              <VideoPublisher />
             </Suspense>
           </Route>
         ) : null}
