@@ -26,6 +26,7 @@ export default function ManufacturingExcellence() {
                   alt={step.title}
                   loading="lazy"
                   className="h-full w-full object-cover"
+                  style={step.objectPosition ? { objectPosition: step.objectPosition } : undefined}
                 />
                 <span
                   className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground shadow-md"

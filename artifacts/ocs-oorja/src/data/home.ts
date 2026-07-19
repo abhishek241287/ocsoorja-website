@@ -109,7 +109,15 @@ export const WHY_OCS_OORJA: HomeFeature[] = [
 // --- "Manufacturing Excellence" — five-stage process timeline ----------------
 // Each stage renders one step of the homepage manufacturing timeline. Replace
 // the image file at `image` to change the picture — no code changes needed.
-export type ManufacturingStep = { title: string; body: string; image: string };
+export type ManufacturingStep = {
+  title: string;
+  body: string;
+  image: string;
+  /** CSS object-position value — controls which part of the image shows in the
+   *  landscape thumbnail crop. Defaults to "center" when omitted.
+   *  Example: "top" shows the upper portion; "center 30%" focuses slightly above centre. */
+  objectPosition?: string;
+};
 
 export const MANUFACTURING_STEPS: ManufacturingStep[] = [
   {
@@ -120,12 +128,13 @@ export const MANUFACTURING_STEPS: ManufacturingStep[] = [
   {
     title: "Manufacturing",
     body: "Inverters and LiFePO₄ packs are assembled on controlled production lines at our Lucknow facility.",
-    image: "/images/home/manufacturing-assembly.png",
+    image: "/images/home/manufacturing-assembly.webp",
   },
   {
     title: "Testing",
     body: "Every unit undergoes electrical, thermal and safety testing to validate real-world performance.",
     image: "/images/home/manufacturing-testing.webp",
+    objectPosition: "center 20%",
   },
   {
     title: "Quality Inspection",
@@ -136,6 +145,7 @@ export const MANUFACTURING_STEPS: ManufacturingStep[] = [
     title: "Delivery",
     body: "Cleared units are packed and dispatched pan-India with full documentation and after-sales support.",
     image: "/images/home/manufacturing-dispatch.webp",
+    objectPosition: "center 25%",
   },
 ];
 
