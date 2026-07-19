@@ -69,6 +69,14 @@ export function FindUs() {
         </address>
       </div>
 
+      {/* Visit note */}
+      <div className="mt-4 rounded-lg bg-primary/5 px-4 py-3 text-sm">
+        <p className="font-semibold text-foreground">Visit our Centre</p>
+        <p className="mt-0.5 text-muted-foreground">
+          Open Monday–Saturday, 10:00 AM – 6:00 PM
+        </p>
+      </div>
+
       {/* Action buttons */}
       <div className="mt-4 flex flex-col gap-2 sm:flex-row">
         {/* Get Directions */}
