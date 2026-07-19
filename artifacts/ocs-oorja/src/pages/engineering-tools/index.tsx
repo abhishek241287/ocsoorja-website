@@ -1,8 +1,16 @@
 import { Link } from "wouter";
 import { Seo } from "@/components/Seo";
-import { Sun, Battery, Zap, Cable, TrendingUp, Car } from "lucide-react";
+import { Sun, Battery, Zap, Cable, TrendingUp, Car, Home } from "lucide-react";
 
 const CALCULATORS = [
+  {
+    id: "load-calculator",
+    title: "Home Load Calculator",
+    description:
+      "Select your appliances, get instant inverter, battery & solar sizing. No wattage knowledge needed.",
+    icon: Home,
+    href: "/engineering-tools/load-calculator",
+  },
   {
     id: "solar-sizing",
     title: "Solar Sizing Calculator",
