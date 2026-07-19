@@ -17,15 +17,15 @@ export default function ManufacturingExcellence() {
           subtitle={HOME_SECTIONS.manufacturing.subtitle}
         />
 
-        <ol className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-5 lg:gap-5">
+        <ol className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-5 lg:gap-6">
           {MANUFACTURING_STEPS.map((step, i) => (
             <li key={step.title} className="flex flex-col">
-              <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-card-border">
+              <div className="relative aspect-[4/3] rounded-2xl border border-card-border">
                 <img
                   src={step.image}
                   alt={step.title}
                   loading="lazy"
-                  className="h-full w-full object-cover"
+                  className="h-full w-full rounded-2xl object-cover"
                   style={step.objectPosition ? { objectPosition: step.objectPosition } : undefined}
                 />
                 <span
