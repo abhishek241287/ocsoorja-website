@@ -12,6 +12,36 @@ uri = "file://attached_assets/generated_images/manufacturing-assembly-new.png"
 type = "image"
 title = "manufacturing assembly line factory"
 
+[[generated]]
+id = "qiuwJ26xyZNk5hunJ-puY"
+uri = "file://artifacts/ocs-oorja/public/images/home/manufacturing-engineering.png"
+type = "image"
+title = "engineering lab premium"
+
+[[generated]]
+id = "NONaUICY_Nn8MOVEukOq9"
+uri = "file://artifacts/ocs-oorja/public/images/home/manufacturing-assembly.png"
+type = "image"
+title = "assembly floor premium"
+
+[[generated]]
+id = "RCqScbUvZECSOFSQyDRnf"
+uri = "file://artifacts/ocs-oorja/public/images/home/manufacturing-testing.png"
+type = "image"
+title = "testing lab premium"
+
+[[generated]]
+id = "gK4ubaqE1FhEeiiLydL96"
+uri = "file://artifacts/ocs-oorja/public/images/home/manufacturing-quality.png"
+type = "image"
+title = "quality inspection premium"
+
+[[generated]]
+id = "v5RQ6KIJ4gTlJgi6AJP8t"
+uri = "file://artifacts/ocs-oorja/public/images/home/manufacturing-dispatch.png"
+type = "image"
+title = "dispatch logistics premium"
+
 [[outputs]]
 id = "JY2OLmlBfgwLE0V9x_ZWD"
 uri = "file://screenshots/hero-before.jpg"
