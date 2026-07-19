@@ -4,12 +4,12 @@ export const commercial: ProjectCaseStudy[] = [
   {
     id: "lucknow-commercial-rooftop-solar-bess",
     slug: "lucknow-commercial-rooftop-solar-bess",
-    title: "Commercial Rooftop Solar + BESS, Lucknow",
-    subtitle: "Rooftop solar with a 100kWh battery energy storage system for a manufacturing facility",
+    title: "Commercial Rooftop Solar + BESS, Sitapur",
+    subtitle: "Rooftop solar with a 50kWh battery energy storage system for a manufacturing facility",
     segment: "Commercial",
     status: "completed",
 
-    location: { city: "Lucknow", state: "Uttar Pradesh", countryCode: "IN" },
+    location: { city: "Sitapur", state: "Uttar Pradesh", countryCode: "IN" },
     completedDate: "2026-04-15",
     publishDate: "2026-07-08",
     updatedAt: "2026-07-08",
@@ -17,14 +17,14 @@ export const commercial: ProjectCaseStudy[] = [
     clientName: "Confidential",
     clientType: "Small Business",
 
-    systemSize: { solarKw: 24, batteryKwh: 100, inverterKw: 24 },
+    systemSize: { solarKw: 24, batteryKwh: 50, inverterKw: 24 },
     technologies: ["Hybrid Inverter", "BESS", "BMS", "MPPT", "Solar", "Smart Monitoring"],
     productsUsed: ["bess-100kwh-commercial", "solar-hybrid-inverter-48v-6kw"],
 
     challenge:
       "A small manufacturing facility was running two production shifts and absorbing frequent daytime grid fluctuations that tripped sensitive equipment, plus 2-3 hour outages during peak summer load-shedding. Diesel generator backup was costly to run and maintain.",
     solution:
-      "OCS OORJA designed a 24kW rooftop solar array powered by an array of 48V 6kW hybrid inverters feeding a 100kWh commercial BESS unit. The BESS smooths grid fluctuations in real time, stores surplus solar generation for use after sunset, and switches the facility to battery power within milliseconds during an outage — removing the need to start the diesel generator for short outages.",
+      "OCS OORJA designed a 24kW rooftop solar array powered by an array of 48V 6kW hybrid inverters feeding a 50kWh commercial BESS unit. The BESS smooths grid fluctuations in real time, stores surplus solar generation for use after sunset, and switches the facility to battery power within milliseconds during an outage — removing the need to start the diesel generator for short outages.",
     results:
       "Since commissioning, the facility has cut diesel generator runtime by roughly 70% and reduced its grid electricity spend during the day through self-consumption of solar power. The BESS has also eliminated equipment trips caused by voltage fluctuations on the grid.",
 
@@ -62,9 +62,9 @@ export const commercial: ProjectCaseStudy[] = [
     relatedArticleIds: ["hybrid-solar-inverter-guide", "lifepo4-vs-lead-acid"],
 
     seo: {
-      metaTitle: "Commercial Rooftop Solar + BESS Case Study, Lucknow | OCS OORJA",
+      metaTitle: "Commercial Rooftop Solar + BESS Case Study, Sitapur | OCS OORJA",
       metaDescription:
-        "How a 24kW rooftop solar array and 100kWh BESS cut diesel generator use and stabilized power for a Lucknow manufacturing facility.",
+        "How a 24kW rooftop solar array and 50kWh BESS cut diesel generator use and stabilized power for a Sitapur manufacturing facility.",
     },
     schemaType: "Project",
   },
