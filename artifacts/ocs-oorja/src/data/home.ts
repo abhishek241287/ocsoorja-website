@@ -134,7 +134,6 @@ export const MANUFACTURING_STEPS: ManufacturingStep[] = [
     title: "Testing",
     body: "Every unit undergoes electrical, thermal and safety testing to validate real-world performance.",
     image: "/images/home/manufacturing-testing.webp",
-    objectPosition: "center 20%",
   },
   {
     title: "Quality Inspection",
