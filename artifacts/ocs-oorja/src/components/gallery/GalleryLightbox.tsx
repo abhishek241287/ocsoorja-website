@@ -143,12 +143,6 @@ export default function GalleryLightbox({ photo, index, total, onClose, onPrev, 
                 </dd>
               </div>
             )}
-            {photo.photographer && (
-              <div className="flex gap-1.5">
-                <dt className="font-medium text-white/80">Photographer:</dt>
-                <dd>{photo.photographer}</dd>
-              </div>
-            )}
           </dl>
 
           {(photo.relatedProjectSlug || photo.productsUsed?.length) && (
