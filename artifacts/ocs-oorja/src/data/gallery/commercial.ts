@@ -26,7 +26,7 @@ export const commercial: GalleryPhoto[] = [
     alt: "Rooftop solar panel array installed on a factory and warehouse roof",
     category: "commercial",
     location: { city: "Lucknow", state: "Uttar Pradesh" },
-    caption: "Rooftop array feeding a 100kWh battery energy storage system",
+    caption: "Rooftop array feeding a 50kWh battery energy storage system",
     productsUsed: ["bess-100kwh-commercial", "solar-hybrid-inverter-48v-6kw"],
     installationDate: "2026-04-15",
     relatedProjectSlug: "lucknow-commercial-rooftop-solar-bess",
