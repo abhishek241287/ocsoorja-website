@@ -6,6 +6,12 @@ uri = "file://attached_assets/generated_images/delhi_ev_policy_article.png"
 type = "image"
 title = "EV charging hub India"
 
+[[generated]]
+id = "I01RpQUL75S1bGUNg-KSB"
+uri = "file://attached_assets/generated_images/manufacturing-assembly-new.png"
+type = "image"
+title = "manufacturing assembly line factory"
+
 [[outputs]]
 id = "JY2OLmlBfgwLE0V9x_ZWD"
 uri = "file://screenshots/hero-before.jpg"

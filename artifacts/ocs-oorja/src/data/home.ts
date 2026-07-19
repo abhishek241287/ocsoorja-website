@@ -120,7 +120,7 @@ export const MANUFACTURING_STEPS: ManufacturingStep[] = [
   {
     title: "Manufacturing",
     body: "Inverters and LiFePO₄ packs are assembled on controlled production lines at our Lucknow facility.",
-    image: "/images/home/manufacturing-assembly.webp",
+    image: "/images/home/manufacturing-assembly.png",
   },
   {
     title: "Testing",
