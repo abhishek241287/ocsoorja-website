@@ -1,0 +1,457 @@
+You are writing a production-ready knowledge article for the OCS OORJA website.
+
+This article is NOT a marketing article.
+
+It is a deep engineering knowledge article written for Indian readers and should become one of the best resources on Battery Management Systems (BMS).
+
+The article must be original, technically accurate, SEO optimized, AI-search friendly, and written in clean Markdown.
+
+==========================================================
+ARTICLE DETAILS
+==========================================================
+
+Title:
+Battery Management System (BMS) Explained: The Brain Behind Every Lithium Battery
+
+Primary Keyword:
+Battery Management System
+
+Secondary Keywords:
+BMS
+Lithium Battery BMS
+LiFePO4 BMS
+Battery Protection System
+Battery Management System India
+Battery Monitoring System
+Lithium Battery Safety
+Hybrid Inverter Battery
+
+Target Audience
+
+• Homeowners
+• Solar buyers
+• ESS customers
+• Engineers
+• Electrical contractors
+• EV manufacturers
+• Battery pack manufacturers
+
+Country
+
+India
+
+Language
+
+English
+
+Tone
+
+Professional
+Engineering-first
+Educational
+Authoritative
+Simple to understand
+
+Never sound like AI marketing copy.
+
+==========================================================
+OUTPUT FORMAT
+==========================================================
+
+Return ONLY ONE complete Markdown (.md) article.
+
+No explanations.
+
+No comments.
+
+No code blocks.
+
+Only the finished article.
+
+==========================================================
+YAML FRONTMATTER
+==========================================================
+
+Use complete YAML frontmatter exactly like previous article.
+
+Include
+
+id
+slug
+title
+category
+status
+author
+featuredImage
+summary
+directAnswer
+keywords
+keyTakeaways
+questionsCovered
+relatedArticleIds
+relatedProductIds
+ocsReferences
+featured
+featuredOrder
+createdAt
+updatedAt
+publishDate
+ctaTopic
+
+==========================================================
+ARTICLE STRUCTURE
+==========================================================
+
+# Direct Answer
+
+# Introduction
+
+# What is a Battery Management System (BMS)?
+
+# Why Every Lithium Battery Needs a BMS
+
+# Main Functions of a BMS
+
+Explain
+
+• Cell voltage monitoring
+• Current monitoring
+• Temperature monitoring
+• State of Charge (SOC)
+• State of Health (SOH)
+• Protection logic
+• Fault detection
+
+# How a BMS Works
+
+Explain the entire process step-by-step.
+
+# Components Inside a BMS
+
+Explain
+
+MOSFETs
+
+MCU
+
+Current Sensor
+
+NTC Sensors
+
+Cell Sense Wires
+
+CAN
+
+RS485
+
+UART
+
+Bluetooth
+
+EEPROM
+
+Relay/Contactor
+
+Fuse
+
+Balancing Circuit
+
+# Types of Battery Management Systems
+
+Centralized
+
+Distributed
+
+Modular
+
+Passive BMS
+
+Active BMS
+
+Smart BMS
+
+CAN BMS
+
+Bluetooth BMS
+
+Industrial ESS BMS
+
+# Passive vs Active Cell Balancing
+
+Comparison table
+
+Advantages
+
+Disadvantages
+
+Applications
+
+# Communication Protocols
+
+CAN
+
+CANOpen
+
+Modbus
+
+RS485
+
+UART
+
+Bluetooth
+
+WiFi
+
+Where each protocol is used.
+
+# Common Protection Features
+
+Over Voltage
+
+Under Voltage
+
+Over Current
+
+Short Circuit
+
+Reverse Polarity
+
+High Temperature
+
+Low Temperature
+
+Cell Imbalance
+
+Overcharge
+
+Deep Discharge
+
+# Engineering Insights
+
+Real-world observations
+
+Cheap BMS failures
+
+MOSFET heating
+
+Loose balance wires
+
+Poor crimping
+
+Water ingress
+
+Fake BMS ratings
+
+High ambient temperatures in India
+
+Improper charger settings
+
+Improper inverter compatibility
+
+# Common BMS Failures
+
+# Common Buying Mistakes
+
+# How to Select the Right BMS
+
+Current rating
+
+Peak current
+
+Cell chemistry
+
+Communication
+
+Firmware
+
+Certification
+
+Cooling
+
+Future expansion
+
+# Installation Best Practices
+
+# Maintenance Checklist
+
+Monthly
+
+Quarterly
+
+Yearly
+
+# Safety Guidelines
+
+# Frequently Asked Questions
+
+Minimum 15 FAQs.
+
+# Key Takeaways
+
+# Conclusion
+
+# Technical Disclaimer
+
+# Related Articles
+
+# Related Products
+
+# SEO Metadata
+
+==========================================================
+ENGINEERING REQUIREMENTS
+==========================================================
+
+Explain
+
+16S LiFePO4
+
+48V batteries
+
+51.2V batteries
+
+ESS batteries
+
+Solar batteries
+
+EV batteries
+
+Battery packs
+
+Hybrid inverter compatibility
+
+Current ratings
+
+100A
+
+150A
+
+200A
+
+250A
+
+300A
+
+400A
+
+500A
+
+Continuous vs Peak Current
+
+Charge current
+
+Discharge current
+
+Balance current
+
+Explain all concepts in beginner-friendly language.
+
+==========================================================
+INDIAN CONTEXT
+==========================================================
+
+Mention
+
+Indian temperatures
+
+Indian installers
+
+Dust
+
+Humidity
+
+Voltage fluctuations
+
+Solar ESS
+
+Telecom batteries
+
+Residential batteries
+
+Commercial batteries
+
+==========================================================
+EEAT
+==========================================================
+
+Write like experienced battery engineers.
+
+Never invent statistics.
+
+Never invent certifications.
+
+Never invent laboratory tests.
+
+Only explain accepted engineering principles.
+
+==========================================================
+SEO
+==========================================================
+
+Use semantic SEO.
+
+Featured Snippet ready.
+
+Google AI Overview ready.
+
+Proper H2 hierarchy.
+
+Proper H3 hierarchy.
+
+Comparison tables.
+
+Bullet lists.
+
+FAQs.
+
+Internal links.
+
+==========================================================
+INTERNAL LINKS
+==========================================================
+
+Naturally reference
+
+Hybrid Solar Inverter Guide
+
+On-Grid vs Off-Grid vs Hybrid Solar Systems
+
+LiFePO4 vs Lead Acid Batteries
+
+Home Solar Battery Savings
+
+==========================================================
+CTA
+==========================================================
+
+Do NOT create a CTA section.
+
+Only populate
+
+ctaTopic
+
+inside YAML.
+
+==========================================================
+IMAGE SUGGESTIONS
+==========================================================
+
+Provide
+
+8 professional photorealistic image prompts
+
+Suitable for Nano Banana / Beautiful.ai.
+
+No cartoons.
+
+No illustrations.
+
+==========================================================
+QUALITY
+==========================================================
+
+Target
+
+7,000–8,000 words.
+
+The article should be publish-ready and capable of achieving a CTO review score of 9.8+/10.
