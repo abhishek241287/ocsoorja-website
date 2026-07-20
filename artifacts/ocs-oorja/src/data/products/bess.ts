@@ -68,36 +68,62 @@ export const bess: Product[] = [
   },
   {
     "id": "p-bess-100kwh",
-    "name": "OCS OORJA BESS 100 kWh (Commercial)",
+    "name": "OCS OORJA BESS 100 kWh (Commercial & Industrial)",
     "slug": "bess-100kwh-commercial",
     "family": "bess",
     "series": "Commercial & Industrial BESS",
-    "image": "/images/placeholder.svg",
-    "summary": "Placeholder listing — full specifications, photography, and downloads coming soon.",
-    "warranty": "Warranty details on request",
+    "image": "/images/products/bess/bess-100kwh-commercial.png",
+    "images": [
+      "/images/products/bess/bess-100kwh-commercial.png"
+    ],
+    "summary": "Fully customised 100 kWh+ LiFePO₄ battery energy storage system for commercial, industrial, and utility applications. Designed and built to your site's load profile, grid configuration, and integration requirements.",
+    "warranty": "As per project contract (typically 5–10 years)",
     "tags": [
       "BESS",
       "C&I",
-      "Storage",
-      "LFP"
+      "LFP",
+      "Made in India",
+      "Customised"
     ],
     "specs": [
-      {
-        "key": "Usable Capacity",
-        "value": "100 kWh"
-      },
-      {
-        "key": "Status",
-        "value": "Full specifications coming soon"
-      }
+      { "key": "Usable Energy", "value": "100 kWh (scalable; custom capacity available)" },
+      { "key": "Cell Chemistry", "value": "LiFePO₄ (Lithium Iron Phosphate)" },
+      { "key": "System Voltage", "value": "As per project requirement (48V – 800V DC bus)" },
+      { "key": "Charge / Discharge Power", "value": "Configurable — 50 kW to 500 kW+ (C-rate matched to load)" },
+      { "key": "Cycle Life", "value": ">6000 Times @80% DoD, 25°C" },
+      { "key": "Communication", "value": "RS-485 / CAN / Modbus TCP / Ethernet (EMS ready)" },
+      { "key": "Protection Rating", "value": "IP54 standard (IP65 outdoor optional)" },
+      { "key": "Cooling", "value": "Forced-air / liquid cooling (project dependent)" },
+      { "key": "Safety", "value": "Emergency stop, multi-level BMS, arc-flash protection" },
+      { "key": "Grid Integration", "value": "On-grid, off-grid, and microgrid configurations" },
+      { "key": "Certifications", "value": "As per project scope (IEC / IS / BIS applicable standards)" },
+      { "key": "Warranty", "value": "As per project contract (typically 5–10 years)" }
     ],
-    "dateAdded": "2026-07-05",
-    "status": "placeholder",
-    "awaiting": [
-      "images",
-      "specs",
-      "datasheet",
-      "brochure"
-    ]
+    "features": [
+      "Fully Customised Design – Engineered to your specific load profile, site constraints, and grid topology",
+      "Scalable Capacity – Modular architecture from 50 kWh to multiple MWh; grow as your needs expand",
+      "LiFePO₄ Chemistry – Safest lithium chemistry; no thermal runaway risk, suitable for indoor and outdoor installation",
+      ">6000 Cycle Life – Decades of daily cycling with no capacity degradation warranty",
+      "Intelligent Multi-Level BMS – Cell-level monitoring, balancing, and fault isolation with EMS connectivity",
+      "Touchscreen HMI Control Panel – Real-time system status, alarms, and remote monitoring from a single screen",
+      "Emergency Stop & Arc-Flash Protection – IEC-compliant safety interlocks for commercial and industrial sites",
+      "Grid & Microgrid Ready – Supports peak shaving, demand response, solar self-consumption, and islanding",
+      "Remote Monitoring & SCADA Integration – RS-485, Modbus TCP, CAN, and Ethernet interfaces as standard",
+      "IP54+ Enclosure – Heavy-duty steel cabinet rated for industrial environments; IP65 outdoor option available",
+      "Project Management Support – OCS OORJA provides design, supply, installation supervision, and commissioning",
+      "Make in India – Designed, integrated, and quality-tested at OCS OORJA Labs, Lucknow"
+    ],
+    "applications": [
+      "Commercial & Industrial Peak Shaving",
+      "Solar + Storage Hybrid Plants",
+      "Captive Power & Demand Response",
+      "EV Charging Hub Energy Buffer",
+      "Microgrid & Islanding Systems",
+      "Telecom & Data Centre Backup",
+      "Agricultural Cold Chain & Irrigation",
+      "Government & Municipal Utilities"
+    ],
+    "details": "The OCS OORJA Commercial BESS is not an off-the-shelf product — it is an engineered solution. Every installation begins with a detailed load study and grid analysis, from which our engineering team specifies the optimal cell count, DC bus voltage, inverter pairing, and thermal management strategy. The system ships as a fully assembled, factory-tested cabinet (or multi-cabinet array for larger capacities), complete with a touchscreen HMI, emergency stop, multi-level BMS, and all communications pre-wired. Integration with your existing SCADA, EMS, or solar inverter platform is handled via RS-485, Modbus TCP, CAN, or Ethernet — whichever your control system requires. Capacity starts at 100 kWh and scales to multiple MWh through modular cabinet stacking with no re-engineering. Common deployment modes include solar self-consumption maximisation, utility peak-shaving, captive power arbitrage, and off-grid microgrid with automatic transfer switching. To receive a technical proposal and indicative pricing, contact our project team with your site load data.",
+    "dateAdded": "2026-07-20"
   }
 ];
