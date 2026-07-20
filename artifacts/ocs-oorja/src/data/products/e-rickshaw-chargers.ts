@@ -7,6 +7,63 @@ import type { Product } from "./types";
 
 export const eRickshawChargers: Product[] = [
   {
+    "id": "p-erickshaw-battery-51v2",
+    "name": "OCS OORJA 51.2V 100Ah LiFePO₄ Battery",
+    "slug": "e-rickshaw-battery-51v2-100ah",
+    "family": "e-rickshaw-chargers",
+    "series": "E-Rickshaw Traction Battery",
+    "image": "/images/products/e-rickshaw-chargers/erickshaw-lifepo4-battery.png",
+    "images": [
+      "/images/products/e-rickshaw-chargers/erickshaw-lifepo4-battery.png"
+    ],
+    "summary": "51.2V 100Ah (5.1 kWh) LiFePO₄ traction battery engineered for e-rickshaws and EV swap stations. 16S prismatic cells, 100A continuous discharge, RS-485/CAN communication, and >5000 cycles at 80% DoD.",
+    "warranty": "36 Months (3 Years)",
+    "tags": [
+      "Battery",
+      "E‑Rickshaw",
+      "LFP",
+      "51.2V",
+      "Made in India"
+    ],
+    "specs": [
+      { "key": "Array Mode", "value": "16S" },
+      { "key": "Nominal Energy", "value": "5.1 kWh" },
+      { "key": "Nominal Voltage", "value": "51.2V" },
+      { "key": "Charge Voltage", "value": "58.4V" },
+      { "key": "Discharge Cut-off Voltage", "value": "42V" },
+      { "key": "Max Continuous Charging Current", "value": "100A" },
+      { "key": "Max Continuous Discharging Current", "value": "100A" },
+      { "key": "Cycle Life", "value": ">5000 Times @80% DoD, 25°C" },
+      { "key": "Communication Mode", "value": "RS-485 / CAN" },
+      { "key": "Operating Temperature (Charge)", "value": "0°C – 60°C" },
+      { "key": "Operating Temperature (Discharge)", "value": "−10°C – 65°C" },
+      { "key": "Gross Weight", "value": "45 kg" }
+    ],
+    "features": [
+      "16S LiFePO₄ Prismatic Cells – Grade-A cells for high power density and long cycle life",
+      "5.1 kWh Usable Energy – Ample capacity for full-day e-rickshaw operation",
+      "100A Continuous Charge & Discharge – Handles rapid charging and heavy acceleration loads",
+      ">5000 Cycle Life @80% DoD – Over 10 years of daily cycling at 25°C",
+      "RS-485 / CAN Communication – Smart BMS integration for real-time SOC, temperature, and fault monitoring",
+      "Wide Operating Temperature – Charges 0–60°C, discharges −10 to 65°C for all Indian seasons",
+      "Smart BMS Protection – Guards against overcharge, over-discharge, over-current, and short circuits",
+      "Zero Maintenance – No water topping, no acid fumes, safe for enclosed spaces",
+      "Compact Flat-Pack Design – Easy under-seat or chassis installation in e-rickshaws",
+      "Drop-in Replacement – Compatible with standard 48V lead-acid e-rickshaw battery bays",
+      "3-Year Warranty – Backed by OCS OORJA's India-wide service network"
+    ],
+    "applications": [
+      "E-Rickshaw Traction",
+      "EV Battery Swap Stations",
+      "Electric Cargo Vehicles",
+      "Solar Hybrid Power Systems",
+      "Telecom Tower Backup",
+      "Industrial UPS & Power Backup"
+    ],
+    "details": "The OCS OORJA 51.2V 100Ah LiFePO₄ Battery is a purpose-built traction pack for e-rickshaws and light electric vehicles. Configured in a 16S prismatic cell arrangement, it delivers 5.1 kWh of nominal energy with 100A continuous charge and discharge capability — enough for a full day of operation on a single overnight charge. The built-in RS-485/CAN communication interface allows the BMS to exchange real-time data with chargers and vehicle controllers, enabling accurate SOC display, temperature monitoring, and fault protection. With more than 5000 cycles at 80% depth-of-discharge (tested at 25°C), this battery outlasts conventional lead-acid packs by 3–5× while eliminating the maintenance burden of watering and equalisation. Designed and quality-checked at OCS OORJA Labs, Lucknow, and backed by a 3-year warranty.",
+    "dateAdded": "2026-07-20"
+  },
+  {
     "id": "p-ev-charger-erickshaw",
     "name": "EV Charger for E‑Rickshaw Battery",
     "slug": "ev-charger-e-rickshaw",
