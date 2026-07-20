@@ -22,8 +22,10 @@
 
 export type ContentBlock =
   | { type: "paragraph"; text: string }
+  | { type: "subheading"; level: 3 | 4; text: string }
   | { type: "list"; ordered: boolean; items: string[] }
-  | { type: "blockquote"; text: string };
+  | { type: "blockquote"; text: string }
+  | { type: "table"; headers: string[]; rows: string[][] };
 
 export type ArticleSection = {
   id: string;
@@ -57,6 +59,20 @@ const BULLET_RE = /^[-*•]\s+(.*)$/;
 const NUMBERED_RE = /^\d+[.)]\s+(.*)$/;
 const QUOTE_RE = /^>\s?(.*)$/;
 const BOLD_ONLY_RE = /^\*\*(.+)\*\*$/;
+const TABLE_ROW_RE = /^\|/;
+const TABLE_SEP_RE = /^[\|\s\-:]+$/;
+
+function parseTableRow(line: string): string[] {
+  return line.replace(/^\||\|$/g, "").split("|").map((c) => c.trim());
+}
+
+function isTableBlock(lines: string[]): boolean {
+  return (
+    lines.length >= 2 &&
+    lines.every((l) => TABLE_ROW_RE.test(l.trim())) &&
+    TABLE_SEP_RE.test(lines[1].trim())
+  );
+}
 
 function splitBlocks(text: string): string[] {
   return text
@@ -70,6 +86,17 @@ function parseBlock(raw: string): ContentBlock {
     .split("\n")
     .map((l) => l.trim())
     .filter(Boolean);
+  if (lines.length === 1) {
+    const h4 = /^####\s+(.+)$/.exec(lines[0]);
+    if (h4) return { type: "subheading", level: 4, text: h4[1].trim() };
+    const h3 = /^###\s+(.+)$/.exec(lines[0]);
+    if (h3) return { type: "subheading", level: 3, text: h3[1].trim() };
+  }
+  if (isTableBlock(lines)) {
+    const headers = parseTableRow(lines[0]);
+    const rows = lines.slice(2).map(parseTableRow);
+    return { type: "table", headers, rows };
+  }
   if (lines.length > 0 && lines.every((l) => BULLET_RE.test(l))) {
     return { type: "list", ordered: false, items: lines.map((l) => BULLET_RE.exec(l)![1]) };
   }
@@ -84,6 +111,8 @@ function parseBlock(raw: string): ContentBlock {
 
 function blockText(block: ContentBlock): string {
   if (block.type === "list") return block.items.join(" ");
+  if (block.type === "table") return [...block.headers, ...block.rows.flat()].join(" ");
+  if (block.type === "subheading") return block.text;
   return block.text;
 }
 

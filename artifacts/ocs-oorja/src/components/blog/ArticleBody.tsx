@@ -17,6 +17,62 @@ export default function ArticleBody({ sections }: { sections: ArticleSection[] }
             </h2>
           )}
           {section.blocks.map((block, j) => {
+            if (block.type === "table") {
+              return (
+                <div key={j} className="mt-6 overflow-x-auto rounded-xl border border-border shadow-sm">
+                  <table className="w-full min-w-[560px] text-sm border-collapse">
+                    <thead>
+                      <tr className="bg-primary text-primary-foreground">
+                        {block.headers.map((h, k) => (
+                          <th
+                            key={k}
+                            className="px-4 py-3 text-left font-semibold whitespace-nowrap first:rounded-tl-xl last:rounded-tr-xl"
+                          >
+                            {renderInlineMarkdown(h ?? "")}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {block.rows.map((row, k) => (
+                        <tr
+                          key={k}
+                          className={
+                            k % 2 === 0
+                              ? "bg-background hover:bg-secondary/30 transition-colors"
+                              : "bg-secondary/40 hover:bg-secondary/60 transition-colors"
+                          }
+                        >
+                          {row.map((cell, l) => (
+                            <td
+                              key={l}
+                              className="px-4 py-3 text-muted-foreground border-t border-border align-top leading-6"
+                            >
+                              {renderInlineMarkdown(cell ?? "")}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              );
+            }
+            if (block.type === "subheading") {
+              const Tag = block.level === 3 ? "h3" : "h4";
+              return (
+                <Tag
+                  key={j}
+                  className={
+                    block.level === 3
+                      ? "mt-6 text-lg font-semibold tracking-tight text-foreground"
+                      : "mt-5 text-base font-semibold tracking-tight text-foreground"
+                  }
+                >
+                  {block.text}
+                </Tag>
+              );
+            }
             if (block.type === "paragraph") {
               return (
                 <p key={j} className="mt-3 text-base leading-8 text-muted-foreground">
