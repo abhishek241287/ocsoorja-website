@@ -114,7 +114,6 @@ export default function Projects() {
         </div>
 
         <div className="mb-8 inline-flex flex-wrap gap-1 rounded-full border border-border bg-card p-1">
-          {tabButton("case-studies", "Case Studies")}
           {tabButton("gallery", "Installation Gallery")}
           <Link
             href="/projects/videos"
@@ -122,6 +121,7 @@ export default function Projects() {
           >
             Video Gallery
           </Link>
+          {tabButton("case-studies", "Case Studies")}
         </div>
 
         {activeTab === "case-studies" ? (
