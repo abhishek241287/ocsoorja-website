@@ -1,5 +1,5 @@
 import { Router, type IRouter } from "express";
-import { rateLimit, ipKeyGenerator } from "express-rate-limit";
+import { rateLimit } from "express-rate-limit";
 import { Resend } from "resend";
 import { db, enquiriesTable } from "@workspace/db";
 import { SubmitContactFormBody, ContactResponse, ErrorResponse } from "@workspace/api-zod";
@@ -13,7 +13,6 @@ const contactRateLimit = rateLimit({
   legacyHeaders: false,
   message: { error: "Too many requests. Please try again later." },
   statusCode: 429,
-  keyGenerator: (req) => ipKeyGenerator(req) ?? "unknown",
 });
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
