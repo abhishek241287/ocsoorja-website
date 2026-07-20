@@ -1,0 +1,253 @@
+We are preparing for production deployment.
+
+Do NOT deploy until every item below has been verified.
+
+Create a deployment report with PASS / FAIL for each item.
+
+==================================================
+1. DATABASE
+==================================================
+
+□ All migrations run successfully.
+□ No pending migrations.
+□ Database schema matches the latest code.
+□ All required tables exist.
+□ Foreign keys verified.
+□ Indexes created successfully.
+□ No migration warnings.
+
+==================================================
+2. API
+==================================================
+
+Test every API endpoint.
+
+Verify:
+
+□ 200 responses where expected.
+□ Validation errors handled correctly.
+□ No 500 errors.
+□ Authentication works.
+□ Error logging works.
+□ Health endpoint returns OK.
+
+==================================================
+3. CONTACT / QUOTE FORM
+==================================================
+
+Perform a real submission.
+
+Verify:
+
+□ Record saved to database.
+□ Email delivered to customercare@ocsoorja.com.
+□ Customer confirmation email sent.
+□ Reply-To is customer email.
+□ Validation works.
+□ Spam protection works.
+□ No duplicate submissions.
+
+==================================================
+4. ADMIN PANEL
+==================================================
+
+Verify:
+
+□ Login
+□ Logout
+□ Session persistence
+□ Dashboard loads
+□ Products
+□ Blogs
+□ Videos
+□ Projects
+□ Enquiries
+□ Uploads
+□ Search
+□ Filters
+
+==================================================
+5. FILE UPLOADS
+==================================================
+
+Verify:
+
+□ Images upload.
+□ PDFs upload.
+□ Videos upload.
+□ File size limits.
+□ Invalid file rejection.
+□ Storage permissions.
+
+==================================================
+6. WEBSITE
+==================================================
+
+Check every page.
+
+□ Home
+□ Products
+□ Product Details
+□ Engineering Tools
+□ Projects
+□ Case Studies
+□ Installation Gallery
+□ Video Gallery
+□ Blog
+□ About
+□ Contact
+□ Privacy Policy
+□ Terms
+□ 404 page
+
+No broken links.
+
+==================================================
+7. MOBILE
+==================================================
+
+Test:
+
+320 px
+
+375 px
+
+768 px
+
+1024 px
+
+1440 px
+
+Verify:
+
+□ Navigation
+□ Buttons
+□ Images
+□ Forms
+□ Tables
+□ Product pages
+□ Gallery
+
+==================================================
+8. SEO
+==================================================
+
+Verify:
+
+□ Meta title.
+□ Meta description.
+□ Canonical URLs.
+□ robots.txt
+□ sitemap.xml
+□ JSON-LD.
+□ OpenGraph.
+□ Twitter Cards.
+□ Image ALT tags.
+□ Breadcrumb Schema.
+
+==================================================
+9. PERFORMANCE
+==================================================
+
+Run Lighthouse.
+
+Desktop
+
+Mobile
+
+Report:
+
+Performance
+
+Accessibility
+
+Best Practices
+
+SEO
+
+Target:
+
+Performance >90
+
+Accessibility >95
+
+Best Practices >95
+
+SEO >95
+
+==================================================
+10. SECURITY
+==================================================
+
+Verify:
+
+□ Environment variables secure.
+□ Secrets not exposed.
+□ Rate limiting.
+□ Input validation.
+□ XSS protection.
+□ SQL injection protection.
+□ File upload validation.
+□ CORS configured.
+
+==================================================
+11. PRODUCTION BUILD
+==================================================
+
+Verify:
+
+□ Production build succeeds.
+□ TypeScript passes.
+□ ESLint passes.
+□ No console errors.
+□ No console warnings.
+□ No hydration errors.
+
+==================================================
+12. FINAL USER FLOW
+==================================================
+
+Perform this exact journey:
+
+Homepage
+
+↓
+
+Product Page
+
+↓
+
+Request Quote
+
+↓
+
+Database
+
+↓
+
+Email Delivered
+
+↓
+
+Admin Panel shows enquiry
+
+Everything must work.
+
+==================================================
+13. FINAL REPORT
+==================================================
+
+Produce a deployment report.
+
+PASS / FAIL
+
+If anything fails,
+fix it before deployment.
+
+Do not say "looks good."
+
+Actually execute every test.
+
+Include screenshots where appropriate.
+
+Deployment is allowed ONLY if every section passes.

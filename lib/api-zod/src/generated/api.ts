@@ -21,16 +21,24 @@ export const HealthCheckResponse = zod.object({
  * Receives a contact form submission and sends an email
  * @summary Submit contact form
  */
+export const submitContactFormBodyNameMax = 200;
 
+export const submitContactFormBodyEmailMax = 254;
+
+export const submitContactFormBodyPhoneMax = 20;
+
+export const submitContactFormBodyCompanyMax = 200;
+
+export const submitContactFormBodyMessageMax = 5000;
 
 
 
 export const SubmitContactFormBody = zod.object({
-  "name": zod.string().min(1),
-  "email": zod.string().email(),
-  "phone": zod.string().optional(),
-  "company": zod.string().optional(),
-  "message": zod.string().min(1)
+  "name": zod.string().min(1).max(submitContactFormBodyNameMax),
+  "email": zod.string().email().max(submitContactFormBodyEmailMax),
+  "phone": zod.string().max(submitContactFormBodyPhoneMax).optional(),
+  "company": zod.string().max(submitContactFormBodyCompanyMax).optional(),
+  "message": zod.string().min(1).max(submitContactFormBodyMessageMax)
 })
 
 export const SubmitContactFormResponse = zod.object({

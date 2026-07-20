@@ -7,11 +7,20 @@
  */
 
 export interface ContactInput {
-  /** @minLength 1 */
+  /**
+     * @minLength 1
+     * @maxLength 200
+     */
   name: string;
+  /** @maxLength 254 */
   email: string;
+  /** @maxLength 20 */
   phone?: string;
+  /** @maxLength 200 */
   company?: string;
-  /** @minLength 1 */
+  /**
+     * @minLength 1
+     * @maxLength 5000
+     */
   message: string;
 }
