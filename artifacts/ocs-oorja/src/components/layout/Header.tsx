@@ -275,6 +275,19 @@ export default function Header() {
         >
           <Container className="py-4">
             <nav className="flex flex-col" aria-label="Mobile">
+              {/* Home — mobile only (logo serves this purpose on desktop) */}
+              <Link
+                href="/"
+                onClick={() => setMobileOpen(false)}
+                aria-current={isActiveHref("/", location) ? "page" : undefined}
+                className={cn(
+                  "border-b border-border/60 py-3 text-base font-medium transition-colors",
+                  isActiveHref("/", location) ? "text-primary-strong" : "text-foreground",
+                )}
+              >
+                Home
+              </Link>
+
               {/* Products with expandable families */}
               <div className="border-b border-border/60">
                 <div className="flex items-center">
