@@ -69,7 +69,7 @@ export const eRickshawChargers: Product[] = [
     "slug": "ev-charger-e-rickshaw",
     "family": "e-rickshaw-chargers",
     "series": "E-Rickshaw Charger Series",
-    "image": "/images/products/ev-charger-erickshaw-new.jpeg",
+    "image": "/images/products/e-rickshaw-chargers/erickshaw-charger.png",
     "summary": "Dedicated smart charger tailored for e‑rickshaw battery packs.",
     "warranty": "36 Months (3 Years)",
     "tags": [
@@ -103,7 +103,7 @@ export const eRickshawChargers: Product[] = [
     "slug": "ocs-oorja-51v-7a-smart-charger",
     "family": "e-rickshaw-chargers",
     "series": "51.2V Smart Charger Series",
-    "image": "/images/products/ev-charger-erickshaw-new.jpeg",
+    "image": "/images/products/e-rickshaw-chargers/erickshaw-charger.png",
     "summary": "Compact, silent, and battery-friendly smart charger ideal for 40–120Ah LiFePO₄ packs with built-in RCD protection and optional CAN communication for overnight charging.",
     "warranty": "36 Months (3 Years)",
     "tags": [
@@ -241,7 +241,7 @@ export const eRickshawChargers: Product[] = [
     "slug": "ocs-oorja-51v-20a-smart-charger",
     "family": "e-rickshaw-chargers",
     "series": "51.2V Smart Charger Series",
-    "image": "/images/products/ev-charger-erickshaw-new.jpeg",
+    "image": "/images/products/e-rickshaw-chargers/erickshaw-charger.png",
     "summary": "Fast, dependable charging for 80–150Ah LiFePO₄ packs with BMS-aware taper, RCD protection, and CAN communication—perfect for workshops and fleet operations.",
     "warranty": "36 Months (3 Years)",
     "tags": [
@@ -386,7 +386,7 @@ export const eRickshawChargers: Product[] = [
     "slug": "ocs-oorja-51v-25a-smart-charger",
     "family": "e-rickshaw-chargers",
     "series": "51.2V Smart Charger Series",
-    "image": "/images/products/ev-charger-erickshaw-new.jpeg",
+    "image": "/images/products/e-rickshaw-chargers/erickshaw-charger.png",
     "summary": "High-throughput powerhouse for 100–200Ah LiFePO₄ packs with advanced CAN control, industrial protections, and smart thermal management—minimize downtime, maximize cycles.",
     "warranty": "36 Months (3 Years) with Priority Fleet Support",
     "tags": [
