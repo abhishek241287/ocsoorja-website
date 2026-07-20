@@ -1,9 +1,20 @@
 import { Router, type IRouter } from "express";
+import { rateLimit } from "express-rate-limit";
 import { Resend } from "resend";
 import { db, enquiriesTable } from "@workspace/db";
 import { SubmitContactFormBody, ContactResponse, ErrorResponse } from "@workspace/api-zod";
 
 const router: IRouter = Router();
+
+const contactRateLimit = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  limit: 5,
+  standardHeaders: "draft-8",
+  legacyHeaders: false,
+  message: { error: "Too many requests. Please try again later." },
+  statusCode: 429,
+  keyGenerator: (req) => req.ip ?? "unknown",
+});
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
@@ -60,7 +71,7 @@ function confirmationHtml(name: string): string {
 // Route
 // ---------------------------------------------------------------------------
 
-router.post("/contact", async (req, res): Promise<void> => {
+router.post("/contact", contactRateLimit, async (req, res): Promise<void> => {
   const parsed = SubmitContactFormBody.safeParse(req.body);
   if (!parsed.success) {
     req.log.warn({ errors: parsed.error.message }, "Invalid contact form submission");
