@@ -37,10 +37,12 @@ export const videosTable = pgTable("videos", {
   description: text("description"),
   category: text("category").notNull().default("General"),
   type: text("type").notNull(), // "upload" | "youtube" | "vimeo"
-  url: text("url").notNull(),   // "/api/videos/stream/xxx.mp4"  OR  YouTube/Vimeo URL
-  thumbnail: text("thumbnail"), // "/images/videos/xxx.jpg"  OR  external thumb URL
+  url: text("url").notNull(),   // "/api/storage/objects/…" for uploads, YouTube/Vimeo URL for embeds
+  thumbnail: text("thumbnail"), // "/api/storage/objects/…" OR external thumb URL
   duration: text("duration"),
   featured: boolean("featured").notNull().default(false),
+  published: boolean("published").notNull().default(false),
+  publishedAt: timestamp("published_at"),
   sortOrder: integer("sort_order").notNull().default(0),
   createdAt: timestamp("created_at").defaultNow(),
 });

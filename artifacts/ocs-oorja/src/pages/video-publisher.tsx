@@ -1,18 +1,20 @@
 /**
- * Video Publisher — DEVELOPMENT WORKSPACE ONLY.
+ * Video Publisher — production admin tool.
  *
- * Allows admins to upload videos, add YouTube/Vimeo links, edit metadata,
- * replace thumbnails, reorder, feature, and delete videos.
- *
- * Routes/page tree-shaken from production builds (lazy import gated on DEV).
+ * Protected by a password login gate (ADMIN_PASSWORD env var).
+ * Supports uploading video files to GCS or adding YouTube/Vimeo links,
+ * with full metadata: title, description, category, thumbnail, publish date,
+ * featured flag, and published toggle.
  */
-import { useCallback, useRef, useState } from "react";
+import { type FormEvent, useCallback, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Film,
   GripVertical,
   Image as ImageIcon,
   Link2,
+  Lock,
+  LogOut,
   Pencil,
   Play,
   Star,
@@ -28,11 +30,12 @@ import {
   captureVideoThumbnail,
   getVideoDuration,
   uploadThumbnail,
+  uploadVideoToGCS,
   type VideoEntry,
   type VideoListResponse,
 } from "@/lib/video-utils";
 
-// ── API helpers ─────────────────────────────────────────────────────────────
+// ── API helper ───────────────────────────────────────────────────────────────
 
 async function apiJson<T>(url: string, init?: RequestInit): Promise<T> {
   const r = await fetch(url, init);
@@ -41,27 +44,245 @@ async function apiJson<T>(url: string, init?: RequestInit): Promise<T> {
   return data;
 }
 
-// ── Thumbnail capture + upload helper ───────────────────────────────────────
+// ── Supported formats list (informational) ───────────────────────────────────
 
-async function autoCaptureThumbnail(file: File): Promise<string | null> {
-  const blob = await captureVideoThumbnail(file);
-  if (!blob) return null;
-  return uploadThumbnail(blob, "auto-thumb.jpg");
+const SUPPORTED_FORMATS =
+  "MP4, M4V, MOV, AVI, MKV, WEBM, OGV, 3GP, WMV, FLV, TS, MTS, M2TS";
+
+// ── Date helpers ─────────────────────────────────────────────────────────────
+
+function toDatetimeLocal(iso: string | null): string {
+  if (!iso) return "";
+  try {
+    const d = new Date(iso);
+    const pad = (n: number) => String(n).padStart(2, "0");
+    return (
+      `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}` +
+      `T${pad(d.getHours())}:${pad(d.getMinutes())}`
+    );
+  } catch {
+    return "";
+  }
 }
 
-async function uploadCustomThumbnail(file: File): Promise<string | null> {
-  return uploadThumbnail(file, file.name);
+// ── Login Gate ───────────────────────────────────────────────────────────────
+
+function LoginGate({ onLogin }: { onLogin: () => void }) {
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    try {
+      const r = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+      const data = (await r.json()) as { ok?: boolean; error?: string };
+      if (r.ok && data.ok) {
+        onLogin();
+      } else {
+        setError(data.error ?? "Login failed");
+      }
+    } catch {
+      setError("Network error — please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="flex min-h-[60vh] flex-col items-center justify-center px-4">
+      <div className="w-full max-w-sm rounded-xl border border-border bg-card p-8 shadow-sm">
+        <div className="mb-6 flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+            <Lock className="h-5 w-5 text-primary-strong" />
+          </div>
+          <div>
+            <h1 className="font-semibold text-foreground">Video Publisher</h1>
+            <p className="text-xs text-muted-foreground">Admin access required</p>
+          </div>
+        </div>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <Input
+            type="password"
+            placeholder="Admin password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoFocus
+            required
+          />
+          {error && <p className="text-sm text-destructive">{error}</p>}
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading ? "Signing in…" : "Sign In"}
+          </Button>
+        </form>
+      </div>
+    </div>
+  );
 }
 
-// ── Main component ───────────────────────────────────────────────────────────
+// ── Shared form fields ────────────────────────────────────────────────────────
+
+interface CommonFields {
+  title: string;
+  description: string;
+  category: string;
+  featured: boolean;
+  published: boolean;
+  publishedAt: string; // datetime-local string
+}
+
+function MetaFields({
+  fields,
+  onChange,
+}: {
+  fields: CommonFields;
+  onChange: (f: Partial<CommonFields>) => void;
+}) {
+  return (
+    <div className="mt-4 grid gap-3 sm:grid-cols-2">
+      <Input
+        placeholder="Title *"
+        value={fields.title}
+        onChange={(e) => onChange({ title: e.target.value })}
+        className="sm:col-span-2"
+      />
+      <textarea
+        placeholder="Description (optional)"
+        value={fields.description}
+        onChange={(e) => onChange({ description: e.target.value })}
+        rows={3}
+        className="sm:col-span-2 rounded-md border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring resize-none"
+      />
+      <div>
+        <label className="mb-1 block text-xs font-medium text-muted-foreground">
+          Category
+        </label>
+        <select
+          value={fields.category}
+          onChange={(e) => onChange({ category: e.target.value })}
+          className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+        >
+          {VIDEO_CATEGORIES.map((c) => (
+            <option key={c}>{c}</option>
+          ))}
+        </select>
+      </div>
+      <div>
+        <label className="mb-1 block text-xs font-medium text-muted-foreground">
+          Publish date (optional)
+        </label>
+        <input
+          type="datetime-local"
+          value={fields.publishedAt}
+          onChange={(e) => onChange({ publishedAt: e.target.value })}
+          className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground"
+        />
+      </div>
+      <div className="sm:col-span-2 flex flex-wrap gap-4">
+        <label className="flex cursor-pointer items-center gap-2 text-sm">
+          <input
+            type="checkbox"
+            checked={fields.featured}
+            onChange={(e) => onChange({ featured: e.target.checked })}
+            className="accent-primary"
+          />
+          <span>Mark as featured</span>
+        </label>
+        <label className="flex cursor-pointer items-center gap-2 text-sm">
+          <input
+            type="checkbox"
+            checked={fields.published}
+            onChange={(e) => onChange({ published: e.target.checked })}
+            className="accent-primary"
+          />
+          <span>Publish immediately</span>
+        </label>
+      </div>
+    </div>
+  );
+}
+
+// ── Thumbnail picker ─────────────────────────────────────────────────────────
+
+function ThumbnailPicker({
+  preview,
+  onFile,
+  onClear,
+  label = "Upload thumbnail",
+}: {
+  preview: string | null;
+  onFile: (file: File) => void;
+  onClear: () => void;
+  label?: string;
+}) {
+  const ref = useRef<HTMLInputElement>(null);
+  return (
+    <div className="flex items-center gap-3">
+      <input
+        ref={ref}
+        type="file"
+        accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
+        className="hidden"
+        onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])}
+      />
+      <button
+        type="button"
+        onClick={() => ref.current?.click()}
+        className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-sm font-medium hover:bg-secondary"
+      >
+        <ImageIcon className="h-4 w-4" />
+        {label}
+      </button>
+      {preview && (
+        <div className="relative">
+          <img
+            src={preview}
+            alt="Thumbnail preview"
+            className="h-16 w-28 rounded-md object-cover ring-1 ring-border"
+          />
+          <button
+            type="button"
+            onClick={onClear}
+            className="absolute -right-1.5 -top-1.5 rounded-full bg-foreground p-0.5 text-background"
+          >
+            <X className="h-3 w-3" />
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Main component ────────────────────────────────────────────────────────────
 
 export default function VideoPublisher() {
   const qc = useQueryClient();
 
+  // Check admin auth
+  const { data: authData, refetch: refetchAuth } = useQuery<{
+    authenticated: boolean;
+  }>({
+    queryKey: ["admin-me"],
+    queryFn: () =>
+      fetch("/api/admin/me").then((r) => r.json()) as Promise<{
+        authenticated: boolean;
+      }>,
+    retry: false,
+  });
+
+  const isAuthenticated = authData?.authenticated ?? false;
+
+  // Video list (all videos for admin, including drafts)
   const { data, isLoading } = useQuery<VideoListResponse>({
     queryKey: ["admin-videos"],
-    queryFn: () =>
-      apiJson<VideoListResponse>("/api/videos?limit=50"),
+    queryFn: () => apiJson<VideoListResponse>("/api/videos?limit=50"),
+    enabled: isAuthenticated,
   });
   const videos = data?.videos ?? [];
 
@@ -70,73 +291,109 @@ export default function VideoPublisher() {
     void qc.invalidateQueries({ queryKey: ["videos"] });
   }, [qc]);
 
-  // ── Upload section state ──
-  const [uploadTitle, setUploadTitle] = useState("");
-  const [uploadCategory, setUploadCategory] = useState("General");
-  const [uploadThumbMode, setUploadThumbMode] = useState<"auto" | "custom">("auto");
-  const [uploadThumbPreview, setUploadThumbPreview] = useState<string | null>(null);
+  // ── Upload state ──────────────────────────────────────────────────────────
+
+  const defaultFields: CommonFields = {
+    title: "",
+    description: "",
+    category: "General",
+    featured: false,
+    published: false,
+    publishedAt: "",
+  };
+
+  const [uploadFields, setUploadFields] = useState<CommonFields>({
+    ...defaultFields,
+  });
+  const [uploadThumbMode, setUploadThumbMode] = useState<"auto" | "custom">(
+    "auto",
+  );
+  const [uploadThumbPreview, setUploadThumbPreview] = useState<string | null>(
+    null,
+  );
   const [uploadThumbUrl, setUploadThumbUrl] = useState<string | null>(null);
   const [uploadStatus, setUploadStatus] = useState("");
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
   const videoFileRef = useRef<HTMLInputElement>(null);
-  const uploadThumbRef = useRef<HTMLInputElement>(null);
 
   const uploadMutation = useMutation({
     mutationFn: async (file: File) => {
-      setUploadStatus("Reading duration…");
+      setUploadStatus("Reading video…");
+      setUploadProgress(null);
       const duration = await getVideoDuration(file);
 
       let thumbUrl = uploadThumbUrl;
-
-      if (!thumbUrl) {
-        if (uploadThumbMode === "auto") {
-          setUploadStatus("Capturing thumbnail…");
-          thumbUrl = await autoCaptureThumbnail(file);
+      if (!thumbUrl && uploadThumbMode === "auto") {
+        setUploadStatus("Capturing thumbnail…");
+        const blob = await captureVideoThumbnail(file);
+        if (blob) {
+          setUploadStatus("Uploading thumbnail…");
+          thumbUrl = await uploadThumbnail(blob, "auto-thumb.jpg");
         }
       }
 
       setUploadStatus("Uploading video…");
-      const fd = new FormData();
-      fd.append("video", file);
-      fd.append("title", uploadTitle || file.name.replace(/\.[^.]+$/, ""));
-      fd.append("category", uploadCategory);
-      fd.append("duration", duration);
-      if (thumbUrl) fd.append("thumbnailUrl", thumbUrl);
+      const { servingUrl } = await uploadVideoToGCS(file, (pct) => {
+        setUploadProgress(pct);
+        setUploadStatus(`Uploading… ${pct}%`);
+      });
+      setUploadProgress(null);
 
-      return apiJson<VideoEntry>("/api/videos/upload", { method: "POST", body: fd });
+      setUploadStatus("Saving…");
+      return apiJson<VideoEntry>("/api/videos/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: uploadFields.title || file.name.replace(/\.[^.]+$/, ""),
+          description: uploadFields.description,
+          category: uploadFields.category,
+          objectPath: servingUrl,
+          thumbnailUrl: thumbUrl ?? "",
+          duration,
+          featured: uploadFields.featured,
+          published: uploadFields.published,
+          publishedAt: uploadFields.publishedAt
+            ? new Date(uploadFields.publishedAt).toISOString()
+            : null,
+        }),
+      });
     },
     onSuccess: () => {
       invalidate();
-      setUploadTitle("");
+      setUploadFields({ ...defaultFields });
       setUploadThumbPreview(null);
       setUploadThumbUrl(null);
+      setUploadProgress(null);
       setUploadStatus("Uploaded!");
       if (videoFileRef.current) videoFileRef.current.value = "";
-      if (uploadThumbRef.current) uploadThumbRef.current.value = "";
       setTimeout(() => setUploadStatus(""), 3000);
     },
     onError: (err: Error) => {
+      setUploadProgress(null);
       setUploadStatus("");
       console.error(err);
     },
   });
 
   async function handleCustomThumbFile(file: File) {
-    const previewUrl = URL.createObjectURL(file);
-    setUploadThumbPreview(previewUrl);
+    setUploadThumbPreview(URL.createObjectURL(file));
     setUploadStatus("Uploading thumbnail…");
-    const url = await uploadCustomThumbnail(file);
+    const url = await uploadThumbnail(file, file.name);
     setUploadStatus("");
     if (url) setUploadThumbUrl(url);
   }
 
-  // ── Embed section state ──
+  // ── Embed state ───────────────────────────────────────────────────────────
+
+  const [embedFields, setEmbedFields] = useState<CommonFields>({
+    ...defaultFields,
+  });
   const [embedUrl, setEmbedUrl] = useState("");
-  const [embedTitle, setEmbedTitle] = useState("");
-  const [embedCategory, setEmbedCategory] = useState("General");
   const [embedThumbUrl, setEmbedThumbUrl] = useState<string | null>(null);
-  const [embedThumbPreview, setEmbedThumbPreview] = useState<string | null>(null);
+  const [embedThumbPreview, setEmbedThumbPreview] = useState<string | null>(
+    null,
+  );
   const [embedStatus, setEmbedStatus] = useState("");
-  const embedThumbRef = useRef<HTMLInputElement>(null);
 
   const embedMutation = useMutation({
     mutationFn: () =>
@@ -144,33 +401,38 @@ export default function VideoPublisher() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          title: embedTitle,
+          title: embedFields.title,
+          description: embedFields.description,
+          category: embedFields.category,
           url: embedUrl,
-          category: embedCategory,
           thumbnailUrl: embedThumbUrl ?? "",
+          featured: embedFields.featured,
+          published: embedFields.published,
+          publishedAt: embedFields.publishedAt
+            ? new Date(embedFields.publishedAt).toISOString()
+            : null,
         }),
       }),
     onSuccess: () => {
       invalidate();
+      setEmbedFields({ ...defaultFields });
       setEmbedUrl("");
-      setEmbedTitle("");
       setEmbedThumbUrl(null);
       setEmbedThumbPreview(null);
       setEmbedStatus("Added!");
-      if (embedThumbRef.current) embedThumbRef.current.value = "";
       setTimeout(() => setEmbedStatus(""), 3000);
     },
     onError: (err: Error) => setEmbedStatus(err.message),
   });
 
   async function handleEmbedThumbFile(file: File) {
-    const previewUrl = URL.createObjectURL(file);
-    setEmbedThumbPreview(previewUrl);
-    const url = await uploadCustomThumbnail(file);
+    setEmbedThumbPreview(URL.createObjectURL(file));
+    const url = await uploadThumbnail(file, file.name);
     if (url) setEmbedThumbUrl(url);
   }
 
-  // ── Mutations ──
+  // ── List mutations ────────────────────────────────────────────────────────
+
   const patchMutation = useMutation({
     mutationFn: ({ id, ...patch }: Partial<VideoEntry> & { id: number }) =>
       apiJson<VideoEntry>(`/api/videos/${id}`, {
@@ -187,7 +449,8 @@ export default function VideoPublisher() {
     onSuccess: invalidate,
   });
 
-  // ── Drag-drop reorder ──
+  // ── Drag-drop reorder ─────────────────────────────────────────────────────
+
   const dragId = useRef<number | null>(null);
   const [ordered, setOrdered] = useState<VideoEntry[] | null>(null);
   const list = ordered ?? videos;
@@ -218,54 +481,78 @@ export default function VideoPublisher() {
     reorderMutation.mutate(items.map((v) => v.id));
   }
 
-  // ── Edit dialog ──
+  // ── Edit dialog ───────────────────────────────────────────────────────────
+
   const [editing, setEditing] = useState<VideoEntry | null>(null);
   const [editThumbPreview, setEditThumbPreview] = useState<string | null>(null);
-  const editThumbRef = useRef<HTMLInputElement>(null);
 
   async function handleEditThumbFile(file: File) {
-    const previewUrl = URL.createObjectURL(file);
-    setEditThumbPreview(previewUrl);
-    const url = await uploadCustomThumbnail(file);
+    setEditThumbPreview(URL.createObjectURL(file));
+    const url = await uploadThumbnail(file, file.name);
     if (url && editing) setEditing({ ...editing, thumbnail: url });
+  }
+
+  // ── Logout ────────────────────────────────────────────────────────────────
+
+  async function handleLogout() {
+    await fetch("/api/admin/logout", { method: "POST" });
+    void refetchAuth();
+  }
+
+  // ── Render ────────────────────────────────────────────────────────────────
+
+  if (!authData) {
+    return (
+      <div className="flex min-h-[40vh] items-center justify-center text-sm text-muted-foreground">
+        Loading…
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <LoginGate onLogin={() => void refetchAuth()} />;
   }
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10">
-      <h1 className="text-2xl font-bold text-foreground">Video Publisher</h1>
-      <p className="mt-1 text-sm text-muted-foreground">
-        Upload videos, add YouTube/Vimeo links, and manage your video gallery.
-      </p>
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Video Publisher</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Upload videos or add YouTube / Vimeo links. Manage your video gallery.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => void handleLogout()}
+          title="Sign out"
+          className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+        >
+          <LogOut className="h-4 w-4" />
+          <span className="hidden sm:inline">Sign out</span>
+        </button>
+      </div>
 
-      {/* ── Upload video file ─────────────────────────────────────────── */}
+      {/* ── Upload video file ──────────────────────────────────────────── */}
       <section className="mt-8 rounded-xl border border-border bg-card p-5">
         <h2 className="flex items-center gap-2 font-semibold">
           <Upload className="h-4 w-4" /> Upload Video
         </h2>
         <p className="mt-1 text-xs text-muted-foreground">
-          MP4, MOV, AVI, MKV, WEBM · max 1 GB
+          {SUPPORTED_FORMATS} · max 1 GB
         </p>
 
-        <div className="mt-4 grid gap-3 sm:grid-cols-2">
-          <Input
-            placeholder="Title (defaults to filename)"
-            value={uploadTitle}
-            onChange={(e) => setUploadTitle(e.target.value)}
-          />
-          <select
-            value={uploadCategory}
-            onChange={(e) => setUploadCategory(e.target.value)}
-            className="rounded-md border border-border bg-background px-3 py-2 text-sm"
-          >
-            {VIDEO_CATEGORIES.map((c) => (
-              <option key={c}>{c}</option>
-            ))}
-          </select>
-        </div>
+        <MetaFields
+          fields={uploadFields}
+          onChange={(f) => setUploadFields((prev) => ({ ...prev, ...f }))}
+        />
 
         {/* Thumbnail mode */}
         <div className="mt-4">
-          <p className="mb-2 text-xs font-medium text-muted-foreground">Cover thumbnail</p>
+          <p className="mb-2 text-xs font-medium text-muted-foreground">
+            Cover thumbnail
+          </p>
           <div className="flex flex-wrap gap-3">
             <label className="flex cursor-pointer items-center gap-2 text-sm">
               <input
@@ -296,54 +583,43 @@ export default function VideoPublisher() {
           </div>
 
           {uploadThumbMode === "custom" && (
-            <div className="mt-3 flex items-center gap-3">
-              <input
-                ref={uploadThumbRef}
-                type="file"
-                accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
-                className="hidden"
-                onChange={(e) =>
-                  e.target.files?.[0] && handleCustomThumbFile(e.target.files[0])
-                }
+            <div className="mt-3">
+              <ThumbnailPicker
+                preview={uploadThumbPreview}
+                onFile={handleCustomThumbFile}
+                onClear={() => {
+                  setUploadThumbPreview(null);
+                  setUploadThumbUrl(null);
+                }}
               />
-              <button
-                type="button"
-                onClick={() => uploadThumbRef.current?.click()}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-sm font-medium hover:bg-secondary"
-              >
-                <ImageIcon className="h-4 w-4" />
-                Choose image
-              </button>
-              {uploadThumbPreview && (
-                <div className="relative">
-                  <img
-                    src={uploadThumbPreview}
-                    alt="Thumbnail preview"
-                    className="h-16 w-28 rounded-md object-cover ring-1 ring-border"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setUploadThumbPreview(null);
-                      setUploadThumbUrl(null);
-                      if (uploadThumbRef.current) uploadThumbRef.current.value = "";
-                    }}
-                    className="absolute -right-1.5 -top-1.5 rounded-full bg-foreground p-0.5 text-background"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                </div>
-              )}
             </div>
           )}
         </div>
 
-        {/* File picker + upload button */}
+        {/* Upload progress bar */}
+        {uploadProgress !== null && (
+          <div className="mt-4">
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-xs text-muted-foreground">
+                Uploading to cloud storage…
+              </span>
+              <span className="text-xs font-medium">{uploadProgress}%</span>
+            </div>
+            <div className="h-2 rounded-full bg-secondary overflow-hidden">
+              <div
+                className="h-full bg-primary transition-all duration-200 rounded-full"
+                style={{ width: `${uploadProgress}%` }}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* File picker */}
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <input
             ref={videoFileRef}
             type="file"
-            accept=".mp4,.mov,.avi,.mkv,.webm,video/*"
+            accept=".mp4,.m4v,.mov,.avi,.mkv,.webm,.ogv,.3gp,.3g2,.wmv,.flv,.f4v,.ts,.m2ts,.mts,video/*"
             className="hidden"
             onChange={(e) => {
               const file = e.target.files?.[0];
@@ -354,10 +630,14 @@ export default function VideoPublisher() {
             onClick={() => videoFileRef.current?.click()}
             disabled={uploadMutation.isPending}
           >
-            {uploadMutation.isPending ? uploadStatus || "Uploading…" : "Choose & Upload"}
+            {uploadMutation.isPending
+              ? uploadStatus || "Processing…"
+              : "Choose & Upload File"}
           </Button>
           {uploadMutation.isError && (
-            <p className="text-sm text-destructive">{String(uploadMutation.error)}</p>
+            <p className="text-sm text-destructive">
+              {String(uploadMutation.error)}
+            </p>
           )}
           {uploadStatus && !uploadMutation.isPending && (
             <p className="text-sm text-primary-strong">{uploadStatus}</p>
@@ -371,29 +651,20 @@ export default function VideoPublisher() {
           <Link2 className="h-4 w-4" /> Add YouTube / Vimeo Link
         </h2>
 
-        <div className="mt-4 grid gap-3 sm:grid-cols-2">
-          <Input
-            placeholder="Video title *"
-            value={embedTitle}
-            onChange={(e) => setEmbedTitle(e.target.value)}
-          />
+        <div className="mt-4">
           <Input
             placeholder="https://youtube.com/watch?v=… or vimeo.com/…"
             value={embedUrl}
             onChange={(e) => setEmbedUrl(e.target.value)}
           />
-          <select
-            value={embedCategory}
-            onChange={(e) => setEmbedCategory(e.target.value)}
-            className="rounded-md border border-border bg-background px-3 py-2 text-sm"
-          >
-            {VIDEO_CATEGORIES.map((c) => (
-              <option key={c}>{c}</option>
-            ))}
-          </select>
         </div>
 
-        {/* Custom thumbnail (optional override) */}
+        <MetaFields
+          fields={embedFields}
+          onChange={(f) => setEmbedFields((prev) => ({ ...prev, ...f }))}
+        />
+
+        {/* Custom thumbnail override */}
         <div className="mt-4">
           <p className="mb-2 text-xs font-medium text-muted-foreground">
             Custom thumbnail{" "}
@@ -401,56 +672,28 @@ export default function VideoPublisher() {
               (optional — YouTube thumbnail auto-fetched if not set)
             </span>
           </p>
-          <div className="flex items-center gap-3">
-            <input
-              ref={embedThumbRef}
-              type="file"
-              accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
-              className="hidden"
-              onChange={(e) =>
-                e.target.files?.[0] && handleEmbedThumbFile(e.target.files[0])
-              }
-            />
-            <button
-              type="button"
-              onClick={() => embedThumbRef.current?.click()}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-sm font-medium hover:bg-secondary"
-            >
-              <ImageIcon className="h-4 w-4" />
-              Upload thumbnail
-            </button>
-            {embedThumbPreview && (
-              <div className="relative">
-                <img
-                  src={embedThumbPreview}
-                  alt="Thumbnail preview"
-                  className="h-16 w-28 rounded-md object-cover ring-1 ring-border"
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    setEmbedThumbPreview(null);
-                    setEmbedThumbUrl(null);
-                    if (embedThumbRef.current) embedThumbRef.current.value = "";
-                  }}
-                  className="absolute -right-1.5 -top-1.5 rounded-full bg-foreground p-0.5 text-background"
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              </div>
-            )}
-          </div>
+          <ThumbnailPicker
+            preview={embedThumbPreview}
+            onFile={handleEmbedThumbFile}
+            onClear={() => {
+              setEmbedThumbPreview(null);
+              setEmbedThumbUrl(null);
+            }}
+            label="Upload thumbnail"
+          />
         </div>
 
         <div className="mt-4 flex items-center gap-3">
           <Button
-            disabled={!embedTitle || !embedUrl || embedMutation.isPending}
+            disabled={!embedFields.title || !embedUrl || embedMutation.isPending}
             onClick={() => embedMutation.mutate()}
           >
             {embedMutation.isPending ? "Adding…" : "Add Video"}
           </Button>
           {embedMutation.isError && (
-            <p className="text-sm text-destructive">{String(embedMutation.error)}</p>
+            <p className="text-sm text-destructive">
+              {String(embedMutation.error)}
+            </p>
           )}
           {embedStatus && !embedMutation.isPending && (
             <p className="text-sm text-primary-strong">{embedStatus}</p>
@@ -458,12 +701,12 @@ export default function VideoPublisher() {
         </div>
       </section>
 
-      {/* ── Video list ──────────────────────────────────────────────────── */}
+      {/* ── Video list ─────────────────────────────────────────────────── */}
       <section className="mt-8">
         <h2 className="mb-3 font-semibold">
           All Videos ({list.length})
           <span className="ml-2 text-xs font-normal text-muted-foreground">
-            Drag to reorder
+            Drag to reorder · click ★ to feature · click eye to publish/unpublish
           </span>
         </h2>
 
@@ -504,25 +747,60 @@ export default function VideoPublisher() {
                     </div>
                   )}
                   <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors hover:bg-black/30">
-                    <Play className="h-4 w-4 fill-white text-white opacity-0 transition-opacity hover:opacity-100" />
+                    <Play className="h-4 w-4 fill-white text-white opacity-0 transition-opacity group-hover:opacity-100" />
                   </div>
                 </div>
 
                 {/* Meta */}
                 <div className="min-w-0 flex-1">
-                  <p className="truncate font-medium text-foreground">{video.title}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="truncate font-medium text-foreground">
+                      {video.title}
+                    </p>
+                    {!video.published && (
+                      <span className="shrink-0 rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+                        Draft
+                      </span>
+                    )}
+                  </div>
                   <p className="truncate text-xs text-muted-foreground">
                     {video.type} · {video.category}
                     {video.duration ? ` · ${video.duration}` : ""}
+                    {video.publishedAt
+                      ? ` · ${new Date(video.publishedAt).toLocaleDateString()}`
+                      : ""}
                   </p>
                 </div>
 
-                {/* Actions */}
+                {/* Publish toggle */}
+                <button
+                  type="button"
+                  title={video.published ? "Unpublish" : "Publish"}
+                  onClick={() =>
+                    patchMutation.mutate({
+                      id: video.id,
+                      published: !video.published,
+                    })
+                  }
+                  className={cn(
+                    "rounded-md px-2 py-1.5 text-xs font-medium transition-colors border",
+                    video.published
+                      ? "border-primary/30 bg-primary/10 text-primary-strong hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30"
+                      : "border-border text-muted-foreground hover:border-primary/30 hover:bg-primary/10 hover:text-primary-strong",
+                  )}
+                >
+                  {video.published ? "Published" : "Publish"}
+                </button>
+
+                {/* Featured */}
                 <button
                   type="button"
                   title={video.featured ? "Remove featured" : "Mark as featured"}
                   onClick={() =>
-                    patchMutation.mutate({ id: video.id, featured: !video.featured })
+                    patchMutation.mutate({
+                      id: video.id,
+                      featured: !video.featured,
+                    })
                   }
                   className={cn(
                     "rounded-md p-2 transition-colors",
@@ -531,9 +809,12 @@ export default function VideoPublisher() {
                       : "text-muted-foreground hover:text-foreground",
                   )}
                 >
-                  <Star className={cn("h-4 w-4", video.featured && "fill-current")} />
+                  <Star
+                    className={cn("h-4 w-4", video.featured && "fill-current")}
+                  />
                 </button>
 
+                {/* Edit */}
                 <button
                   type="button"
                   title="Edit"
@@ -546,6 +827,7 @@ export default function VideoPublisher() {
                   <Pencil className="h-4 w-4" />
                 </button>
 
+                {/* Delete */}
                 <button
                   type="button"
                   title="Delete"
@@ -563,7 +845,7 @@ export default function VideoPublisher() {
         )}
       </section>
 
-      {/* ── Edit dialog ──────────────────────────────────────────────────── */}
+      {/* ── Edit dialog ─────────────────────────────────────────────────── */}
       {editing && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
@@ -584,18 +866,18 @@ export default function VideoPublisher() {
               </button>
             </div>
 
-            <div className="space-y-4">
-              {/* Title */}
+            <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-1">
               <label className="block text-sm">
                 <span className="text-muted-foreground">Title</span>
                 <Input
                   value={editing.title}
-                  onChange={(e) => setEditing({ ...editing, title: e.target.value })}
+                  onChange={(e) =>
+                    setEditing({ ...editing, title: e.target.value })
+                  }
                   className="mt-1"
                 />
               </label>
 
-              {/* Description */}
               <label className="block text-sm">
                 <span className="text-muted-foreground">Description</span>
                 <textarea
@@ -604,11 +886,10 @@ export default function VideoPublisher() {
                     setEditing({ ...editing, description: e.target.value })
                   }
                   rows={3}
-                  className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring resize-none"
                 />
               </label>
 
-              {/* Category */}
               <label className="block text-sm">
                 <span className="text-muted-foreground">Category</span>
                 <select
@@ -624,48 +905,55 @@ export default function VideoPublisher() {
                 </select>
               </label>
 
-              {/* Replace thumbnail */}
+              <label className="block text-sm">
+                <span className="text-muted-foreground">Publish date</span>
+                <input
+                  type="datetime-local"
+                  value={toDatetimeLocal(editing.publishedAt)}
+                  onChange={(e) =>
+                    setEditing({ ...editing, publishedAt: e.target.value })
+                  }
+                  className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground"
+                />
+              </label>
+
+              <div className="flex flex-wrap gap-4 text-sm">
+                <label className="flex cursor-pointer items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={editing.featured}
+                    onChange={(e) =>
+                      setEditing({ ...editing, featured: e.target.checked })
+                    }
+                    className="accent-primary"
+                  />
+                  <span>Featured</span>
+                </label>
+                <label className="flex cursor-pointer items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={editing.published}
+                    onChange={(e) =>
+                      setEditing({ ...editing, published: e.target.checked })
+                    }
+                    className="accent-primary"
+                  />
+                  <span>Published</span>
+                </label>
+              </div>
+
               <div className="text-sm">
                 <span className="text-muted-foreground">Cover thumbnail</span>
-                <div className="mt-2 flex items-center gap-3">
-                  {editThumbPreview && (
-                    <div className="relative">
-                      <img
-                        src={editThumbPreview}
-                        alt=""
-                        className="h-16 w-28 rounded-md object-cover ring-1 ring-border"
-                      />
-                    </div>
-                  )}
-                  <input
-                    ref={editThumbRef}
-                    type="file"
-                    accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
-                    className="hidden"
-                    onChange={(e) =>
-                      e.target.files?.[0] && handleEditThumbFile(e.target.files[0])
-                    }
+                <div className="mt-2">
+                  <ThumbnailPicker
+                    preview={editThumbPreview}
+                    onFile={handleEditThumbFile}
+                    onClear={() => {
+                      setEditing({ ...editing, thumbnail: null });
+                      setEditThumbPreview(null);
+                    }}
+                    label={editing.thumbnail ? "Replace thumbnail" : "Upload thumbnail"}
                   />
-                  <button
-                    type="button"
-                    onClick={() => editThumbRef.current?.click()}
-                    className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-sm font-medium hover:bg-secondary"
-                  >
-                    <ImageIcon className="h-4 w-4" />
-                    {editing.thumbnail ? "Replace thumbnail" : "Upload thumbnail"}
-                  </button>
-                  {editing.thumbnail && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setEditing({ ...editing, thumbnail: null });
-                        setEditThumbPreview(null);
-                      }}
-                      className="text-xs text-muted-foreground hover:text-destructive"
-                    >
-                      Remove
-                    </button>
-                  )}
                 </div>
               </div>
             </div>
@@ -680,6 +968,9 @@ export default function VideoPublisher() {
                   description: editing.description,
                   category: editing.category,
                   thumbnail: editing.thumbnail,
+                  featured: editing.featured,
+                  published: editing.published,
+                  publishedAt: editing.publishedAt,
                 });
                 setEditing(null);
                 setEditThumbPreview(null);

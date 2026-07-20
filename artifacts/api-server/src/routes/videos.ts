@@ -1,28 +1,46 @@
 import { Router, type IRouter } from "express";
 import fs from "node:fs";
 import path from "node:path";
-import multer from "multer";
 import { db, videosTable } from "@workspace/db";
 import { eq, asc, desc, ilike, and, sql } from "drizzle-orm";
+import { requireAdmin, isAdminAuthenticated } from "../lib/adminAuth";
 
 // ---------------------------------------------------------------------------
 // Video Gallery API
 //
-// Public:  GET /videos          — paginated list (search, category, featured-first)
-//          GET /videos/stream/:filename — HTTP-Range streaming for uploaded files
+// Public:
+//   GET  /videos          — paginated list (published only; all if admin cookie)
+//   GET  /videos/stream/:filename — backward-compat streaming for old local files
 //
-// Dev-only write operations (IS_DEV_WORKSPACE guard):
-//          POST   /videos/upload            — multipart video + thumbnail
-//          POST   /videos/upload-thumbnail  — multipart thumbnail only
-//          POST   /videos/embed             — add YouTube / Vimeo link
-//          PATCH  /videos/:id               — edit metadata / replace thumbnail
-//          PUT    /videos/reorder           — drag-drop reorder
-//          DELETE /videos/:id               — remove row + local file
+// Admin-only (requireAdmin):
+//   POST   /videos/upload    — register a GCS-uploaded video in the DB
+//   POST   /videos/embed     — add a YouTube / Vimeo link
+//   PATCH  /videos/:id       — edit metadata
+//   PUT    /videos/reorder   — drag-drop reorder
+//   DELETE /videos/:id       — remove DB row + local/GCS cleanup
 // ---------------------------------------------------------------------------
 
-const IS_DEV_WORKSPACE =
-  process.env.NODE_ENV === "development" && !process.env.REPLIT_DEPLOYMENT;
+// ── Supported video formats (informational) ──────────────────────────────────
+export const ALLOWED_VIDEO_FORMATS = [
+  ".mp4",
+  ".m4v",
+  ".mov",
+  ".avi",
+  ".mkv",
+  ".webm",
+  ".ogv",
+  ".3gp",
+  ".3g2",
+  ".wmv",
+  ".flv",
+  ".f4v",
+  ".ts",
+  ".m2ts",
+  ".mts",
+  ".mxf",
+];
 
+// Legacy local-disk support (kept for backward compat only)
 function findWorkspaceRoot(): string {
   let dir = process.cwd();
   for (let i = 0; i < 10; i++) {
@@ -34,57 +52,22 @@ function findWorkspaceRoot(): string {
   throw new Error("Could not locate workspace root (pnpm-workspace.yaml)");
 }
 
-const WORKSPACE = findWorkspaceRoot();
-const VIDEO_DIR = path.join(WORKSPACE, "artifacts/api-server/uploads/videos");
-const THUMB_DIR = path.join(WORKSPACE, "artifacts/ocs-oorja/public/images/videos");
-
-for (const dir of [VIDEO_DIR, THUMB_DIR]) {
-  fs.mkdirSync(dir, { recursive: true });
-}
-
-const ALLOWED_VIDEO_EXT = [".mp4", ".mov", ".avi", ".mkv", ".webm"];
-const ALLOWED_THUMB_EXT = [".jpg", ".jpeg", ".png", ".webp"];
-
 const VIDEO_MIME: Record<string, string> = {
   ".mp4": "video/mp4",
+  ".m4v": "video/mp4",
   ".webm": "video/webm",
   ".mov": "video/quicktime",
   ".avi": "video/x-msvideo",
   ".mkv": "video/x-matroska",
+  ".ogv": "video/ogg",
+  ".3gp": "video/3gpp",
+  ".3g2": "video/3gpp2",
+  ".wmv": "video/x-ms-wmv",
+  ".flv": "video/x-flv",
+  ".ts": "video/mp2t",
+  ".m2ts": "video/mp2t",
+  ".mts": "video/mp2t",
 };
-
-const videoUpload = multer({
-  storage: multer.diskStorage({
-    destination: VIDEO_DIR,
-    filename: (_req, file, cb) => {
-      const ext = path.extname(file.originalname).toLowerCase();
-      cb(null, `${Date.now()}${ext}`);
-    },
-  }),
-  limits: { fileSize: 1024 * 1024 * 1024 }, // 1 GB
-  fileFilter: (_req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase();
-    if (ALLOWED_VIDEO_EXT.includes(ext)) cb(null, true);
-    else cb(new Error(`Unsupported format. Allowed: ${ALLOWED_VIDEO_EXT.join(", ")}`));
-  },
-});
-
-const thumbUpload = multer({
-  storage: multer.diskStorage({
-    destination: THUMB_DIR,
-    filename: (_req, file, cb) => {
-      const ext = path.extname(file.originalname).toLowerCase() || ".jpg";
-      cb(null, `${Date.now()}${ext}`);
-    },
-  }),
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB
-  fileFilter: (_req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase();
-    const mime = file.mimetype.toLowerCase();
-    if (ALLOWED_THUMB_EXT.includes(ext) || mime.startsWith("image/")) cb(null, true);
-    else cb(new Error("Thumbnail must be JPG, PNG, or WebP."));
-  },
-});
 
 function parseVideoUrl(url: string): {
   type: "youtube" | "vimeo" | null;
@@ -97,7 +80,7 @@ function parseVideoUrl(url: string): {
   if (yt)
     return {
       type: "youtube",
-      id: yt[1],
+      id: yt[1]!,
       embedUrl: `https://www.youtube.com/embed/${yt[1]}`,
     };
 
@@ -105,7 +88,7 @@ function parseVideoUrl(url: string): {
   if (vm)
     return {
       type: "vimeo",
-      id: vm[1],
+      id: vm[1]!,
       embedUrl: `https://player.vimeo.com/video/${vm[1]}`,
     };
 
@@ -136,7 +119,8 @@ async function nextSortOrder(): Promise<number> {
 
 const router: IRouter = Router();
 
-// ── GET /videos ─────────────────────────────────────────────────────────────
+// ── GET /videos ──────────────────────────────────────────────────────────────
+// Returns published videos to the public; returns ALL videos to admins.
 router.get("/", async (req, res): Promise<void> => {
   const {
     search = "",
@@ -147,11 +131,14 @@ router.get("/", async (req, res): Promise<void> => {
 
   const pageNum = Math.max(1, parseInt(page, 10));
   const limitNum = Math.min(50, Math.max(1, parseInt(limit, 10)));
+  const isAdmin = isAdminAuthenticated(req);
 
   const conditions = [];
   if (search) conditions.push(ilike(videosTable.title, `%${search}%`));
   if (category && category !== "All")
     conditions.push(eq(videosTable.category, category));
+  // Non-admins only see published videos
+  if (!isAdmin) conditions.push(eq(videosTable.published, true));
 
   const where = conditions.length > 0 ? and(...conditions) : undefined;
 
@@ -174,148 +161,143 @@ router.get("/", async (req, res): Promise<void> => {
   ]);
 
   const total = countRows[0]?.count ?? 0;
-  res.json({ videos: rows, total, page: pageNum, hasMore: pageNum * limitNum < total });
-});
-
-// ── GET /videos/stream/:filename ─────────────────────────────────────────────
-router.get("/stream/:filename", (req, res): void => {
-  const filename = path.basename(req.params.filename); // prevent path traversal
-  const filePath = path.join(VIDEO_DIR, filename);
-
-  if (!fs.existsSync(filePath)) {
-    res.status(404).json({ error: "Video not found" });
-    return;
-  }
-
-  const stat = fs.statSync(filePath);
-  const ext = path.extname(filename).toLowerCase();
-  const contentType = VIDEO_MIME[ext] ?? "application/octet-stream";
-  const range = req.headers.range;
-
-  if (!range) {
-    res.writeHead(200, {
-      "Content-Length": stat.size,
-      "Content-Type": contentType,
-      "Accept-Ranges": "bytes",
-    });
-    fs.createReadStream(filePath).pipe(res);
-    return;
-  }
-
-  const [startStr, endStr] = range.replace(/bytes=/, "").split("-");
-  const start = parseInt(startStr, 10);
-  const end = endStr ? parseInt(endStr, 10) : stat.size - 1;
-
-  if (start >= stat.size) {
-    res.status(416).set("Content-Range", `bytes */${stat.size}`).end();
-    return;
-  }
-
-  res.writeHead(206, {
-    "Content-Range": `bytes ${start}-${end}/${stat.size}`,
-    "Accept-Ranges": "bytes",
-    "Content-Length": end - start + 1,
-    "Content-Type": contentType,
+  res.json({
+    videos: rows,
+    total,
+    page: pageNum,
+    hasMore: pageNum * limitNum < total,
   });
-  fs.createReadStream(filePath, { start, end }).pipe(res);
 });
 
-// ── POST /videos/upload-thumbnail ────────────────────────────────────────────
-router.post(
-  "/upload-thumbnail",
-  (req, res, next) => {
-    if (!IS_DEV_WORKSPACE) {
-      res.status(404).json({ error: "Not found" });
+// ── GET /videos/stream/:filename — legacy local-disk streaming ───────────────
+// Kept for backward compat. New uploads go to GCS and are served via
+// GET /api/storage/objects/*.
+router.get("/stream/:filename", (req, res): void => {
+  try {
+    const WORKSPACE = findWorkspaceRoot();
+    const VIDEO_DIR = path.join(
+      WORKSPACE,
+      "artifacts/api-server/uploads/videos",
+    );
+    const filename = path.basename(req.params.filename);
+    const filePath = path.join(VIDEO_DIR, filename);
+
+    if (!fs.existsSync(filePath)) {
+      res.status(404).json({ error: "Video not found" });
       return;
     }
-    next();
-  },
-  thumbUpload.single("thumbnail"),
-  (req, res): void => {
-    if (!req.file) {
-      res.status(400).json({ error: "No thumbnail provided" });
+
+    const stat = fs.statSync(filePath);
+    const ext = path.extname(filename).toLowerCase();
+    const contentType = VIDEO_MIME[ext] ?? "application/octet-stream";
+    const range = req.headers.range;
+
+    if (!range) {
+      res.writeHead(200, {
+        "Content-Length": stat.size,
+        "Content-Type": contentType,
+        "Accept-Ranges": "bytes",
+      });
+      fs.createReadStream(filePath).pipe(res);
       return;
     }
-    res.json({ url: `/images/videos/${req.file.filename}` });
-  },
-);
+
+    const [startStr, endStr] = range.replace(/bytes=/, "").split("-");
+    const start = parseInt(startStr!, 10);
+    const end = endStr ? parseInt(endStr, 10) : stat.size - 1;
+
+    if (start >= stat.size) {
+      res.status(416).set("Content-Range", `bytes */${stat.size}`).end();
+      return;
+    }
+
+    res.writeHead(206, {
+      "Content-Range": `bytes ${start}-${end}/${stat.size}`,
+      "Accept-Ranges": "bytes",
+      "Content-Length": end - start + 1,
+      "Content-Type": contentType,
+    });
+    fs.createReadStream(filePath, { start, end }).pipe(res);
+  } catch {
+    res.status(500).json({ error: "Stream error" });
+  }
+});
 
 // ── POST /videos/upload ──────────────────────────────────────────────────────
-router.post(
-  "/upload",
-  (req, res, next) => {
-    if (!IS_DEV_WORKSPACE) {
-      res.status(404).json({ error: "Not found" });
-      return;
-    }
-    next();
-  },
-  videoUpload.single("video"),
-  async (req, res): Promise<void> => {
-    if (!req.file) {
-      res.status(400).json({ error: "No video file provided" });
-      return;
-    }
+// Registers a video that was already uploaded to GCS via presigned URL.
+// Body: { title, description, category, objectPath, thumbnailUrl, duration,
+//         featured, published, publishedAt }
+router.post("/upload", requireAdmin, async (req, res): Promise<void> => {
+  const {
+    title,
+    description = "",
+    category = "General",
+    objectPath,
+    thumbnailUrl = "",
+    duration = "",
+    featured = false,
+    published = false,
+    publishedAt,
+  } = req.body as Record<string, string | boolean | undefined>;
 
-    const { title, description = "", category = "General", duration = "", thumbnailUrl = "" } =
-      req.body as Record<string, string>;
-
-    const filename = req.file.filename;
-    const url = `/api/videos/stream/${filename}`;
-    const sortOrder = await nextSortOrder();
-
-    const [video] = await db
-      .insert(videosTable)
-      .values({
-        title: title || filename.replace(/\.[^.]+$/, ""),
-        description: description || null,
-        category,
-        type: "upload",
-        url,
-        thumbnail: thumbnailUrl || null,
-        duration: duration || null,
-        featured: false,
-        sortOrder,
-      })
-      .returning();
-
-    req.log.info({ id: video?.id, filename }, "Video uploaded");
-    res.json(video);
-  },
-);
-
-// ── POST /videos/embed ───────────────────────────────────────────────────────
-router.post("/embed", async (req, res): Promise<void> => {
-  if (!IS_DEV_WORKSPACE) {
-    res.status(404).json({ error: "Not found" });
+  if (!title || !objectPath) {
+    res.status(400).json({ error: "title and objectPath are required" });
     return;
   }
 
+  const sortOrder = await nextSortOrder();
+
+  const [video] = await db
+    .insert(videosTable)
+    .values({
+      title: String(title),
+      description: description ? String(description) : null,
+      category: String(category),
+      type: "upload",
+      url: String(objectPath),
+      thumbnail: thumbnailUrl ? String(thumbnailUrl) : null,
+      duration: duration ? String(duration) : null,
+      featured: featured === true || featured === "true",
+      published: published === true || published === "true",
+      publishedAt: publishedAt ? new Date(String(publishedAt)) : null,
+      sortOrder,
+    })
+    .returning();
+
+  req.log.info({ id: video?.id }, "Video registered from GCS upload");
+  res.json(video);
+});
+
+// ── POST /videos/embed ───────────────────────────────────────────────────────
+router.post("/embed", requireAdmin, async (req, res): Promise<void> => {
   const {
     title,
     description = "",
     category = "General",
     url,
     thumbnailUrl = "",
-  } = req.body as Record<string, string>;
+    featured = false,
+    published = false,
+    publishedAt,
+  } = req.body as Record<string, string | boolean | undefined>;
 
   if (!title || !url) {
     res.status(400).json({ error: "title and url are required" });
     return;
   }
 
-  const parsed = parseVideoUrl(url);
+  const parsed = parseVideoUrl(String(url));
   if (!parsed.type || !parsed.id) {
     res.status(400).json({ error: "Not a valid YouTube or Vimeo URL" });
     return;
   }
 
-  let thumbnail = thumbnailUrl;
+  let thumbnail = String(thumbnailUrl);
   if (!thumbnail) {
     if (parsed.type === "youtube") {
       thumbnail = `https://img.youtube.com/vi/${parsed.id}/hqdefault.jpg`;
     } else {
-      thumbnail = await fetchVimeoThumbnail(url);
+      thumbnail = await fetchVimeoThumbnail(String(url));
     }
   }
 
@@ -323,14 +305,16 @@ router.post("/embed", async (req, res): Promise<void> => {
   const [video] = await db
     .insert(videosTable)
     .values({
-      title,
-      description: description || null,
-      category,
+      title: String(title),
+      description: description ? String(description) : null,
+      category: String(category),
       type: parsed.type,
-      url,
+      url: String(url),
       thumbnail: thumbnail || null,
       duration: null,
-      featured: false,
+      featured: featured === true || featured === "true",
+      published: published === true || published === "true",
+      publishedAt: publishedAt ? new Date(String(publishedAt)) : null,
       sortOrder,
     })
     .returning();
@@ -340,25 +324,31 @@ router.post("/embed", async (req, res): Promise<void> => {
 });
 
 // ── PATCH /videos/:id ────────────────────────────────────────────────────────
-router.patch("/:id", async (req, res): Promise<void> => {
-  if (!IS_DEV_WORKSPACE) {
-    res.status(404).json({ error: "Not found" });
-    return;
-  }
-
+router.patch("/:id", requireAdmin, async (req, res): Promise<void> => {
   const id = parseInt(req.params.id, 10);
-  const { title, description, category, featured, duration, thumbnail } = req.body as Record<
-    string,
-    string | boolean | undefined
-  >;
+  const {
+    title,
+    description,
+    category,
+    featured,
+    duration,
+    thumbnail,
+    published,
+    publishedAt,
+  } = req.body as Record<string, string | boolean | undefined>;
 
   const patch: Record<string, unknown> = {};
   if (title !== undefined) patch.title = title;
   if (description !== undefined) patch.description = description || null;
   if (category !== undefined) patch.category = category;
-  if (featured !== undefined) patch.featured = featured === true || featured === "true";
+  if (featured !== undefined)
+    patch.featured = featured === true || featured === "true";
   if (duration !== undefined) patch.duration = duration || null;
   if (thumbnail !== undefined) patch.thumbnail = thumbnail || null;
+  if (published !== undefined)
+    patch.published = published === true || published === "true";
+  if (publishedAt !== undefined)
+    patch.publishedAt = publishedAt ? new Date(String(publishedAt)) : null;
 
   if (Object.keys(patch).length === 0) {
     res.status(400).json({ error: "No fields to update" });
@@ -379,12 +369,7 @@ router.patch("/:id", async (req, res): Promise<void> => {
 });
 
 // ── PUT /videos/reorder ──────────────────────────────────────────────────────
-router.put("/reorder", async (req, res): Promise<void> => {
-  if (!IS_DEV_WORKSPACE) {
-    res.status(404).json({ error: "Not found" });
-    return;
-  }
-
+router.put("/reorder", requireAdmin, async (req, res): Promise<void> => {
   const { orderedIds } = req.body as { orderedIds: number[] };
   if (!Array.isArray(orderedIds)) {
     res.status(400).json({ error: "orderedIds must be an array" });
@@ -404,12 +389,7 @@ router.put("/reorder", async (req, res): Promise<void> => {
 });
 
 // ── DELETE /videos/:id ───────────────────────────────────────────────────────
-router.delete("/:id", async (req, res): Promise<void> => {
-  if (!IS_DEV_WORKSPACE) {
-    res.status(404).json({ error: "Not found" });
-    return;
-  }
-
+router.delete("/:id", requireAdmin, async (req, res): Promise<void> => {
   const id = parseInt(req.params.id, 10);
   const [video] = await db
     .delete(videosTable)
@@ -421,18 +401,20 @@ router.delete("/:id", async (req, res): Promise<void> => {
     return;
   }
 
-  // Delete local video file if it was an upload
+  // Clean up legacy local video file if present
   if (video.url.startsWith("/api/videos/stream/")) {
-    const filename = path.basename(video.url);
-    const filePath = path.join(VIDEO_DIR, filename);
-    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-  }
-
-  // Delete local thumbnail if it's in our images/videos dir
-  if (video.thumbnail?.startsWith("/images/videos/")) {
-    const filename = path.basename(video.thumbnail);
-    const filePath = path.join(THUMB_DIR, filename);
-    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    try {
+      const WORKSPACE = findWorkspaceRoot();
+      const VIDEO_DIR = path.join(
+        WORKSPACE,
+        "artifacts/api-server/uploads/videos",
+      );
+      const filename = path.basename(video.url);
+      const filePath = path.join(VIDEO_DIR, filename);
+      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    } catch {
+      /* non-fatal */
+    }
   }
 
   req.log.info({ id }, "Video deleted");

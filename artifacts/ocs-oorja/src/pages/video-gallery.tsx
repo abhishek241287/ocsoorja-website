@@ -144,11 +144,24 @@ export default function VideoGalleryPage() {
           </div>
         ) : videos.length === 0 ? (
           <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border py-24 text-center">
-            <Film className="h-10 w-10 text-muted-foreground/50" />
-            <p className="mt-4 text-lg font-medium">No videos available</p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {search ? "Try a different search term." : "Check back soon."}
+            <Film className="h-12 w-12 text-muted-foreground/40" />
+            <p className="mt-4 text-lg font-semibold text-foreground">
+              {search ? "No videos match your search" : "Videos coming soon"}
             </p>
+            <p className="mt-2 max-w-sm text-sm text-muted-foreground">
+              {search
+                ? "Try a different search term or browse all categories."
+                : "We're preparing product demonstrations, installation walkthroughs, and project case studies. Check back soon."}
+            </p>
+            {search && (
+              <button
+                type="button"
+                onClick={() => { setSearchInput(""); setSearch(""); setCategory("All"); }}
+                className="mt-4 rounded-full border border-border px-4 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:border-foreground/30 hover:text-foreground"
+              >
+                Clear search
+              </button>
+            )}
           </div>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

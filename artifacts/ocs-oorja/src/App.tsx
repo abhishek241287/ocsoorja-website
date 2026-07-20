@@ -41,10 +41,8 @@ const GalleryPublisher = import.meta.env.DEV
   ? lazy(() => import("@/pages/gallery-publisher"))
   : null;
 
-// Internal Video Publisher tool — development workspace only.
-const VideoPublisher = import.meta.env.DEV
-  ? lazy(() => import("@/pages/video-publisher"))
-  : null;
+// Video Publisher — password-protected admin tool, always available.
+const VideoPublisher = lazy(() => import("@/pages/video-publisher"));
 
 const VideoGallery = lazy(() => import("@/pages/video-gallery"));
 
@@ -107,19 +105,17 @@ function Router() {
             </Suspense>
           </Route>
         ) : null}
-        {VideoPublisher ? (
-          <Route path="/video-publisher">
-            <Suspense
-              fallback={
-                <div className="flex min-h-[60vh] items-center justify-center text-muted-foreground">
-                  Loading the Video Publisher…
-                </div>
-              }
-            >
-              <VideoPublisher />
-            </Suspense>
-          </Route>
-        ) : null}
+        <Route path="/video-publisher">
+          <Suspense
+            fallback={
+              <div className="flex min-h-[60vh] items-center justify-center text-muted-foreground">
+                Loading…
+              </div>
+            }
+          >
+            <VideoPublisher />
+          </Suspense>
+        </Route>
         <Route component={NotFound} />
       </Switch>
     </Layout>

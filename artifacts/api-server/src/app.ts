@@ -1,5 +1,6 @@
 import express, { type Express } from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import pinoHttp from "pino-http";
 import router from "./routes";
 import { logger } from "./lib/logger";
@@ -10,6 +11,7 @@ const app: Express = express();
 // which express-rate-limit needs to correctly identify and limit requests.
 app.set("trust proxy", 1);
 
+app.use(cookieParser());
 app.use(
   pinoHttp({
     logger,

@@ -18,6 +18,8 @@ export type VideoEntry = {
   thumbnail: string | null;
   duration: string | null;
   featured: boolean;
+  published: boolean;
+  publishedAt: string | null;
   sortOrder: number;
   createdAt: string | null;
 };
@@ -99,14 +101,44 @@ export async function captureVideoThumbnail(file: File): Promise<Blob | null> {
   });
 }
 
-/** Upload a thumbnail Blob to the server and return the public URL. */
-export async function uploadThumbnail(blob: Blob, filename = "thumb.jpg"): Promise<string | null> {
-  const fd = new FormData();
-  fd.append("thumbnail", blob, filename);
-  const r = await fetch("/api/videos/upload-thumbnail", { method: "POST", body: fd });
-  if (!r.ok) return null;
-  const data = (await r.json()) as { url?: string };
-  return data.url ?? null;
+/**
+ * Upload a thumbnail Blob to GCS via presigned URL.
+ * Returns the serving URL (/api/storage/objects/…) or null on failure.
+ */
+export async function uploadThumbnail(
+  blob: Blob,
+  filename = "thumb.jpg",
+): Promise<string | null> {
+  try {
+    // Step 1: Request a presigned PUT URL
+    const presignRes = await fetch("/api/storage/uploads/request-url", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: filename,
+        size: blob.size,
+        contentType: blob.type || "image/jpeg",
+      }),
+    });
+    if (!presignRes.ok) return null;
+    const { uploadURL, objectPath } = (await presignRes.json()) as {
+      uploadURL: string;
+      objectPath: string;
+    };
+
+    // Step 2: Upload directly to GCS
+    const uploadRes = await fetch(uploadURL, {
+      method: "PUT",
+      headers: { "Content-Type": blob.type || "image/jpeg" },
+      body: blob,
+    });
+    if (!uploadRes.ok) return null;
+
+    // Step 3: Return the serving URL
+    return `/api/storage${objectPath}`;
+  } catch {
+    return null;
+  }
 }
 
 /** Read a video file's duration as a display string like "3:42". */
@@ -128,4 +160,61 @@ export async function getVideoDuration(file: File): Promise<string> {
       resolve("");
     });
   });
+}
+
+/**
+ * Upload a video file to GCS via presigned PUT URL, with XHR progress tracking.
+ * Returns { objectPath, servingUrl } or throws on failure.
+ */
+export async function uploadVideoToGCS(
+  file: File,
+  onProgress: (pct: number) => void,
+): Promise<{ objectPath: string; servingUrl: string }> {
+  // Step 1: Get presigned URL
+  const presignRes = await fetch("/api/storage/uploads/request-url", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      name: file.name,
+      size: file.size,
+      contentType: file.type || "video/mp4",
+    }),
+  });
+  if (!presignRes.ok) {
+    const err = (await presignRes.json().catch(() => ({}))) as {
+      error?: string;
+    };
+    throw new Error(err.error ?? "Failed to get upload URL");
+  }
+  const { uploadURL, objectPath } = (await presignRes.json()) as {
+    uploadURL: string;
+    objectPath: string;
+  };
+
+  // Step 2: Upload directly to GCS via XHR (supports progress events)
+  await new Promise<void>((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("PUT", uploadURL);
+    xhr.setRequestHeader("Content-Type", file.type || "video/mp4");
+    xhr.upload.addEventListener("progress", (e) => {
+      if (e.lengthComputable) {
+        onProgress(Math.round((e.loaded / e.total) * 100));
+      }
+    });
+    xhr.addEventListener("load", () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        resolve();
+      } else {
+        reject(new Error(`GCS upload failed: HTTP ${xhr.status}`));
+      }
+    });
+    xhr.addEventListener("error", () => reject(new Error("Upload network error")));
+    xhr.addEventListener("abort", () => reject(new Error("Upload aborted")));
+    xhr.send(file);
+  });
+
+  return {
+    objectPath,
+    servingUrl: `/api/storage${objectPath}`,
+  };
 }
