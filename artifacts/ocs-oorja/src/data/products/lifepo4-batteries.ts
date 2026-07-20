@@ -392,7 +392,7 @@ export const lifepo4Batteries: Product[] = [
     "slug": "e-bike-60v-20ah",
     "family": "lifepo4-batteries",
     "series": "E-Mobility Packs (NMC)",
-    "image": "/images/products/ess-48v-100ah.svg",
+    "image": "/images/products/lifepo4-batteries/ebike-lifepo4-battery.png",
     "summary": "Lightweight 60V 20Ah pack for two‑wheelers, tuned for daily commuting.",
     "warranty": "Warranty details on request",
     "tags": [
@@ -431,7 +431,7 @@ export const lifepo4Batteries: Product[] = [
     "slug": "e-bike-60v-30ah",
     "family": "lifepo4-batteries",
     "series": "E-Mobility Packs (NMC)",
-    "image": "/images/products/ess-48v-100ah.svg",
+    "image": "/images/products/lifepo4-batteries/ebike-lifepo4-battery.png",
     "summary": "Extended‑range 60V 30Ah pack for two‑wheelers.",
     "warranty": "Warranty details on request",
     "tags": [
@@ -470,7 +470,7 @@ export const lifepo4Batteries: Product[] = [
     "slug": "e-bike-60v-35ah",
     "family": "lifepo4-batteries",
     "series": "E-Mobility Packs (NMC)",
-    "image": "/images/products/ess-48v-100ah.svg",
+    "image": "/images/products/lifepo4-batteries/ebike-lifepo4-battery.png",
     "summary": "Balanced performance 60V 35Ah pack for two‑wheelers.",
     "warranty": "Warranty details on request",
     "tags": [
@@ -509,7 +509,7 @@ export const lifepo4Batteries: Product[] = [
     "slug": "e-bike-60v-40ah",
     "family": "lifepo4-batteries",
     "series": "E-Mobility Packs (NMC)",
-    "image": "/images/products/ess-48v-100ah.svg",
+    "image": "/images/products/lifepo4-batteries/ebike-lifepo4-battery.png",
     "summary": "High‑capacity 60V 40Ah pack for extended range two‑wheelers.",
     "warranty": "Warranty details on request",
     "tags": [
