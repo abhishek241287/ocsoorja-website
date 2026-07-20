@@ -1,0 +1,289 @@
+We are preparing the production website.
+
+Add three new Hybrid Solar Inverters under the Hybrid Inverters category.
+
+DO NOT use placeholder content.
+Use the specifications and features exactly from the attached specification sheets.
+
+Models:
+
+1. OCS OORJA 4 kW Hybrid Solar Inverter (IP54)
+2. OCS OORJA 6.2 kW Hybrid Solar Inverter (IP54)
+3. OCS OORJA 11 kW Hybrid Solar Inverter (IP54)
+
+Each product must have its own dedicated product page.
+
+────────────────────────
+CONTENT STRUCTURE
+────────────────────────
+
+Each product must contain:
+
+• Product Name
+• Model Number
+• Product Category
+• Short Description
+• Long Description
+• Key Features
+• Technical Specifications
+• Applications
+• Downloads
+• Product Images
+• Image Gallery
+• FAQ
+• Related Products
+
+────────────────────────
+FEATURES
+────────────────────────
+
+Use the supplied feature list.
+
+Display them as premium feature cards with icons.
+
+Features include:
+
+• IP54 Protection Level
+• Waterproof
+• Dustproof
+• Salt Spray Resistant
+• IEC Certified
+• EU Standards Compliant
+• Built-in Intelligent AI Cloud Function
+• Off-grid and Grid-tied Operation
+• PV Power Feed to Grid
+• LCD Intelligent Display
+• Real-time Monitoring
+• Support WiFi Monitoring
+• Remote Operation
+• Grid Feeding Status Monitoring
+
+────────────────────────
+TECHNICAL SPECIFICATIONS
+────────────────────────
+
+Create a professional specifications table.
+
+Use every parameter from the specification sheet including:
+
+Input
+
+PV Voltage
+
+Battery Voltage
+
+Output Power
+
+Grid Voltage
+
+Frequency
+
+Efficiency
+
+Charging Current
+
+MPPT
+
+Protection
+
+Communication
+
+Dimensions
+
+Weight
+
+Operating Temperature
+
+Noise
+
+Ingress Protection
+
+Everything from the specification sheet should be represented.
+
+────────────────────────
+APPLICATIONS
+────────────────────────
+
+Display application cards.
+
+Residential
+
+Commercial
+
+Off-grid
+
+Farm
+
+Retail Shops
+
+Clinics
+
+Offices
+
+Educational Institutes
+
+────────────────────────
+DOWNLOADS
+────────────────────────
+
+Support downloadable files:
+
+Brochure
+
+Datasheet
+
+User Manual
+
+Warranty Card
+
+────────────────────────
+RELATED PRODUCTS
+────────────────────────
+
+Each inverter should recommend the other two models.
+
+────────────────────────
+SEO
+────────────────────────
+
+Every product requires its own SEO fields.
+
+Generate:
+
+SEO Title
+
+Meta Description
+
+URL Slug
+
+Canonical URL
+
+Open Graph Title
+
+Open Graph Description
+
+Twitter Card
+
+Image Alt Text
+
+Image Title
+
+Schema.org Product JSON-LD
+
+Breadcrumb Schema
+
+FAQ Schema
+
+Product Schema
+
+────────────────────────
+SEO KEYWORDS
+────────────────────────
+
+Generate optimized keywords for each product naturally.
+
+Examples include:
+
+Hybrid Solar Inverter
+
+Solar Inverter India
+
+Hybrid Inverter
+
+IP54 Solar Inverter
+
+On Grid Inverter
+
+Off Grid Inverter
+
+Hybrid Energy Storage
+
+Solar Battery Inverter
+
+Solar Power Backup
+
+Residential Solar Inverter
+
+Commercial Solar Inverter
+
+MPPT Inverter
+
+Smart Hybrid Inverter
+
+WiFi Solar Inverter
+
+OCS OORJA Hybrid Inverter
+
+Do NOT keyword stuff.
+
+────────────────────────
+PAGE DESIGN
+────────────────────────
+
+Follow the existing premium product page design.
+
+Hero Image
+
+Feature Icons
+
+Specification Table
+
+Downloads
+
+Applications
+
+FAQ
+
+Related Products
+
+Sticky Enquiry Button
+
+Sticky WhatsApp Button
+
+────────────────────────
+SEARCH
+────────────────────────
+
+These products must automatically appear in:
+
+Product Search
+
+Category Filters
+
+Site Search
+
+Related Products
+
+Homepage Featured Products
+
+XML Sitemap
+
+robots.txt indexing
+
+────────────────────────
+AI SEARCH OPTIMIZATION
+────────────────────────
+
+Optimize the product pages for:
+
+Google Search
+
+Google AI Mode
+
+ChatGPT
+
+Gemini
+
+Perplexity
+
+Claude
+
+Bing Copilot
+
+Include structured data and semantic HTML.
+
+────────────────────────
+QUALITY
+────────────────────────
+
+The pages should look comparable to premium inverter manufacturers such as Huawei Digital Power, Sungrow, Schneider Electric, SMA, ABB, and Deye while maintaining the OCS OORJA branding.
