@@ -9,6 +9,28 @@ import {
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
+export const enquiriesTable = pgTable("enquiries", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  phone: text("phone"),
+  company: text("company"),
+  message: text("message").notNull(),
+  notificationSent: boolean("notification_sent").notNull().default(false),
+  confirmationSent: boolean("confirmation_sent").notNull().default(false),
+  notificationMsgId: text("notification_msg_id"),
+  confirmationMsgId: text("confirmation_msg_id"),
+  emailError: text("email_error"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertEnquirySchema = createInsertSchema(enquiriesTable).omit({
+  id: true,
+  createdAt: true,
+});
+export type InsertEnquiry = z.infer<typeof insertEnquirySchema>;
+export type Enquiry = typeof enquiriesTable.$inferSelect;
+
 export const videosTable = pgTable("videos", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
