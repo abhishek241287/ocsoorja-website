@@ -22,7 +22,7 @@ const SITE = siteConfig.url;
 type ProjectsTab = "case-studies" | "gallery";
 
 export default function Projects() {
-  const [activeTab, setActiveTab] = useState<ProjectsTab>("case-studies");
+  const [activeTab, setActiveTab] = useState<ProjectsTab>("gallery");
 
   const sortedProjects = useMemo(() => projectsSortedByDateDesc(projects), []);
   const [filteredProjects, setFilteredProjects] = useState<ProjectCaseStudy[]>(sortedProjects);
