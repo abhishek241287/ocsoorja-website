@@ -358,7 +358,7 @@ function VideoLightbox({
             {video.type === "upload" ? (
               <video
                 key={video.id}
-                src={video.url}
+                src={`/api/storage${video.url}`}
                 controls
                 autoPlay
                 playsInline
